@@ -92,7 +92,7 @@ export function Layout() {
             </Link>
 
             <Link to="/profile" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <span className="text-ink font-semibold text-sm hidden sm:block">Иван</span>
+              <span className="text-ink font-semibold text-sm hidden sm:block"></span>
               <div className="w-8 h-8 bg-navy text-white rounded-full flex items-center justify-center text-xs font-bold">
                 ИА
               </div>
