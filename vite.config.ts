@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite' // <--- Импорт
 
 export default defineConfig({
+  base: './',
   plugins: [react(), tailwindcss()], // <--- Добавлен в плагины
   server: {
     host: '0.0.0.0',
