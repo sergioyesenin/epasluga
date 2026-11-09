@@ -3,7 +3,13 @@ import { Link } from 'react-router-dom'
 import { Button, Card } from '../../design-system'
 import type { Service } from '../../types/service'
 
-export function SuccessScreen({ service }: { service: Service }) {
+type SuccessScreenProps = {
+  service: Service
+  applicationNum?: string
+  situationId?: string
+}
+
+export function SuccessScreen({ service, applicationNum, situationId }: SuccessScreenProps) {
   const [rating, setRating] = useState<number | null>(null)
   const [isRated, setIsRated] = useState(false)
 
@@ -17,15 +23,25 @@ export function SuccessScreen({ service }: { service: Service }) {
 
       <h1 className="text-3xl font-bold text-navy-deep mb-4">Заявление принято!</h1>
       <p className="text-lg text-ink mb-2">Услуга: {service.shortTitle}</p>
-      
+      {applicationNum && (
+        <p className="text-sm text-muted mb-2">Номер заявления: <span className="font-mono">{applicationNum}</span></p>
+      )}
+
       <p className="text-muted mb-8">
         Срок оказания: <strong className="text-ink">{service.timeToComplete}</strong>.<br />
         Мы пришлем уведомление, когда документ будет готов.
       </p>
 
       <div className="flex flex-col gap-3 items-center mb-12">
-        <Link to="/apps">
-          <Button className="w-64">Перейти к моим услугам</Button>
+        {situationId && (
+          <Link to={`/situation/${situationId}`} className="w-64">
+            <Button className="w-full">Вернуться к ситуации</Button>
+          </Link>
+        )}
+        <Link to="/apps" className="w-64">
+          <Button variant={situationId ? 'ghost' : 'primary'} className="w-full">
+            Перейти к моим услугам
+          </Button>
         </Link>
         <Link to="/" className="text-sm text-navy hover:underline mt-2">
           Вернуться на главную

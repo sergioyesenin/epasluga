@@ -5,6 +5,7 @@ import { z } from 'zod'
 import { Button, Card, Input } from '../../design-system'
 import type { Service } from '../../types/service'
 import { SuccessScreen } from './SuccessScreen'
+import { useApplications } from '../../lib/applications'
 
 // Схема валидации (эвристика #9 — понятные сообщения рядом с полем)
 const PHONE_RE = /^\+375\s?\(?(?:17|25|29|33|44)\)?[\s-]?\d{3}[\s-]?\d{2}[\s-]?\d{2}$/
@@ -36,12 +37,21 @@ function readDraft(id: string): Partial<FormData> | null {
 type ApplicationFormProps = {
   service: Service
   onBack: () => void
+  situationId?: string
+  situationStepId?: string
 }
 
-export function ApplicationForm({ service, onBack }: ApplicationFormProps) {
+export function ApplicationForm({
+  service,
+  onBack,
+  situationId,
+  situationStepId,
+}: ApplicationFormProps) {
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [draftSavedAt, setDraftSavedAt] = useState<string | null>(null)
+  const [generatedNum, setGeneratedNum] = useState<string>('')
   const saveTimer = useRef<number | null>(null)
+  const { add } = useApplications()
 
   const {
     register,
@@ -53,16 +63,11 @@ export function ApplicationForm({ service, onBack }: ApplicationFormProps) {
     resolver: zodResolver(schema),
     mode: 'onBlur',
     defaultValues: {
-      lastName: '',
-      firstName: '',
-      middleName: '',
-      phone: '',
-      email: '',
-      comment: '',
+      lastName: '', firstName: '', middleName: '',
+      phone: '', email: '', comment: '',
     },
   })
 
-  // Восстановление черновика при монтировании
   useEffect(() => {
     const saved = readDraft(service.id)
     if (saved) {
@@ -71,13 +76,11 @@ export function ApplicationForm({ service, onBack }: ApplicationFormProps) {
     }
   }, [service.id, reset])
 
-  // Автосохранение при любом изменении (эвристика #3)
   useEffect(() => {
     const sub = watch((values) => {
       if (saveTimer.current) window.clearTimeout(saveTimer.current)
       saveTimer.current = window.setTimeout(() => {
         const draft = { ...values }
-        // consent не сохраняем — пользователь должен явно поставить галочку
         delete draft.consent
         localStorage.setItem(DRAFT_PREFIX + service.id, JSON.stringify(draft))
         setDraftSavedAt(
@@ -92,8 +95,22 @@ export function ApplicationForm({ service, onBack }: ApplicationFormProps) {
   }, [watch, service.id])
 
   const onSubmit = async (data: FormData) => {
-    // TODO шаг 5: записать в «Мои услуги» и уведомления
-    console.info('application submitted', { serviceId: service.id, ...data })
+    const num = String(Date.now()).slice(-12)
+    setGeneratedNum(num)
+
+    add({
+      id: 'a' + Date.now(),
+      num,
+      title: service.shortTitle,
+      serviceId: service.id,
+      initiator: service.orgName,
+      status: 'На проверке',
+      at: new Date().toISOString(),
+      comment: data.comment || '',
+      situationId,
+      situationStepId,
+    })
+
     localStorage.removeItem(DRAFT_PREFIX + service.id)
     setIsSubmitted(true)
   }
@@ -105,7 +122,13 @@ export function ApplicationForm({ service, onBack }: ApplicationFormProps) {
   }
 
   if (isSubmitted) {
-    return <SuccessScreen service={service} />
+    return (
+      <SuccessScreen
+        service={service}
+        applicationNum={generatedNum}
+        situationId={situationId}
+      />
+    )
   }
 
   return (

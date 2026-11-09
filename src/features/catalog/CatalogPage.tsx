@@ -5,6 +5,7 @@ import { lifeSituations } from '../../data/situations'
 import { searchServices } from '../../lib/search'
 import { useFavorites } from '../../lib/favorites'
 import { getSituationIcon } from '../../lib/situationIcons'
+import { useAllSituationProgress } from '../../lib/situationProgress'
 import { CatalogCard } from './CatalogCard'
 import { CategoryGrid } from './CategoryGrid'
 import { EmptyState, Card, Input, Button } from '../../design-system'
@@ -25,6 +26,7 @@ export function CatalogPage() {
 
   const [draftQuery, setDraftQuery] = useState(query)
   const { favs, toggle, has } = useFavorites()
+  const situationProgress = useAllSituationProgress()
 
   const activeCategory = categories.find((c) => c.id === categoryId)
 
@@ -148,27 +150,54 @@ export function CatalogPage() {
         <>
           {filteredSituations.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 animate-in fade-in duration-300">
-              {filteredSituations.map((sit) => (
-                <Link key={sit.id} to={`/situation/${sit.id}`} className="block group h-full">
-                  <Card variant="interactive" className="h-full flex flex-col p-5">
-                    <div className="flex items-start gap-3 mb-3">
-                      <span className="text-3xl shrink-0" aria-hidden="true">
-                        {getSituationIcon(sit.id)}
-                      </span>
-                      <h3 className="text-lg font-bold text-navy group-hover:text-navy-deep transition-colors leading-tight">
-                        {sit.title}
-                      </h3>
-                    </div>
-                    <p className="text-sm text-muted mb-4 flex-1 line-clamp-3">{sit.painPoint}</p>
-                    <div className="mt-auto pt-4 border-t border-line flex justify-between items-center text-sm font-semibold text-navy">
-                      <span className="bg-[#e8eeff] text-navy px-2 py-1 rounded text-xs">
-                        {sit.steps.length} {pluralizeSteps(sit.steps.length)}
-                      </span>
-                      <span className="group-hover:translate-x-1 transition-transform">Начать →</span>
-                    </div>
-                  </Card>
-                </Link>
-              ))}
+              {filteredSituations.map((sit) => {
+                const doneCount = situationProgress[sit.id] ?? 0
+                const totalCount = sit.steps.length
+                const inProgress = doneCount > 0 && doneCount < totalCount
+                const isComplete = totalCount > 0 && doneCount >= totalCount
+
+                return (
+                  <Link
+                    key={sit.id}
+                    to={`/situation/${sit.id}`}
+                    className="block group h-full"
+                  >
+                    <Card variant="interactive" className="h-full flex flex-col p-5">
+                      <div className="flex items-start gap-3 mb-3">
+                        <span className="text-3xl shrink-0" aria-hidden="true">
+                          {getSituationIcon(sit.id)}
+                        </span>
+                        <h3 className="text-lg font-bold text-navy group-hover:text-navy-deep transition-colors leading-tight">
+                          {sit.title}
+                        </h3>
+                      </div>
+                      <p className="text-sm text-muted mb-4 flex-1 line-clamp-3">
+                        {sit.painPoint}
+                      </p>
+                      <div className="mt-auto pt-4 border-t border-line flex justify-between items-center text-sm font-semibold text-navy gap-2">
+                        <div className="flex items-center gap-2">
+                          <span className="bg-[#e8eeff] text-navy px-2 py-1 rounded text-xs">
+                            {totalCount} {pluralizeSteps(totalCount)}
+                          </span>
+                          {inProgress && (
+                            <span className="bg-[#fff4e5] text-accent-warm px-2 py-1 rounded text-xs">
+                              {doneCount}/{totalCount}
+                            </span>
+                          )}
+                          {isComplete && (
+                            <span className="bg-[#e6f6ec] text-ok px-2 py-1 rounded text-xs">
+                              Готово
+                            </span>
+                          )}
+                        </div>
+                        <span className="group-hover:translate-x-1 transition-transform whitespace-nowrap">
+                          {isComplete ? 'Открыть →' : inProgress ? 'Продолжить →' : 'Начать →'}
+                        </span>
+                      </div>
+                    </Card>
+                  </Link>
+                )
+              })}
             </div>
           ) : (
             <EmptyState

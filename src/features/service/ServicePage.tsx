@@ -1,5 +1,5 @@
 ﻿import { useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useSearchParams } from 'react-router-dom'
 import { services } from '../../data/services'
 import { Button, Badge, Card, Accordion, Tooltip } from '../../design-system'
 import { ru } from '../../content/ru'
@@ -17,6 +17,10 @@ const AUTH_HINT: Record<string, React.ReactNode> = {
 
 export function ServicePage() {
   const { id } = useParams()
+  const [params] = useSearchParams()
+  const situationId = params.get('situation') ?? undefined
+  const situationStepId = params.get('step') ?? undefined
+
   const service = services.find((s) => s.id === id)
   const [isFormOpen, setIsFormOpen] = useState(false)
 
@@ -24,17 +28,21 @@ export function ServicePage() {
     return (
       <div className="max-w-3xl mx-auto py-12 text-center">
         <h1 className="text-2xl font-bold text-navy-deep mb-4">Услуга не найдена</h1>
-        <Link to="/catalog" className="text-navy hover:underline">
-          Вернуться в каталог
-        </Link>
+        <Link to="/catalog" className="text-navy hover:underline">Вернуться в каталог</Link>
       </div>
     )
   }
 
   if (isFormOpen) {
-    return <ApplicationForm service={service} onBack={() => setIsFormOpen(false)} />
+    return (
+      <ApplicationForm
+        service={service}
+        onBack={() => setIsFormOpen(false)}
+        situationId={situationId}
+        situationStepId={situationStepId}
+      />
+    )
   }
-
   return (
     <div className="max-w-4xl mx-auto pb-12">
       {/* Шапка с заголовком */}

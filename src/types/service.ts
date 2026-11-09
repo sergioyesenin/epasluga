@@ -90,3 +90,18 @@ export interface LifeSituation {
   steps: SituationStep[];
   faq?: { question: string; answer: string }[];
 }
+
+export interface Application {
+  id: string
+  num: string
+  title: string
+  serviceId: string
+  initiator: string
+  status: ApplicationStatus
+  at: string
+  comment: string
+  /** Если заявление оформлено из шага жизненной ситуации — её id. */
+  situationId?: string
+  /** id шага в этой ситуации (чтобы подсветить конкретный шаг). */
+  situationStepId?: string
+}

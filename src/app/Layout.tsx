@@ -35,15 +35,16 @@ export function Layout() {
   }
 
   return (
-    <div className="min-h-screen flex bg-bg relative">
+    // h-screen + overflow-hidden — фиксируем общий каркас приложения на высоту окна
+    <div className="h-screen flex bg-bg relative overflow-hidden">
       
       {/* --- САЙДБАР (только для авторизованных) --- */}
       {isAuthenticated && (
-        <aside className="hidden md:flex flex-col w-64 bg-navy text-white shrink-0">
-          <Link to="/" className="p-5 font-bold text-xl hover:opacity-90 transition-opacity">
+        <aside className="hidden md:flex flex-col w-64 bg-navy text-white shrink-0 h-full">
+          <Link to="/" className="p-5 font-bold text-xl hover:opacity-90 transition-opacity shrink-0">
             Е-Паслуга
           </Link>
-          <nav className="flex flex-col">
+          <nav className="flex flex-col overflow-y-auto pb-4">
             {navItems.map((item) => (
               <NavLink
                 key={item.to}
@@ -77,10 +78,10 @@ export function Layout() {
       )}
 
       {/* --- ОСНОВНОЙ КОНТЕНТ --- */}
-      <div className="flex-1 flex flex-col min-w-0 pb-16 md:pb-0">
+      <div className="flex-1 flex flex-col min-w-0 h-full">
         
         {/* Шапка */}
-        <header className="h-16 bg-white border-b border-line flex items-center justify-between px-4 md:px-7 sticky top-0 z-30">
+        <header className="h-16 bg-white border-b border-line flex items-center justify-between px-4 md:px-7 sticky top-0 z-30 shrink-0">
           <div className="flex items-center gap-3">
             <Link to="/" className="font-bold text-navy text-lg md:text-xl">
               Е-Паслуга
@@ -138,8 +139,8 @@ export function Layout() {
           </div>
         </header>
         
-        {/* Контент страницы */}
-        <main className="flex-1 p-4 md:p-7">
+        {/* Контент страницы — скроллится только эта часть */}
+        <main className="flex-1 p-4 md:p-7 pb-20 md:pb-7 overflow-y-auto">
           <Breadcrumbs />
           <Outlet />
         </main>

@@ -42,6 +42,20 @@ export function MyServicesPage() {
             })}
           </tbody>
         </table>
+
+        {apps.length === 0 && (
+          <div className="text-center text-muted py-12">
+            Пока нет ни одной заявки. Откройте{' '}
+            <a href="#/catalog" className="text-navy hover:underline">
+              каталог услуг
+            </a>{' '}
+            или{' '}
+            <a href="#/catalog?view=situations" className="text-navy hover:underline">
+              жизненные ситуации
+            </a>
+            , чтобы начать.
+          </div>
+        )}
       </div>
     </div>
   )

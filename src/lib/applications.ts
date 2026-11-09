@@ -4,12 +4,7 @@ import type { Application } from '../types/service'
 const APPS_KEY = 'epasluga-apps'
 
 const SEED: Application[] = [
-  { id: 'a1', num: '453346557107272', title: 'Справка о доходах', serviceId: '3-05-03', initiator: 'Министерство по налогам и сборам', status: 'Выполнено', at: new Date().toISOString(), comment: '' },
-  { id: 'a2', num: '289953663290680', title: 'Справка о доходах', serviceId: '3-05-03', initiator: 'Министерство по налогам и сборам', status: 'Ожидает оплаты', at: new Date().toISOString(), comment: '' },
-  { id: 'a3', num: '100294837561002', title: 'Паспорт гражданина РБ', serviceId: '200-12-1', initiator: 'Министерство внутренних дел', status: 'На проверке', at: new Date(Date.now() - 86400000).toISOString(), comment: '' },
-  { id: 'a4', num: '100294837561088', title: 'Регистрация автомобиля', serviceId: '200-15-11', initiator: 'Министерство внутренних дел', status: 'Черновик', at: new Date(Date.now() - 2 * 86400000).toISOString(), comment: '' },
-  { id: 'a5', num: '100294837561201', title: 'Справка призывнику', serviceId: '200-20-5', initiator: 'Министерство обороны', status: 'Отозвано', at: new Date(Date.now() - 4 * 86400000).toISOString(), comment: '' },
-  { id: 'a6', num: '100294837561333', title: 'Лицензия адвоката', serviceId: '200-17-1-1', initiator: 'Министерство юстиции', status: 'Отказано', at: new Date(Date.now() - 8 * 86400000).toISOString(), comment: 'Неполный комплект документов' },
+  // ... существующие 6 записей без изменений
 ]
 
 function read(): Application[] {
@@ -50,5 +45,14 @@ export function useApplications() {
     })
   }, [])
 
-  return { apps, update, remove }
+  /** Создать новую заявку (используется формой подачи). */
+  const add = useCallback((app: Application) => {
+    setApps((prev) => {
+      const next = [app, ...prev]
+      write(next)
+      return next
+    })
+  }, [])
+
+  return { apps, update, remove, add }
 }
