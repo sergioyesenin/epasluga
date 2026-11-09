@@ -1,19 +1,19 @@
 ﻿import { useMemo, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams, Link } from 'react-router-dom'
 import { categories } from '../../data/categories'
-import { situations } from '../../data/situations'
+import { lifeSituations } from '../../data/situations' // Новый импорт
 import { searchServices } from '../../lib/search'
 import { useFavorites } from '../../lib/favorites'
 import { CatalogCard } from './CatalogCard'
 import { CategoryGrid } from './CategoryGrid'
 import { CatalogToolbar } from './CatalogToolbar'
-import { EmptyState } from '../../design-system'
+import { EmptyState, Card } from '../../design-system'
 import clsx from 'clsx'
 
-type Mode = 'cats' | 'list' | 'favs'
+type Mode = 'cats' | 'list' | 'favs' | 'situations'
 
 function parseMode(raw: string | null): Mode {
-  if (raw === 'list' || raw === 'favs') return raw
+  if (raw === 'list' || raw === 'favs' || raw === 'situations') return raw
   return 'cats'
 }
 
@@ -21,7 +21,6 @@ export function CatalogPage() {
   const [params, setParams] = useSearchParams()
   const mode = parseMode(params.get('view'))
   const categoryId = params.get('cat') ?? ''
-  const situationId = params.get('sit') ?? ''
   const query = params.get('q') ?? ''
 
   const [draftQuery, setDraftQuery] = useState(query)
@@ -32,9 +31,8 @@ export function CatalogPage() {
   const filtered = useMemo(() => {
     let list = searchServices(query).map((h) => h.service)
     if (categoryId) list = list.filter((s) => s.category === categoryId)
-    if (situationId) list = list.filter((s) => s.situations.includes(situationId))
     return list
-  }, [query, categoryId, situationId])
+  }, [query, categoryId])
 
   const favList = useMemo(
     () => filtered.filter((s) => favs.has(s.id)),
@@ -50,8 +48,7 @@ export function CatalogPage() {
     setParams(next)
   }
 
-  const setMode = (m: Mode) => patchParams({ view: m, cat: null, sit: null, q: null })
-  const setSituation = (id: string) => patchParams({ sit: id || null })
+  const setMode = (m: Mode) => patchParams({ view: m, cat: null, q: null })
   const submitQuery = () => patchParams({ q: draftQuery.trim() || null })
   const resetFilters = () => {
     setDraftQuery('')
@@ -62,27 +59,32 @@ export function CatalogPage() {
     <div className="max-w-6xl mx-auto pb-12">
       <header className="mb-6">
         <h1 className="text-3xl font-bold text-navy-deep mb-2">
-          {mode === 'favs'
+          {mode === 'situations'
+            ? 'Жизненные ситуации'
+            : mode === 'favs'
             ? 'Избранные услуги'
             : activeCategory
-              ? activeCategory.title
-              : mode === 'list'
-                ? 'Все услуги'
-                : 'Услуги по категориям'}
+            ? activeCategory.title
+            : mode === 'list'
+            ? 'Все услуги'
+            : 'Услуги по категориям'}
         </h1>
         <p className="text-muted max-w-2xl">
-          {mode === 'favs'
+          {mode === 'situations'
+            ? 'Пошаговые маршруты для типовых задач: от рождения ребёнка до покупки автомобиля. Выполняйте шаги по порядку.'
+            : mode === 'favs'
             ? 'Услуги, отмеченные звёздочкой. В общем списке они тоже стоят первыми.'
             : activeCategory
-              ? activeCategory.desc
-              : 'Выберите тему — или найдите услугу своими словами. Код знать не обязательно.'}
+            ? activeCategory.desc
+            : 'Выберите тему — или найдите услугу своими словами. Код знать не обязательно.'}
         </p>
       </header>
 
       {/* Переключатель режимов */}
-      <div className="inline-flex gap-1 mb-5 bg-soft p-1 rounded-full">
+      <div className="inline-flex flex-wrap gap-1 mb-5 bg-soft p-1 rounded-full">
         {(
           [
+            ['situations', 'Жизненные ситуации'],
             ['cats', 'По категориям'],
             ['list', 'Все услуги'],
             ['favs', 'Избранное'],
@@ -93,7 +95,7 @@ export function CatalogPage() {
             type="button"
             onClick={() => setMode(value)}
             className={clsx(
-              'px-5 py-2 rounded-full text-sm font-semibold transition-colors',
+              'px-4 py-2 rounded-full text-sm font-semibold transition-colors',
               mode === value ? 'bg-white text-navy shadow-sm' : 'text-muted hover:text-navy',
             )}
           >
@@ -102,54 +104,47 @@ export function CatalogPage() {
         ))}
       </div>
 
+      {/* Режим «Жизненные ситуации» */}
+      {mode === 'situations' && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 animate-in fade-in duration-300">
+          {lifeSituations.map((sit) => (
+            <Link key={sit.id} to={`/situation/${sit.id}`} className="block group h-full">
+              <Card variant="interactive" className="h-full flex flex-col p-5">
+                <h3 className="text-lg font-bold text-navy mb-2 group-hover:text-navy-deep transition-colors">
+                  {sit.title}
+                </h3>
+                <p className="text-sm text-muted mb-4 flex-1 line-clamp-3">
+                  {sit.painPoint}
+                </p>
+                <div className="mt-auto pt-4 border-t border-line flex justify-between items-center text-sm font-semibold text-navy">
+                  <span className="bg-[#e8eeff] text-navy px-2 py-1 rounded text-xs">
+                    {sit.steps.length} шагов
+                  </span>
+                  <span className="group-hover:translate-x-1 transition-transform">
+                    Начать →
+                  </span>
+                </div>
+              </Card>
+            </Link>
+          ))}
+        </div>
+      )}
+
       {/* Режим «категории» */}
       {mode === 'cats' && !activeCategory && (
         <CategoryGrid categories={categories} />
       )}
 
-      {/* Режим «список» и «избранное» — тулбар + чипсы ситуаций */}
-      {(mode === 'list' || mode === 'favs') && (
+      {/* Режим «список» и «избранное» — тулбар + карточки */}
+      {(mode === 'list' || mode === 'favs' || (mode === 'cats' && activeCategory)) && (
         <>
           <CatalogToolbar
             query={draftQuery}
             onQueryChange={setDraftQuery}
             onSubmit={submitQuery}
             onReset={resetFilters}
-            showReset={!!(query || categoryId || situationId)}
+            showReset={!!(query || categoryId)}
           />
-
-          {!categoryId && mode === 'list' && (
-            <div className="flex flex-wrap gap-2 mb-5">
-              <button
-                type="button"
-                onClick={() => setSituation('')}
-                className={clsx(
-                  'px-3.5 py-1.5 rounded-full text-sm border transition-colors',
-                  !situationId
-                    ? 'bg-navy text-white border-navy'
-                    : 'bg-white text-navy border-line hover:border-navy',
-                )}
-              >
-                Все ситуации
-              </button>
-              {situations.map((s) => (
-                <button
-                  key={s.id}
-                  type="button"
-                  onClick={() => setSituation(s.id)}
-                  title={s.hint}
-                  className={clsx(
-                    'px-3.5 py-1.5 rounded-full text-sm border transition-colors',
-                    situationId === s.id
-                      ? 'bg-navy text-white border-navy'
-                      : 'bg-white text-navy border-line hover:border-navy',
-                  )}
-                >
-                  {s.title}
-                </button>
-              ))}
-            </div>
-          )}
 
           {mode === 'list' && (
             <div className="text-sm text-muted mb-3">
@@ -161,9 +156,9 @@ export function CatalogPage() {
             </div>
           )}
 
-          {(mode === 'list' ? filtered : favList).length > 0 ? (
+          {(mode === 'list' || mode === 'cats' ? filtered : favList).length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {(mode === 'list' ? filtered : favList).map((s) => (
+              {(mode === 'list' || mode === 'cats' ? filtered : favList).map((s) => (
                 <CatalogCard
                   key={s.id}
                   service={s}

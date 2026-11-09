@@ -61,3 +61,32 @@ export interface AppNotification {
   at: string
   archived: boolean
 }
+
+export interface Agency {
+  id: string;
+  name: string;
+  shortName: string;
+  // Можно добавить logo или ссылку на сайт
+}
+
+export type SituationStep = {
+  id: string;
+  order: number;
+  title: string; // «Подать заявление на регистрацию»
+  description?: string; // «Понадобится паспорт и документ на авто»
+  serviceId?: string; // Ссылка на ID услуги из вашего data/services.ts (если шаг онлайн)
+  externalAction?: string; // Если процедура офлайн (например, «Получить медсправку»)
+  agencyId: string; // Кто оказывает
+  estimatedTime?: string;
+  isOptional?: boolean;
+};
+
+export interface LifeSituation {
+  id: string;
+  title: string; // «Покупка автомобиля»
+  painPoint: string; // «Вы купили машину и не знаете, с чего начать»
+  outcome: string; // «Авто зарегистрировано, страховка оформлена»
+  categoryIds: string[]; // ['transport', 'tax']
+  steps: SituationStep[];
+  faq?: { question: string; answer: string }[];
+}

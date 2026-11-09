@@ -10,6 +10,7 @@ import { AboutPage } from '../features/about/AboutPage'
 import { ProfilePage } from '../features/profile/ProfilePage'
 import { MyServicesPage } from '../features/my-services/MyServicesPage'
 import { NotificationsPage } from '../features/notifications/NotificationsPage'
+import { SituationPage } from '../features/situations/SituationPage'
 
 export const router = createHashRouter([
   {
@@ -26,6 +27,7 @@ export const router = createHashRouter([
       { path: 'profile', element: <ProfilePage /> },
       { path: 'apps', element: <MyServicesPage /> },
       { path: 'notifications', element: <NotificationsPage /> },
+      { path: 'situation/:id', element: <SituationPage /> },
     ],
   },
 ])
