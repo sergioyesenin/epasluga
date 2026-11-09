@@ -1,14 +1,12 @@
 import { Link } from 'react-router-dom'
 import { Card } from '../../design-system'
 import { lifeSituations } from '../../data/situations'
-
-const ICONS: Record<string, string> = {
-  birth: '👶',
-  'buy-car': '🚗',
-  university: '🎓',
-}
+import { getSituationIcon } from '../../lib/situationIcons'
 
 export function LifeSituations() {
+  // Показываем первые 3 ситуации для превью на главной
+  const featuredSituations = lifeSituations.slice(0, 3)
+
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
@@ -21,7 +19,7 @@ export function LifeSituations() {
         </Link>
       </div>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-        {lifeSituations.map((sit) => (
+        {featuredSituations.map((sit) => (
           <Link
             key={sit.id}
             to={`/situation/${sit.id}`}
@@ -31,7 +29,7 @@ export function LifeSituations() {
               variant="interactive"
               className="h-full items-center text-center justify-center p-6 gap-3"
             >
-              <span className="text-4xl">{ICONS[sit.id] ?? '📋'}</span>
+              <span className="text-4xl">{getSituationIcon(sit.id)}</span>
               <span className="font-semibold text-navy-deep text-sm">
                 {sit.title}
               </span>

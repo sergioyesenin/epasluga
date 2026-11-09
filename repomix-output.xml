@@ -1,3 +1,5 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
 <file_summary>
 This section contains a summary of this file.
 
@@ -64,7 +66,10 @@ src/
     vite.svg
   content/
     ru.ts
+  contexts/
+    AuthContext.tsx
   data/
+    agencies.ts
     categories.ts
     services.ts
     situations.ts
@@ -92,6 +97,8 @@ src/
       CatalogPage.tsx
       CatalogToolbar.tsx
       CategoryGrid.tsx
+    guest-home/
+      GuestHomePage.tsx
     home/
       HomePage.tsx
       LifeSituations.tsx
@@ -109,6 +116,8 @@ src/
       ApplicationForm.tsx
       ServicePage.tsx
       SuccessScreen.tsx
+    situations/
+      SituationPage.tsx
     status/
       StatusPage.tsx
     support/
@@ -148,6 +157,61 @@ vite.config.ts
 
 <files>
 This section contains the contents of the repository's files.
+
+<file path="src/contexts/AuthContext.tsx">
+import { createContext, useContext, useState, type ReactNode } from 'react'
+
+type User = {
+  id: string
+  name: string
+  email: string
+}
+
+type AuthContextType = {
+  isAuthenticated: boolean
+  user: User | null
+  login: () => void
+  logout: () => void
+}
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined)
+
+const MOCK_USER: User = {
+  id: '1140390A012PB8',
+  name: 'Иванов Алексей Сергеевич',
+  email: 'a.ivanov@example.by',
+}
+
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
+    return localStorage.getItem('epasluga-auth') === 'true'
+  })
+
+  const login = () => {
+    localStorage.setItem('epasluga-auth', 'true')
+    setIsAuthenticated(true)
+  }
+
+  const logout = () => {
+    localStorage.removeItem('epasluga-auth')
+    setIsAuthenticated(false)
+  }
+
+  return (
+    <AuthContext.Provider value={{ isAuthenticated, user: isAuthenticated ? MOCK_USER : null, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  )
+}
+
+export function useAuth() {
+  const context = useContext(AuthContext)
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider')
+  }
+  return context
+}
+</file>
 
 <file path="legacy/js/app.js">
 ;(() => {
@@ -6609,6 +6673,27 @@ export const ru = {
 }
 </file>
 
+<file path="src/data/agencies.ts">
+import type { Agency } from '../types/service'
+
+export const agencies: Agency[] = [
+  { id: 'mvd', name: 'Министерство внутренних дел', shortName: 'МВД' },
+  { id: 'mintrud', name: 'Министерство труда и социальной защиты', shortName: 'Минтруд' },
+  { id: 'justice', name: 'Министерство юстиции', shortName: 'Минюст' },
+  { id: 'minedu', name: 'Министерство образования', shortName: 'Минобразования' },
+  { id: 'mns', name: 'Министерство по налогам и сборам', shortName: 'МНС' },
+  { id: 'minzdrav', name: 'Министерство здравоохранения', shortName: 'Минздрав' },
+  { id: 'goskomim', name: 'Государственный комитет по имуществу', shortName: 'Госкомимущество' },
+  { id: 'gtk', name: 'Государственный таможенный комитет', shortName: 'ГТК' },
+  { id: 'gpk', name: 'Государственный пограничный комитет', shortName: 'Госпогранкомитет' },
+  { id: 'minselhoz', name: 'Министерство сельского хозяйства и продовольствия', shortName: 'Минсельхозпрод' },
+  { id: 'minprirody', name: 'Министерство природных ресурсов и охраны окружающей среды', shortName: 'Минприроды' },
+  { id: 'minsvyaz', name: 'Министерство связи и информатизации', shortName: 'Минсвязи' },
+  { id: 'minenergo', name: 'Министерство энергетики', shortName: 'Минэнерго' },
+  { id: 'minsport', name: 'Министерство спорта и туризма', shortName: 'Минспорт' },
+]
+</file>
+
 <file path="src/data/categories.ts">
 import type { Category } from '../types/service'
 
@@ -11375,83 +11460,6 @@ export const services: Service[] = [
 ]
 </file>
 
-<file path="src/data/situations.ts">
-import type { Situation } from '../types/service'
-
-export const situations: Situation[] = [
-  {
-    "id": "docs",
-    "title": "Паспорт и документы",
-    "hint": "Паспорт, регистрация, справки о личности"
-  },
-  {
-    "id": "study",
-    "title": "Учёба",
-    "hint": "Детский сад, вуз, стипендия, талантливая молодёжь"
-  },
-  {
-    "id": "work",
-    "title": "Работа и занятость",
-    "hint": "Стаж, безработица, занятость в экономике"
-  },
-  {
-    "id": "tax",
-    "title": "Налоги",
-    "hint": "Доходы, зачёты, лицевой счёт"
-  },
-  {
-    "id": "family",
-    "title": "Семья и дети",
-    "hint": "Пособия, состав семьи, многодетность"
-  },
-  {
-    "id": "housing",
-    "title": "Жильё",
-    "hint": "Учёт нуждающихся, недвижимость, справки"
-  },
-  {
-    "id": "health",
-    "title": "Здоровье",
-    "hint": "Медсправки, больничные, уход"
-  },
-  {
-    "id": "transport",
-    "title": "Авто и транспорт",
-    "hint": "Регистрация, VIN, пропуска, права"
-  },
-  {
-    "id": "army",
-    "title": "Армия",
-    "hint": "Призыв, справки военнообязанным"
-  },
-  {
-    "id": "business",
-    "title": "Бизнес и ИП",
-    "hint": "Регистрация, лицензии, репутация"
-  },
-  {
-    "id": "pension",
-    "title": "Пенсия и стаж",
-    "hint": "Размер пенсии, ИЛС, стаж ФСЗН"
-  },
-  {
-    "id": "ip",
-    "title": "Изобретения и бренды",
-    "hint": "Патенты, товарные знаки, лицензии"
-  },
-  {
-    "id": "customs",
-    "title": "Таможня",
-    "hint": "Декларации, платежи, возвраты"
-  },
-  {
-    "id": "other",
-    "title": "Ещё",
-    "hint": "Прочие государственные сервисы"
-  }
-]
-</file>
-
 <file path="src/data/synonyms.ts">
 // Синонимы для поиска: пользователь вводит «авто» — находим услуги с VIN и правами
 export const synonyms: Record<string, string[]> = {
@@ -12118,28 +12126,118 @@ export function CategoryGrid({ categories }: { categories: Category[] }) {
 }
 </file>
 
-<file path="src/features/home/LifeSituations.tsx">
-import { Card } from '../../design-system'
+<file path="src/features/guest-home/GuestHomePage.tsx">
+import { Link } from 'react-router-dom'
+import { Button, Card } from '../../design-system'
+// Импортируем существующие компоненты поиска и ситуаций
+import { QuickSearch } from '../home/QuickSearch'
+import { LifeSituations } from '../home/LifeSituations'
+import { services } from '../../data/services'
 
-const situations = [
-  { title: 'Родился ребенок', icon: '👶' },
-  { title: 'Купил авто', icon: '🚗' },
-  { title: 'Смена работы', icon: '💼' },
-  { title: 'Покупка недвижимости', icon: '🏠' },
-]
-
-export function LifeSituations() {
+export function GuestHomePage() {
   return (
-    <div>
-      <h2 className="text-lg font-bold text-navy-deep mb-4">Жизненные ситуации</h2>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {situations.map(sit => (
-          <Card key={sit.title} variant="interactive" className="items-center text-center justify-center p-6 gap-3">
-            <span className="text-4xl">{sit.icon}</span>
-            <span className="font-semibold text-navy-deep text-sm">{sit.title}</span>
-          </Card>
-        ))}
-      </div>
+    <div className="max-w-5xl mx-auto space-y-12 pb-16 pt-4">
+      
+      {/* 1. HERO SECTION */}
+      <section className="text-center md:text-left md:flex md:items-center md:justify-between gap-8 bg-gradient-to-r from-[#f8f9ff] to-white p-8 md:p-12 rounded-card border border-line shadow-sm">
+        <div className="md:w-3/5 mb-6 md:mb-0">
+          <h1 className="text-3xl md:text-4xl font-bold text-navy-deep mb-4 leading-tight">
+            Госуслуги <span className="text-navy">онлайн</span> — без очередей и бумаг
+          </h1>
+          <p className="text-lg text-muted mb-8">
+            Единый портал для решения любых жизненных ситуаций. От рождения ребёнка до покупки автомобиля.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Link to="/login">
+              <Button className="w-full sm:w-auto text-lg px-8 py-3">
+                Войти через ID-карту
+              </Button>
+            </Link>
+            <Link to="/catalog?view=situations">
+              <Button variant="ghost" className="w-full sm:w-auto text-lg px-8 py-3">
+                Смотреть ситуации
+              </Button>
+            </Link>
+          </div>
+        </div>
+        
+        {/* Декоративный элемент */}
+        <div className="hidden md:flex md:w-2/5 justify-center">
+          <div className="w-48 h-48 bg-navy rounded-full flex items-center justify-center text-7xl shadow-xl text-white">
+            🇧🇾
+          </div>
+        </div>
+      </section>
+
+      {/* 2. ПОИСК */}
+      <section>
+        <div className="max-w-3xl mx-auto text-center mb-6">
+          <h2 className="text-2xl font-bold text-navy-deep mb-2">Что вы хотите сделать?</h2>
+          <p className="text-muted">Начните с поиска или выберите из популярных категорий ниже.</p>
+        </div>
+        <div className="flex justify-center">
+          <QuickSearch />
+        </div>
+      </section>
+
+      {/* 3. ЖИЗНЕННЫЕ СИТУАЦИИ (Превью) */}
+      <section>
+        <LifeSituations />
+      </section>
+
+      {/* 4. ПОПУЛЯРНЫЕ УСЛУГИ */}
+      <section>
+        <div className="flex justify-between items-end mb-4">
+          <div>
+            <h2 className="text-lg font-bold text-navy-deep">Часто запрашивают</h2>
+            <p className="text-sm text-muted">Самые популярные услуги на портале</p>
+          </div>
+          <Link to="/catalog?view=list" className="text-sm font-semibold text-navy hover:underline">
+            Все услуги →
+          </Link>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {services.slice(0, 3).map((service) => (
+            <Link key={service.id} to={`/service/${service.id}`} className="block h-full group">
+              <Card variant="interactive" className="h-full flex flex-col p-5">
+                <h3 className="font-semibold text-navy mb-2 group-hover:text-navy-deep transition-colors">
+                  {service.shortTitle}
+                </h3>
+                <p className="text-sm text-muted mb-4 line-clamp-2 flex-1">
+                  {service.plainDescription}
+                </p>
+                <div className="mt-auto pt-3 border-t border-line flex items-center justify-between text-xs font-semibold text-navy">
+                  <span>⏱ {service.timeToComplete}</span>
+                  <span>Оформить →</span>
+                </div>
+              </Card>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* 5. БЛОК ДОВЕРИЯ */}
+      <section className="bg-soft rounded-card p-6 md:p-8 text-center">
+        <h2 className="text-xl font-bold text-navy-deep mb-6">Почему это безопасно</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="flex flex-col items-center">
+            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-2xl shadow-sm mb-3">🛡️</div>
+            <h3 className="font-semibold text-ink mb-1">Защита данных</h3>
+            <p className="text-sm text-muted">Работает на базе защищенных государственных систем</p>
+          </div>
+          <div className="flex flex-col items-center">
+            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-2xl shadow-sm mb-3">🆔</div>
+            <h3 className="font-semibold text-ink mb-1">Вход по ID-карте</h3>
+            <p className="text-sm text-muted">Надежная идентификация через ГосСУОК</p>
+          </div>
+          <div className="flex flex-col items-center">
+            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-2xl shadow-sm mb-3">⏱️</div>
+            <h3 className="font-semibold text-ink mb-1">Экономия времени</h3>
+            <p className="text-sm text-muted">Без визитов в ведомства и бумажных справок</p>
+          </div>
+        </div>
+      </section>
+
     </div>
   )
 }
@@ -12266,6 +12364,169 @@ export function NotificationsPage() {
           description={box === 'arch' ? 'Здесь будут уведомления, которые вы убрали с глаз.' : 'Мы пришлём уведомление, когда по заявлению что-то изменится.'}
         />
       )}
+    </div>
+  )
+}
+</file>
+
+<file path="src/features/situations/SituationPage.tsx">
+import { useState } from 'react'
+import { useParams, Link, useNavigate } from 'react-router-dom'
+import clsx from 'clsx'
+import { lifeSituations } from '../../data/situations'
+import { Card, Badge, Button } from '../../design-system'
+
+export function SituationPage() {
+  const { id } = useParams()
+  const navigate = useNavigate()
+  const situation = lifeSituations.find((s) => s.id === id)
+  const [completed, setCompleted] = useState<Set<string>>(new Set())
+
+  if (!situation) {
+    return (
+      <div className="text-center py-12">
+        <h1 className="text-2xl font-bold text-navy-deep mb-4">Ситуация не найдена</h1>
+        <Link to="/catalog?view=situations" className="text-navy hover:underline">
+          Вернуться к списку ситуаций
+        </Link>
+      </div>
+    )
+  }
+
+  const progress = Math.round((completed.size / situation.steps.length) * 100)
+
+  const toggleStep = (stepId: string) => {
+    setCompleted((prev) => {
+      const next = new Set(prev)
+      if (next.has(stepId)) next.delete(stepId)
+      else next.add(stepId)
+      return next
+    })
+  }
+
+  return (
+    <div className="max-w-4xl mx-auto pb-12">
+      <div className="mb-8">
+        <div className="text-sm text-muted mb-2">
+          <Link to="/catalog?view=situations" className="hover:text-navy">
+            Жизненные ситуации
+          </Link>{' '}
+          / <span>{situation.title}</span>
+        </div>
+        <h1 className="text-3xl font-bold text-navy-deep mb-3">{situation.title}</h1>
+        <p className="text-lg text-ink mb-4">{situation.painPoint}</p>
+
+        <Card className="bg-[#f8f9ff] border-line flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <span className="text-sm text-muted block mb-1">Результат</span>
+            <span className="font-semibold text-navy">{situation.outcome}</span>
+          </div>
+          <div className="flex items-center gap-3 w-full md:w-auto">
+            <div className="h-2 w-full md:w-48 bg-line rounded-full overflow-hidden">
+              <div
+                className="h-full bg-navy transition-all duration-500"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+            <span className="text-sm font-bold text-navy whitespace-nowrap">
+              {progress}%
+            </span>
+          </div>
+        </Card>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2 space-y-4">
+          <h2 className="text-lg font-bold text-navy-deep mb-2">Ваши шаги</h2>
+          {situation.steps.map((step, index) => {
+            const isDone = completed.has(step.id)
+            return (
+              <Card
+                key={step.id}
+                className={clsx('relative', isDone && 'opacity-60 bg-soft')}
+              >
+                <div className="flex gap-4">
+                  <button
+                    type="button"
+                    onClick={() => toggleStep(step.id)}
+                    aria-pressed={isDone}
+                    className={clsx(
+                      'shrink-0 w-8 h-8 rounded-full border-2 flex items-center justify-center mt-1 transition-colors',
+                      isDone
+                        ? 'bg-ok border-ok text-white'
+                        : 'border-line text-muted hover:border-navy hover:text-navy',
+                    )}
+                  >
+                    {isDone ? '✓' : index + 1}
+                  </button>
+
+                  <div className="flex-1">
+                    <div className="flex justify-between items-start mb-1 gap-2">
+                      <h3
+                        className={clsx(
+                          'font-semibold text-navy-deep text-lg',
+                          isDone && 'line-through',
+                        )}
+                      >
+                        {step.title}
+                      </h3>
+                      {step.isOptional && <Badge>Опционально</Badge>}
+                    </div>
+                    {step.description && (
+                      <p className="text-muted text-sm mb-4">{step.description}</p>
+                    )}
+
+                    <div className="flex flex-wrap gap-3 items-center">
+                      {step.serviceId ? (
+                        <Button onClick={() => navigate(`/service/${step.serviceId}`)}>
+                          Оформить онлайн
+                        </Button>
+                      ) : step.externalAction ? (
+                        <Button
+                          variant="ghost"
+                          onClick={() => alert(step.externalAction)}
+                        >
+                          Как сделать офлайн
+                        </Button>
+                      ) : null}
+                      {step.estimatedTime && (
+                        <span className="text-xs text-muted">
+                          ⏱ {step.estimatedTime}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            )
+          })}
+        </div>
+
+        <div className="space-y-6">
+          <Card>
+            <h3 className="font-bold text-navy-deep mb-3">Полезно знать</h3>
+            <ul className="space-y-3 text-sm text-muted">
+              <li>• Шаги можно выполнять в любом порядке, если не указано иначе.</li>
+              <li>• Для онлайн-услуг понадобится ID-карта или ЭЦП.</li>
+              <li>• Прогресс сохраняется только в этой сессии — не закрывайте вкладку.</li>
+            </ul>
+          </Card>
+
+          {situation.faq && situation.faq.length > 0 && (
+            <Card className="bg-soft border-line">
+              <h3 className="font-bold text-navy-deep mb-3">Частые вопросы</h3>
+              {situation.faq.map((item, i) => (
+                <div key={i} className="mb-3 last:mb-0">
+                  <p className="font-semibold text-ink text-sm mb-1">
+                    {item.question}
+                  </p>
+                  <p className="text-sm text-muted">{item.answer}</p>
+                </div>
+              ))}
+            </Card>
+          )}
+        </div>
+      </div>
     </div>
   )
 }
@@ -15916,6 +16177,53 @@ export function CatalogCard({ service, isFavorite, onToggleFavorite }: CatalogCa
 }
 </file>
 
+<file path="src/features/home/LifeSituations.tsx">
+import { Link } from 'react-router-dom'
+import { Card } from '../../design-system'
+import { lifeSituations } from '../../data/situations'
+
+const ICONS: Record<string, string> = {
+  birth: '👶',
+  'buy-car': '🚗',
+  university: '🎓',
+}
+
+export function LifeSituations() {
+  return (
+    <div>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-lg font-bold text-navy-deep">Жизненные ситуации</h2>
+        <Link
+          to="/catalog?view=situations"
+          className="text-sm text-navy hover:underline"
+        >
+          Все ситуации →
+        </Link>
+      </div>
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        {lifeSituations.map((sit) => (
+          <Link
+            key={sit.id}
+            to={`/situation/${sit.id}`}
+            className="block h-full group"
+          >
+            <Card
+              variant="interactive"
+              className="h-full items-center text-center justify-center p-6 gap-3"
+            >
+              <span className="text-4xl">{ICONS[sit.id] ?? '📋'}</span>
+              <span className="font-semibold text-navy-deep text-sm">
+                {sit.title}
+              </span>
+            </Card>
+          </Link>
+        ))}
+      </div>
+    </div>
+  )
+}
+</file>
+
 <file path="src/features/home/QuickActions.tsx">
 import { Link } from 'react-router-dom'
 import { Card } from '../../design-system'
@@ -16186,72 +16494,6 @@ import { handlers } from './handlers'
 export const worker = setupWorker(...handlers)
 </file>
 
-<file path="src/types/service.ts">
-export type AuthLevel = 'none' | 'id' | 'ecp'
-
-export interface Service {
-  id: string
-  code: string              // «3.05.03» — вторично, мелким шрифтом
-  shortTitle: string        // «Справка о доходах» — главное
-  officialTitle: string     // «Сведения о доходах физического лица...»
-  plainDescription: string  // 1–2 предложения по-человечески
-  official: string          // полное юридическое — в аккордеон
-  category: string          // id категории (ip/law/edu/...)
-  categoryTitle: string     // «Налоги и торговля» — для отображения
-  situations: string[]      // ['tax', 'work', 'housing']
-  authLevel: AuthLevel
-  timeToComplete: string
-  cost: string
-  format: string
-  orgName: string
-  orgUnp: string
-  steps: string[]
-}
-
-export interface Situation {
-  id: string
-  title: string
-  hint: string
-}
-
-export interface Category {
-  id: string
-  title: string
-  desc: string
-  icon: string
-}
-
-export type ApplicationStatus =
-  | 'Черновик'
-  | 'На проверке'
-  | 'Ожидает оплаты'
-  | 'Выполнено'
-  | 'Отозвано'
-  | 'Отказано'
-
-export interface Application {
-  id: string
-  num: string
-  title: string
-  serviceId: string
-  initiator: string
-  status: ApplicationStatus
-  at: string
-  comment: string
-}
-
-export type NotificationKind = 'legal' | 'info'
-
-export interface AppNotification {
-  id: string
-  kind: NotificationKind
-  title: string
-  body: string
-  at: string
-  archived: boolean
-}
-</file>
-
 <file path="eslint.config.js">
 import js from '@eslint/js'
 import globals from 'globals'
@@ -16282,22 +16524,6 @@ export default tseslint.config(
 )
 </file>
 
-<file path="index.html">
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>epasluga-prototype</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
-</html>
-</file>
-
 <file path="tsconfig.json">
 {
   "files": [],
@@ -16305,38 +16531,145 @@ export default tseslint.config(
 }
 </file>
 
-<file path="src/app/router.tsx">
-import { createBrowserRouter } from 'react-router-dom'
-import { Layout } from './Layout'
-import { HomePage } from '../features/home/HomePage'
-import { CatalogPage } from '../features/catalog/CatalogPage'
-import { ServicePage } from '../features/service/ServicePage'
-import { LoginPage } from '../features/auth/LoginPage'
-import { StatusPage } from '../features/status/StatusPage'
-import { SupportPage } from '../features/support/SupportPage'
-import { AboutPage } from '../features/about/AboutPage'
-import { ProfilePage } from '../features/profile/ProfilePage'
-import { MyServicesPage } from '../features/my-services/MyServicesPage'
-import { NotificationsPage } from '../features/notifications/NotificationsPage'
+<file path="src/data/situations.ts">
+import type { LifeSituation } from '../types/service'
 
-export const router = createBrowserRouter([
+export const lifeSituations: LifeSituation[] = [
   {
-    path: '/',
-    element: <Layout />,
-    children: [
-      { index: true, element: <HomePage /> },
-      { path: 'catalog', element: <CatalogPage /> },
-      { path: 'service/:id', element: <ServicePage /> },
-      { path: 'login', element: <LoginPage /> },
-      { path: 'status/:id?', element: <StatusPage /> },
-      { path: 'support', element: <SupportPage /> },
-      { path: 'about', element: <AboutPage /> },
-      { path: 'profile', element: <ProfilePage /> },
-      { path: 'apps', element: <MyServicesPage /> },
-      { path: 'notifications', element: <NotificationsPage /> },
+    id: 'birth',
+    title: 'Рождение ребёнка',
+    painPoint: 'Вы стали родителями и не знаете, какие документы оформить в первую очередь.',
+    outcome: 'Свидетельство о рождении получено, ребёнок прописан, пособия назначены.',
+    categoryIds: ['family', 'social', 'docs'],
+    steps: [
+      {
+        id: 'birth-1',
+        order: 1,
+        title: 'Зарегистрировать рождение в ЗАГС',
+        description: 'Получите свидетельство о рождении. Это можно сделать в роддоме или онлайн.',
+        serviceId: '200-5-1',
+        agencyId: 'justice',
+        estimatedTime: '1 день',
+      },
+      {
+        id: 'birth-2',
+        order: 2,
+        title: 'Прописать ребёнка',
+        description: 'Зарегистрируйте ребёнка по месту жительства родителей.',
+        serviceId: '200-13-1',
+        agencyId: 'mvd',
+        estimatedTime: '1–3 дня',
+      },
+      {
+        id: 'birth-3',
+        order: 3,
+        title: 'Оформить пособие при рождении',
+        description: 'Единовременная выплата от государства.',
+        serviceId: '200-2-6',
+        agencyId: 'mintrud',
+        estimatedTime: 'до 10 дней',
+      },
+      {
+        id: 'birth-4',
+        order: 4,
+        title: 'Оформить пособие по уходу до 3 лет',
+        description: 'Ежемесячная выплата на ребёнка.',
+        serviceId: '200-2-9',
+        agencyId: 'mintrud',
+        estimatedTime: 'до 10 дней',
+      },
+      {
+        id: 'birth-5',
+        order: 5,
+        title: 'Поставить в очередь в детский сад',
+        description: 'Можно сделать сразу после получения свидетельства о рождении.',
+        serviceId: '200-6-6',
+        agencyId: 'minedu',
+        estimatedTime: '15 минут',
+        isOptional: true,
+      },
+    ],
+    faq: [
+      {
+        question: 'Что делать, если мы не состоим в браке?',
+        answer:
+          'Потребуется совместное заявление в ЗАГС или установление отцовства через суд, если отец не согласен.',
+      },
     ],
   },
-])
+  {
+    id: 'buy-car',
+    title: 'Покупка автомобиля',
+    painPoint: 'Купили машину, но не знаете, как её правильно оформить и проверить.',
+    outcome: 'Автомобиль проверен, зарегистрирован на вас, страховка есть.',
+    categoryIds: ['transport', 'law'],
+    steps: [
+      {
+        id: 'car-1',
+        order: 1,
+        title: 'Проверить автомобиль по VIN',
+        description: 'Убедитесь, что машина не в розыске и не в залоге.',
+        serviceId: '3-59-01',
+        agencyId: 'mvd',
+        estimatedTime: '5 минут',
+      },
+      {
+        id: 'car-2',
+        order: 2,
+        title: 'Проверить наличие страховки (ОСАГО)',
+        description: 'Убедитесь, что у продавца есть действующий полис.',
+        serviceId: '3-53-01',
+        agencyId: 'mvd',
+        estimatedTime: '5 минут',
+      },
+      {
+        id: 'car-3',
+        order: 3,
+        title: 'Заключить договор купли-продажи',
+        description: 'Оформите договор в 3 экземплярах (один для ГАИ).',
+        externalAction: 'Оформить договор вручную или через нотариуса',
+        agencyId: 'justice',
+        estimatedTime: '30 минут',
+      },
+      {
+        id: 'car-4',
+        order: 4,
+        title: 'Зарегистрировать авто в ГАИ',
+        description: 'Поставьте машину на учёт на ваше имя.',
+        serviceId: '200-15-11',
+        agencyId: 'mvd',
+        estimatedTime: '1 день',
+      },
+    ],
+  },
+  {
+    id: 'university',
+    title: 'Поступление в вуз',
+    painPoint: 'Заканчиваете школу и хотите подать документы в университет.',
+    outcome: 'Документы поданы, вы зачислены.',
+    categoryIds: ['education'],
+    steps: [
+      {
+        id: 'uni-1',
+        order: 1,
+        title: 'Проверить документы об образовании',
+        description: 'Убедитесь, что ваш аттестат или диплом в порядке.',
+        serviceId: '3-101-01',
+        agencyId: 'minedu',
+        estimatedTime: '15 минут',
+      },
+      {
+        id: 'uni-2',
+        order: 2,
+        title: 'Подать документы в приёмную комиссию',
+        description: 'В большинстве вузов это делается через личный кабинет абитуриента.',
+        externalAction: 'Подать документы на сайте вуза',
+        agencyId: 'minedu',
+        estimatedTime: '1 день',
+      },
+    ],
+  },
+]
 </file>
 
 <file path="src/design-system/Tooltip.tsx">
@@ -16949,6 +17282,101 @@ body {
 }
 </file>
 
+<file path="src/types/service.ts">
+export type AuthLevel = 'none' | 'id' | 'ecp'
+
+export interface Service {
+  id: string
+  code: string              // «3.05.03» — вторично, мелким шрифтом
+  shortTitle: string        // «Справка о доходах» — главное
+  officialTitle: string     // «Сведения о доходах физического лица...»
+  plainDescription: string  // 1–2 предложения по-человечески
+  official: string          // полное юридическое — в аккордеон
+  category: string          // id категории (ip/law/edu/...)
+  categoryTitle: string     // «Налоги и торговля» — для отображения
+  situations: string[]      // ['tax', 'work', 'housing']
+  authLevel: AuthLevel
+  timeToComplete: string
+  cost: string
+  format: string
+  orgName: string
+  orgUnp: string
+  steps: string[]
+}
+
+export interface Situation {
+  id: string
+  title: string
+  hint: string
+}
+
+export interface Category {
+  id: string
+  title: string
+  desc: string
+  icon: string
+}
+
+export type ApplicationStatus =
+  | 'Черновик'
+  | 'На проверке'
+  | 'Ожидает оплаты'
+  | 'Выполнено'
+  | 'Отозвано'
+  | 'Отказано'
+
+export interface Application {
+  id: string
+  num: string
+  title: string
+  serviceId: string
+  initiator: string
+  status: ApplicationStatus
+  at: string
+  comment: string
+}
+
+export type NotificationKind = 'legal' | 'info'
+
+export interface AppNotification {
+  id: string
+  kind: NotificationKind
+  title: string
+  body: string
+  at: string
+  archived: boolean
+}
+
+export interface Agency {
+  id: string;
+  name: string;
+  shortName: string;
+  // Можно добавить logo или ссылку на сайт
+}
+
+export type SituationStep = {
+  id: string;
+  order: number;
+  title: string; // «Подать заявление на регистрацию»
+  description?: string; // «Понадобится паспорт и документ на авто»
+  serviceId?: string; // Ссылка на ID услуги из вашего data/services.ts (если шаг онлайн)
+  externalAction?: string; // Если процедура офлайн (например, «Получить медсправку»)
+  agencyId: string; // Кто оказывает
+  estimatedTime?: string;
+  isOptional?: boolean;
+};
+
+export interface LifeSituation {
+  id: string;
+  title: string; // «Покупка автомобиля»
+  painPoint: string; // «Вы купили машину и не знаете, с чего начать»
+  outcome: string; // «Авто зарегистрировано, страховка оформлена»
+  categoryIds: string[]; // ['transport', 'tax']
+  steps: SituationStep[];
+  faq?: { question: string; answer: string }[];
+}
+</file>
+
 <file path=".gitignore">
 # Logs
 logs
@@ -16977,6 +17405,23 @@ dist-ssr
 venv/
 ingest.py
 digest.txt
+</file>
+
+<file path="index.html">
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-eval' 'unsafe-inline';">
+    <title>epasluga-prototype</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
 </file>
 
 <file path="README.md">
@@ -17123,301 +17568,94 @@ export function AboutPage() {
 
 <file path="src/features/auth/LoginPage.tsx">
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
-import { Button, Card, Input } from '../../design-system'
+import { useNavigate } from 'react-router-dom'
+import { Button, Input, Card } from '../../design-system'
+import { useAuth } from '../../contexts/AuthContext'
 
 export function LoginPage() {
-  // Режимы: 'default' (выбор), 'id-error' (диагностика), 'alt' (по номеру)
-  const [mode, setMode] = useState<'default' | 'id-error' | 'alt'>('default')
+  const [step, setStep] = useState<1 | 2>(1)
+  const [identifier, setIdentifier] = useState('')
+  const [code, setCode] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const navigate = useNavigate()
+  const { login } = useAuth()
+
+  const handleSendCode = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!identifier) return
+    setIsLoading(true)
+    // Имитация запроса к серверу
+    setTimeout(() => {
+      setIsLoading(false)
+      setStep(2)
+    }, 800)
+  }
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!code) return
+    setIsLoading(true)
+    // Имитация проверки кода
+    setTimeout(() => {
+      login()
+      navigate('/')
+    }, 800)
+  }
 
   return (
     <div className="max-w-md mx-auto py-12">
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-navy-deep mb-2">Вход в личный кабинет</h1>
-        <p className="text-muted">Выберите удобный способ авторизации</p>
+        <h1 className="text-3xl font-bold text-navy-deep mb-2">Вход в Е-Паслуга</h1>
+        <p className="text-muted">Используйте ID-карту или номер телефона</p>
       </div>
 
-      {mode === 'default' && (
-        <Card className="space-y-4">
-          <Button className="w-full h-14" onClick={() => setMode('id-error')}>
-            Войти через ID-карту
-          </Button>
-          <Button variant="ghost" className="w-full h-14" onClick={() => setMode('alt')}>
-            Войти по номеру телефона
-          </Button>
-          <div className="pt-4 text-center text-sm text-muted">
-            Впервые здесь? <a href="#" className="text-navy hover:underline">Активировать кабинет</a>
-          </div>
-        </Card>
-      )}
-
-      {/* Экран диагностики ID-карты (п. #5 и #9 аудита) */}
-      {mode === 'id-error' && (
-        <Card className="border-danger/30 bg-[#fffbfa]">
-          <div className="flex items-center gap-3 mb-4 text-danger">
-            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-            </svg>
-            <h2 className="text-lg font-bold text-navy-deep">Не удалось прочитать карту</h2>
-          </div>
-          <p className="text-sm text-muted mb-4">Пожалуйста, проверьте следующее:</p>
-          <ul className="text-sm space-y-3 mb-6">
-            <li className="flex gap-2">
-              <span className="text-navy font-bold">1.</span>
-              <span>Приложите ID-карту к верхней части телефона (или вставьте в картридер).</span>
-            </li>
-            <li className="flex gap-2">
-              <span className="text-navy font-bold">2.</span>
-              <span>Убедитесь, что модуль NFC включен в настройках.</span>
-            </li>
-            <li className="flex gap-2">
-              <span className="text-navy font-bold">3.</span>
-              <span>Введите <strong>PIN 1</strong> (не PIN 2 и не PUK).</span>
-            </li>
-          </ul>
-          <Button className="w-full" onClick={() => setMode('default')}>Попробовать снова</Button>
-          <Button variant="ghost" className="w-full mt-3" onClick={() => setMode('alt')}>
-            Войти другим способом
-          </Button>
-        </Card>
-      )}
-
-      {/* Альтернативный вход (п. #1 аудита - таймаут) */}
-      {mode === 'alt' && (
-        <Card>
-          <h2 className="text-lg font-bold text-navy-deep mb-2">Вход по номеру телефона</h2>
-          <p className="text-sm text-muted mb-4">Мы отправим код подтверждения по SMS.</p>
-          <div className="space-y-4">
+      <Card className="p-6 md:p-8 shadow-lg border-line">
+        {step === 1 ? (
+          <form onSubmit={handleSendCode} className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
             <div>
-              <label className="block text-sm font-semibold mb-1">Номер телефона</label>
-              <Input placeholder="+375 29 123-45-67" />
+              <label className="block text-sm font-semibold mb-2">Номер телефона или ID-карты</label>
+              <Input
+                type="text"
+                placeholder="+375 (XX) XXX-XX-XX"
+                value={identifier}
+                onChange={(e) => setIdentifier(e.target.value)}
+                className="h-12"
+                autoFocus
+              />
+              <p className="text-xs text-muted mt-2">В демо-режиме введите любые данные</p>
             </div>
-            <Button className="w-full">Получить код</Button>
-            <button onClick={() => setMode('default')} className="w-full text-center text-sm text-navy hover:underline pt-2">
-              ← Назад к выбору способа
-            </button>
-          </div>
-        </Card>
-      )}
-
-      {/* Поддержка без авторизации (п. #9 аудита) */}
-      <div className="mt-8 text-center text-sm">
-        <span className="text-muted">Не получается войти? </span>
-        <Link to="/support" className="text-navy font-semibold hover:underline">
-          Обратитесь в поддержку
-        </Link>
-      </div>
-    </div>
-  )
-}
-</file>
-
-<file path="src/features/catalog/CatalogPage.tsx">
-import { useMemo, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
-import { categories } from '../../data/categories'
-import { situations } from '../../data/situations'
-import { searchServices } from '../../lib/search'
-import { useFavorites } from '../../lib/favorites'
-import { CatalogCard } from './CatalogCard'
-import { CategoryGrid } from './CategoryGrid'
-import { CatalogToolbar } from './CatalogToolbar'
-import { EmptyState } from '../../design-system'
-import clsx from 'clsx'
-
-type Mode = 'cats' | 'list' | 'favs'
-
-function parseMode(raw: string | null): Mode {
-  if (raw === 'list' || raw === 'favs') return raw
-  return 'cats'
-}
-
-export function CatalogPage() {
-  const [params, setParams] = useSearchParams()
-  const mode = parseMode(params.get('view'))
-  const categoryId = params.get('cat') ?? ''
-  const situationId = params.get('sit') ?? ''
-  const query = params.get('q') ?? ''
-
-  const [draftQuery, setDraftQuery] = useState(query)
-  const { favs, toggle, has } = useFavorites()
-
-  const activeCategory = categories.find((c) => c.id === categoryId)
-
-  const filtered = useMemo(() => {
-    let list = searchServices(query).map((h) => h.service)
-    if (categoryId) list = list.filter((s) => s.category === categoryId)
-    if (situationId) list = list.filter((s) => s.situations.includes(situationId))
-    return list
-  }, [query, categoryId, situationId])
-
-  const favList = useMemo(
-    () => filtered.filter((s) => favs.has(s.id)),
-    [filtered, favs],
-  )
-
-  const patchParams = (patch: Record<string, string | null>) => {
-    const next = new URLSearchParams(params)
-    Object.entries(patch).forEach(([k, v]) => {
-      if (v === null || v === '') next.delete(k)
-      else next.set(k, v)
-    })
-    setParams(next)
-  }
-
-  const setMode = (m: Mode) => patchParams({ view: m, cat: null, sit: null, q: null })
-  const setSituation = (id: string) => patchParams({ sit: id || null })
-  const submitQuery = () => patchParams({ q: draftQuery.trim() || null })
-  const resetFilters = () => {
-    setDraftQuery('')
-    setParams(new URLSearchParams())
-  }
-
-  return (
-    <div className="max-w-6xl mx-auto pb-12">
-      <header className="mb-6">
-        <h1 className="text-3xl font-bold text-navy-deep mb-2">
-          {mode === 'favs'
-            ? 'Избранные услуги'
-            : activeCategory
-              ? activeCategory.title
-              : mode === 'list'
-                ? 'Все услуги'
-                : 'Услуги по категориям'}
-        </h1>
-        <p className="text-muted max-w-2xl">
-          {mode === 'favs'
-            ? 'Услуги, отмеченные звёздочкой. В общем списке они тоже стоят первыми.'
-            : activeCategory
-              ? activeCategory.desc
-              : 'Выберите тему — или найдите услугу своими словами. Код знать не обязательно.'}
-        </p>
-      </header>
-
-      {/* Переключатель режимов */}
-      <div className="inline-flex gap-1 mb-5 bg-soft p-1 rounded-full">
-        {(
-          [
-            ['cats', 'По категориям'],
-            ['list', 'Все услуги'],
-            ['favs', 'Избранное'],
-          ] as const
-        ).map(([value, label]) => (
-          <button
-            key={value}
-            type="button"
-            onClick={() => setMode(value)}
-            className={clsx(
-              'px-5 py-2 rounded-full text-sm font-semibold transition-colors',
-              mode === value ? 'bg-white text-navy shadow-sm' : 'text-muted hover:text-navy',
-            )}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
-
-      {/* Режим «категории» */}
-      {mode === 'cats' && !activeCategory && (
-        <CategoryGrid categories={categories} />
-      )}
-
-      {/* Режим «список» и «избранное» — тулбар + чипсы ситуаций */}
-      {(mode === 'list' || mode === 'favs') && (
-        <>
-          <CatalogToolbar
-            query={draftQuery}
-            onQueryChange={setDraftQuery}
-            onSubmit={submitQuery}
-            onReset={resetFilters}
-            showReset={!!(query || categoryId || situationId)}
-          />
-
-          {!categoryId && mode === 'list' && (
-            <div className="flex flex-wrap gap-2 mb-5">
-              <button
-                type="button"
-                onClick={() => setSituation('')}
-                className={clsx(
-                  'px-3.5 py-1.5 rounded-full text-sm border transition-colors',
-                  !situationId
-                    ? 'bg-navy text-white border-navy'
-                    : 'bg-white text-navy border-line hover:border-navy',
-                )}
+            <Button type="submit" className="w-full h-12 text-base" disabled={isLoading || !identifier}>
+              {isLoading ? 'Отправка...' : 'Получить код'}
+            </Button>
+          </form>
+        ) : (
+          <form onSubmit={handleLogin} className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+            <div>
+              <button 
+                type="button" 
+                onClick={() => setStep(1)} 
+                className="text-sm text-navy hover:underline mb-4 flex items-center gap-1"
               >
-                Все ситуации
+                ← Изменить номер
               </button>
-              {situations.map((s) => (
-                <button
-                  key={s.id}
-                  type="button"
-                  onClick={() => setSituation(s.id)}
-                  title={s.hint}
-                  className={clsx(
-                    'px-3.5 py-1.5 rounded-full text-sm border transition-colors',
-                    situationId === s.id
-                      ? 'bg-navy text-white border-navy'
-                      : 'bg-white text-navy border-line hover:border-navy',
-                  )}
-                >
-                  {s.title}
-                </button>
-              ))}
+              <label className="block text-sm font-semibold mb-2">Код из SMS</label>
+              <Input
+                type="text"
+                placeholder="Введите 4 цифры"
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                className="h-12 text-center text-2xl tracking-[0.5em]"
+                maxLength={4}
+                autoFocus
+              />
+              <p className="text-xs text-muted mt-2">Демо-код: 1234</p>
             </div>
-          )}
-
-          {mode === 'list' && (
-            <div className="text-sm text-muted mb-3">
-              {filtered.length > 0 ? (
-                <>Найдено: <b className="text-ink">{filtered.length}</b></>
-              ) : (
-                'Ничего не найдено'
-              )}
-            </div>
-          )}
-
-          {(mode === 'list' ? filtered : favList).length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {(mode === 'list' ? filtered : favList).map((s) => (
-                <CatalogCard
-                  key={s.id}
-                  service={s}
-                  isFavorite={has(s.id)}
-                  onToggleFavorite={() => toggle(s.id)}
-                />
-              ))}
-            </div>
-          ) : mode === 'favs' ? (
-            <EmptyState
-              title="Пока пусто"
-              description="Откройте каталог и нажмите звёздочку на карточке — услуга появится здесь."
-              action={
-                <button
-                  type="button"
-                  onClick={() => setMode('list')}
-                  className="inline-flex items-center justify-center rounded-control px-4 py-2.5 text-[15px] font-semibold bg-navy text-white hover:bg-navy-deep"
-                >
-                  Открыть все услуги
-                </button>
-              }
-            />
-          ) : (
-            <EmptyState
-              title="Ничего не найдено"
-              description="Попробуйте изменить запрос или сбросить фильтры."
-              action={
-                <button
-                  type="button"
-                  onClick={resetFilters}
-                  className="inline-flex items-center justify-center rounded-control px-4 py-2.5 text-[15px] font-semibold border border-navy text-navy hover:bg-soft"
-                >
-                  Сбросить
-                </button>
-              }
-            />
-          )}
-        </>
-      )}
+            <Button type="submit" className="w-full h-12 text-base" disabled={isLoading || code.length < 4}>
+              {isLoading ? 'Проверка...' : 'Войти в кабинет'}
+            </Button>
+          </form>
+        )}
+      </Card>
     </div>
   )
 }
@@ -17706,21 +17944,6 @@ export default App
 }
 </file>
 
-<file path="vite.config.ts">
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import tailwindcss from '@tailwindcss/vite' // <--- Импорт
-
-export default defineConfig({
-  plugins: [react(), tailwindcss()], // <--- Добавлен в плагины
-  server: {
-    host: '0.0.0.0',
-    port: 5173,
-    open: true,
-  },
-})
-</file>
-
 <file path="src/design-system/index.ts">
 export * from './Button'
 export * from './Card'
@@ -17735,27 +17958,308 @@ export * from './StarButton'
 export * from './ConfirmDialog'
 </file>
 
-<file path="src/main.tsx">
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './styles/globals.css'
-import App from './App'
+<file path="vite.config.ts">
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite' // <--- Импорт
 
-async function enableMocking() {
-  if (import.meta.env.DEV) {
-    const { worker } = await import('./lib/api/mocks/browser')
-    // В MSW v3 опции передаются так (или вообще без них)
-    await worker.start()
-  }
+export default defineConfig({
+  base: './',
+  plugins: [react(), tailwindcss()], // <--- Добавлен в плагины
+  server: {
+    host: '0.0.0.0',
+    port: 5173,
+    open: true,
+  },
+})
+</file>
+
+<file path="src/app/router.tsx">
+import { createHashRouter } from 'react-router-dom'
+import { Layout } from './Layout'
+import { useAuth } from '../contexts/AuthContext'
+
+// Страницы
+import { HomePage } from '../features/home/HomePage'
+import { GuestHomePage } from '../features/guest-home/GuestHomePage'
+import { CatalogPage } from '../features/catalog/CatalogPage'
+import { ServicePage } from '../features/service/ServicePage'
+import { LoginPage } from '../features/auth/LoginPage'
+import { StatusPage } from '../features/status/StatusPage'
+import { SupportPage } from '../features/support/SupportPage'
+import { AboutPage } from '../features/about/AboutPage'
+import { ProfilePage } from '../features/profile/ProfilePage'
+import { MyServicesPage } from '../features/my-services/MyServicesPage'
+import { NotificationsPage } from '../features/notifications/NotificationsPage'
+import { SituationPage } from '../features/situations/SituationPage'
+
+// Компонент-переключатель для главной страницы
+function HomeSwitcher() {
+  const { isAuthenticated } = useAuth()
+  return isAuthenticated ? <HomePage /> : <GuestHomePage />
 }
 
-enableMocking().then(() => {
-  createRoot(document.getElementById('root')!).render(
-    <StrictMode>
-      <App />
-    </StrictMode>,
+export const router = createHashRouter([
+  {
+    path: '/',
+    element: <Layout />,
+    children: [
+      { index: true, element: <HomeSwitcher /> },
+      { path: 'catalog', element: <CatalogPage /> },
+      { path: 'situation/:id', element: <SituationPage /> },
+      { path: 'service/:id', element: <ServicePage /> },
+      { path: 'login', element: <LoginPage /> },
+      { path: 'status/:id?', element: <StatusPage /> },
+      { path: 'support', element: <SupportPage /> },
+      { path: 'about', element: <AboutPage /> },
+      { path: 'profile', element: <ProfilePage /> },
+      { path: 'apps', element: <MyServicesPage /> },
+      { path: 'notifications', element: <NotificationsPage /> },
+    ],
+  },
+])
+</file>
+
+<file path="src/features/catalog/CatalogPage.tsx">
+import { useMemo, useState } from 'react'
+import { useSearchParams, Link } from 'react-router-dom'
+import { categories } from '../../data/categories'
+import { lifeSituations } from '../../data/situations'
+import { searchServices } from '../../lib/search'
+import { useFavorites } from '../../lib/favorites'
+import { CatalogCard } from './CatalogCard'
+import { CategoryGrid } from './CategoryGrid'
+// Убираем CatalogToolbar, так как поиск теперь глобальный
+import { EmptyState, Card, Input, Button } from '../../design-system'
+import clsx from 'clsx'
+
+type Mode = 'cats' | 'list' | 'favs' | 'situations'
+
+function parseMode(raw: string | null): Mode {
+  if (raw === 'list' || raw === 'favs' || raw === 'situations') return raw
+  return 'cats'
+}
+
+export function CatalogPage() {
+  const [params, setParams] = useSearchParams()
+  const mode = parseMode(params.get('view'))
+  const categoryId = params.get('cat') ?? ''
+  const query = params.get('q') ?? ''
+
+  const [draftQuery, setDraftQuery] = useState(query)
+  const { favs, toggle, has } = useFavorites()
+
+  const activeCategory = categories.find((c) => c.id === categoryId)
+
+  // Фильтрация услуг
+  const filteredServices = useMemo(() => {
+    let list = searchServices(query).map((h) => h.service)
+    if (categoryId) list = list.filter((s) => s.category === categoryId)
+    return list
+  }, [query, categoryId])
+
+  // Фильтрация ситуаций
+  const filteredSituations = useMemo(() => {
+    if (!query) return lifeSituations
+    const q = query.toLowerCase()
+    return lifeSituations.filter(
+      (s) =>
+        s.title.toLowerCase().includes(q) ||
+        s.painPoint.toLowerCase().includes(q) ||
+        s.outcome.toLowerCase().includes(q),
+    )
+  }, [query])
+
+  const favList = useMemo(
+    () => filteredServices.filter((s) => favs.has(s.id)),
+    [filteredServices, favs],
   )
-})
+
+  const patchParams = (patch: Record<string, string | null>) => {
+    const next = new URLSearchParams(params)
+    Object.entries(patch).forEach(([k, v]) => {
+      if (v === null || v === '') next.delete(k)
+      else next.set(k, v)
+    })
+    setParams(next)
+  }
+
+  const setMode = (m: Mode) => patchParams({ view: m, cat: null, q: null })
+  const submitQuery = () => patchParams({ q: draftQuery.trim() || null })
+  const resetFilters = () => {
+    setDraftQuery('')
+    setParams(new URLSearchParams())
+  }
+
+  return (
+    <div className="max-w-6xl mx-auto pb-12">
+      <header className="mb-6">
+        <h1 className="text-3xl font-bold text-navy-deep mb-2">
+          {mode === 'situations'
+            ? 'Жизненные ситуации'
+            : mode === 'favs'
+              ? 'Избранные услуги'
+              : activeCategory
+                ? activeCategory.title
+                : mode === 'list'
+                  ? 'Все услуги'
+                  : 'Услуги по категориям'}
+        </h1>
+        <p className="text-muted max-w-2xl">
+          {mode === 'situations'
+            ? 'Пошаговые маршруты для типовых задач: от рождения ребёнка до покупки автомобиля.'
+            : mode === 'favs'
+              ? 'Услуги, отмеченные звёздочкой. В общем списке они тоже стоят первыми.'
+              : activeCategory
+                ? activeCategory.desc
+                : 'Выберите тему — или найдите услугу своими словами.'}
+        </p>
+      </header>
+
+      {/* ГЛОБАЛЬНЫЙ ПОИСК */}
+      <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-end mb-6">
+        <div className="flex-1">
+          <label htmlFor="catalog-q" className="block text-xs text-muted mb-1">
+            Что вы хотите сделать?
+          </label>
+          <Input
+            id="catalog-q"
+            type="search"
+            value={draftQuery}
+            onChange={(e) => setDraftQuery(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && submitQuery()}
+            placeholder="Например: справка о доходах, регистрация авто, пособие..."
+            className="h-11"
+          />
+        </div>
+        <div className="flex gap-2">
+          <Button onClick={submitQuery} className="h-11">
+            Найти
+          </Button>
+          {query && (
+            <Button variant="ghost" onClick={resetFilters} className="h-11">
+              Сбросить
+            </Button>
+          )}
+        </div>
+      </div>
+
+      {/* Переключатель режимов */}
+      <div className="inline-flex flex-wrap gap-1 mb-5 bg-soft p-1 rounded-full">
+        {(
+          [
+            ['situations', 'Жизненные ситуации'],
+            ['cats', 'По категориям'],
+            ['list', 'Все услуги'],
+            ['favs', 'Избранное'],
+          ] as const
+        ).map(([value, label]) => (
+          <button
+            key={value}
+            type="button"
+            onClick={() => setMode(value)}
+            className={clsx(
+              'px-4 py-2 rounded-full text-sm font-semibold transition-colors',
+              mode === value ? 'bg-white text-navy shadow-sm' : 'text-muted hover:text-navy',
+            )}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {/* Жизненные ситуации */}
+      {mode === 'situations' && (
+        <>
+          {filteredSituations.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 animate-in fade-in duration-300">
+              {filteredSituations.map((sit) => (
+                <Link key={sit.id} to={`/situation/${sit.id}`} className="block group h-full">
+                  <Card variant="interactive" className="h-full flex flex-col p-5">
+                    <h3 className="text-lg font-bold text-navy mb-2 group-hover:text-navy-deep transition-colors">
+                      {sit.title}
+                    </h3>
+                    <p className="text-sm text-muted mb-4 flex-1 line-clamp-3">{sit.painPoint}</p>
+                    <div className="mt-auto pt-4 border-t border-line flex justify-between items-center text-sm font-semibold text-navy">
+                      <span className="bg-[#e8eeff] text-navy px-2 py-1 rounded text-xs">
+                        {sit.steps.length} шагов
+                      </span>
+                      <span className="group-hover:translate-x-1 transition-transform">Начать →</span>
+                    </div>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <EmptyState
+              title="Ничего не найдено"
+              description="По вашему запросу нет подходящих ситуаций. Попробуйте изменить запрос."
+            />
+          )}
+        </>
+      )}
+
+      {/* Категории */}
+      {mode === 'cats' && !activeCategory && <CategoryGrid categories={categories} />}
+
+      {/* Список услуг и Избранное */}
+      {(mode === 'list' || mode === 'favs' || (mode === 'cats' && activeCategory)) && (
+        <>
+          {mode === 'list' && (
+            <div className="text-sm text-muted mb-3">
+              {filteredServices.length > 0 ? (
+                <>Найдено: <b className="text-ink">{filteredServices.length}</b></>
+              ) : (
+                'Ничего не найдено'
+              )}
+            </div>
+          )}
+
+          {(mode === 'list' || mode === 'cats' ? filteredServices : favList).length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {(mode === 'list' || mode === 'cats' ? filteredServices : favList).map((s) => (
+                <CatalogCard
+                  key={s.id}
+                  service={s}
+                  isFavorite={has(s.id)}
+                  onToggleFavorite={() => toggle(s.id)}
+                />
+              ))}
+            </div>
+          ) : mode === 'favs' ? (
+            <EmptyState
+              title="Пока пусто"
+              description="Откройте каталог и нажмите звёздочку на карточке — услуга появится здесь."
+              action={
+                <button
+                  type="button"
+                  onClick={() => setMode('list')}
+                  className="inline-flex items-center justify-center rounded-control px-4 py-2.5 text-[15px] font-semibold bg-navy text-white hover:bg-navy-deep"
+                >
+                  Открыть все услуги
+                </button>
+              }
+            />
+          ) : (
+            <EmptyState
+              title="Ничего не найдено"
+              description="Попробуйте изменить запрос или сбросить фильтры."
+              action={
+                <button
+                  type="button"
+                  onClick={resetFilters}
+                  className="inline-flex items-center justify-center rounded-control px-4 py-2.5 text-[15px] font-semibold border border-navy text-navy hover:bg-soft"
+                >
+                  Сбросить
+                </button>
+              }
+            />
+          )}
+        </>
+      )}
+    </div>
+  )
+}
 </file>
 
 <file path="src/features/home/HomePage.tsx">
@@ -17912,139 +18416,20 @@ export function ProfilePage() {
 }
 </file>
 
-<file path="src/app/Layout.tsx">
-import { NavLink, Outlet, Link } from 'react-router-dom'
-import { AiAssistant } from '../features/support/AiAssistant'
-import { Breadcrumbs } from './Breadcrumbs'
-import { useNotifications } from '../lib/notifications'
-import clsx from 'clsx'
+<file path="src/main.tsx">
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import './styles/globals.css'
+import App from './App'
+import { AuthProvider } from './contexts/AuthContext'
 
-const navItems = [
-  { to: '/', label: 'Главная', end: true, icon: 'home' },
-  { to: '/catalog', label: 'Каталог', icon: 'grid' },
-  { to: '/apps', label: 'Мои услуги', icon: 'file' },
-  { to: '/profile', label: 'Профиль', icon: 'user' },
-]
-
-// Иконки для мобильного меню
-const MobileIcon = ({ name }: { name: string }) => {
-  const cls = "w-6 h-6 mb-1"
-  if (name === 'home') return <svg className={cls} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><path strokeLinecap="round" strokeLinejoin="round" d="m4 11 8-7 8 7v9H4v-9Z" /></svg>
-  if (name === 'grid') return <svg className={cls} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><rect x="4" y="5" width="6" height="6" rx="1"/><rect x="14" y="5" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></svg>
-  if (name === 'file') return <svg className={cls} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><path strokeLinecap="round" strokeLinejoin="round" d="M7 4h7l5 5v11H7V4ZM14 4v5h5" /></svg>
-  if (name === 'user') return <svg className={cls} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><circle cx="12" cy="8" r="3.2"/><path strokeLinecap="round" strokeLinejoin="round" d="M5 19c1.5-3 4-4.5 7-4.5S17.5 16 19 19"/></svg>
-  return null
-}
-
-export function Layout() {
-  const { items } = useNotifications()
-  const unreadCount = items.filter((n) => !n.archived).length
-
-  return (
-    <div className="min-h-screen flex bg-bg relative">
-      
-      {/* --- САЙДБАР (только для десктопа) --- */}
-      <aside className="hidden md:flex flex-col w-64 bg-navy text-white shrink-0">
-        <div className="p-5 font-bold text-xl">Е-Паслуга</div>
-        <nav className="flex flex-col">
-          {navItems.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              end={item.end}
-              className={({ isActive }) =>
-                `px-5 py-3 text-sm hover:bg-white/10 ${isActive ? 'bg-white/15 font-semibold' : ''}`
-              }
-            >
-              {item.label}
-            </NavLink>
-          ))}
-          <NavLink
-            to="/notifications"
-            className={({ isActive }) =>
-              `px-5 py-3 text-sm hover:bg-white/10 ${isActive ? 'bg-white/15 font-semibold' : ''}`
-            }
-          >
-            Уведомления
-          </NavLink>
-          <NavLink
-            to="/support"
-            className={({ isActive }) =>
-              `px-5 py-3 text-sm hover:bg-white/10 ${isActive ? 'bg-white/15 font-semibold' : ''}`
-            }
-          >
-            Поддержка
-          </NavLink>
-          <NavLink
-            to="/about"
-            className={({ isActive }) =>
-              `px-5 py-3 text-sm hover:bg-white/10 ${isActive ? 'bg-white/15 font-semibold' : ''}`
-            }
-          >
-            О портале
-          </NavLink>
-        </nav>
-      </aside>
-
-      {/* --- ОСНОВНОЙ КОНТЕНТ --- */}
-      <div className="flex-1 flex flex-col min-w-0 pb-16 md:pb-0">
-        <header className="h-16 bg-white border-b border-line flex items-center justify-between px-4 md:px-7 sticky top-0 z-30">
-          <div className="flex items-center gap-3">
-            {/* Логотип для мобилки (т.к. сайдбар скрыт) */}
-            <span className="md:hidden font-bold text-navy text-lg">Е-Паслуга</span>
-            <span className="text-muted text-sm hidden md:block">Личный кабинет гражданина</span>
-          </div>
-          
-          <div className="flex items-center gap-4">
-            {/* Уведомления в шапке (на всех экранах, но особенно важно на мобилках) */}
-            <Link to="/notifications" className="relative p-2 text-muted hover:text-navy transition-colors rounded-lg hover:bg-soft">
-              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 16h12l-1.2-2.2V10a4.8 4.8 0 1 0-9.6 0v3.8L6 16ZM10 16a2 2 0 0 0 4 0" />
-              </svg>
-              {unreadCount > 0 && (
-                <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-danger rounded-full border-2 border-white"></span>
-              )}
-            </Link>
-
-            <Link to="/profile" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <span className="text-ink font-semibold text-sm hidden sm:block">Иван</span>
-              <div className="w-8 h-8 bg-navy text-white rounded-full flex items-center justify-center text-xs font-bold">
-                ИА
-              </div>
-            </Link>
-          </div>
-        </header>
-        
-        <main className="flex-1 p-4 md:p-7">
-          <Breadcrumbs />
-          <Outlet />
-        </main>
-      </div>
-
-      {/* --- НИЖНЯЯ НАВИГАЦИЯ (только для мобилок) --- */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-line flex justify-around items-center h-16 z-40 pb-safe">
-        {navItems.map((item) => (
-          <NavLink
-            key={item.to}
-            to={item.to}
-            end={item.end}
-            className={({ isActive }) =>
-              clsx(
-                "flex flex-col items-center justify-center w-full h-full text-[10px] font-medium transition-colors",
-                isActive ? "text-navy" : "text-muted hover:text-navy"
-              )
-            }
-          >
-            <MobileIcon name={item.icon} />
-            {item.label}
-          </NavLink>
-        ))}
-      </nav>
-      
-      <AiAssistant />
-    </div>
-  )
-}
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <AuthProvider>
+      <App />
+    </AuthProvider>
+  </StrictMode>,
+)
 </file>
 
 <file path="src/features/service/ServicePage.tsx">
@@ -18190,6 +18575,182 @@ export function ServicePage() {
         </div>
 
       </div>
+    </div>
+  )
+}
+</file>
+
+<file path="src/app/Layout.tsx">
+import { NavLink, Outlet, Link, useNavigate } from 'react-router-dom'
+import { AiAssistant } from '../features/support/AiAssistant'
+import { Breadcrumbs } from './Breadcrumbs'
+import { useNotifications } from '../lib/notifications'
+import { useAuth } from '../contexts/AuthContext'
+import clsx from 'clsx'
+
+const navItems = [
+  { to: '/', label: 'Главная', end: true, icon: 'home' },
+  { to: '/catalog', label: 'Каталог', icon: 'grid' },
+  { to: '/apps', label: 'Мои услуги', icon: 'file' },
+  { to: '/profile', label: 'Профиль', icon: 'user' },
+]
+
+// Иконки для мобильного меню
+const MobileIcon = ({ name }: { name: string }) => {
+  const cls = "w-6 h-6 mb-1"
+  if (name === 'home') return <svg className={cls} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><path strokeLinecap="round" strokeLinejoin="round" d="m4 11 8-7 8 7v9H4v-9Z" /></svg>
+  if (name === 'grid') return <svg className={cls} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><rect x="4" y="5" width="6" height="6" rx="1"/><rect x="14" y="5" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></svg>
+  if (name === 'file') return <svg className={cls} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><path strokeLinecap="round" strokeLinejoin="round" d="M7 4h7l5 5v11H7V4ZM14 4v5h5" /></svg>
+  if (name === 'user') return <svg className={cls} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><circle cx="12" cy="8" r="3.2"/><path strokeLinecap="round" strokeLinejoin="round" d="M5 19c1.5-3 4-4.5 7-4.5S17.5 16 19 19"/></svg>
+  return null
+}
+
+export function Layout() {
+  const { items } = useNotifications()
+  const { isAuthenticated, user, logout } = useAuth()
+  const navigate = useNavigate()
+
+  const unreadCount = items.filter((n) => !n.archived).length
+
+  const handleLogout = () => {
+    logout()
+    navigate('/')
+  }
+
+  return (
+    <div className="min-h-screen flex bg-bg relative">
+      
+      {/* --- САЙДБАР (только для авторизованных) --- */}
+      {isAuthenticated && (
+        <aside className="hidden md:flex flex-col w-64 bg-navy text-white shrink-0">
+          <Link to="/" className="p-5 font-bold text-xl hover:opacity-90 transition-opacity">
+            Е-Паслуга
+          </Link>
+          <nav className="flex flex-col">
+            {navItems.map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                end={item.end}
+                className={({ isActive }) =>
+                  `px-5 py-3 text-sm hover:bg-white/10 ${isActive ? 'bg-white/15 font-semibold' : ''}`
+                }
+              >
+                {item.label}
+              </NavLink>
+            ))}
+            <NavLink
+              to="/support"
+              className={({ isActive }) =>
+                `px-5 py-3 text-sm hover:bg-white/10 ${isActive ? 'bg-white/15 font-semibold' : ''}`
+              }
+            >
+              Поддержка
+            </NavLink>
+            <NavLink
+              to="/about"
+              className={({ isActive }) =>
+                `px-5 py-3 text-sm hover:bg-white/10 ${isActive ? 'bg-white/15 font-semibold' : ''}`
+              }
+            >
+              О портале
+            </NavLink>
+          </nav>
+        </aside>
+      )}
+
+      {/* --- ОСНОВНОЙ КОНТЕНТ --- */}
+      <div className="flex-1 flex flex-col min-w-0 pb-16 md:pb-0">
+        
+        {/* Шапка */}
+        <header className="h-16 bg-white border-b border-line flex items-center justify-between px-4 md:px-7 sticky top-0 z-30">
+          <div className="flex items-center gap-3">
+            <Link to="/" className="font-bold text-navy text-lg md:text-xl">
+              Е-Паслуга
+            </Link>
+            <span className="text-muted text-sm hidden md:block">
+              {isAuthenticated ? 'Личный кабинет гражданина' : 'Единый портал электронных услуг'}
+            </span>
+          </div>
+          
+          <div className="flex items-center gap-4">
+            {isAuthenticated ? (
+              <>
+                {/* Уведомления */}
+                <Link to="/notifications" className="relative p-2 text-muted hover:text-navy transition-colors rounded-lg hover:bg-soft">
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 16h12l-1.2-2.2V10a4.8 4.8 0 1 0-9.6 0v3.8L6 16ZM10 16a2 2 0 0 0 4 0" />
+                  </svg>
+                  {unreadCount > 0 && (
+                    <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-danger rounded-full border-2 border-white"></span>
+                  )}
+                </Link>
+
+                {/* Профиль и кнопка выхода */}
+                <div className="flex items-center gap-3 border-l border-line pl-4">
+                  <Link to="/profile" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <span className="text-ink font-semibold text-sm hidden sm:block">
+                      {user?.name.split(' ')[0] || 'Профиль'}
+                    </span>
+                    <div className="w-8 h-8 bg-navy text-white rounded-full flex items-center justify-center text-xs font-bold">
+                      {user?.name.substring(0, 2) || 'ИА'}
+                    </div>
+                  </Link>
+                  <button 
+                    onClick={handleLogout}
+                    className="text-sm font-medium text-muted hover:text-danger transition-colors hidden sm:block ml-2"
+                  >
+                    Выйти
+                  </button>
+                </div>
+              </>
+            ) : (
+              <div className="flex items-center gap-4">
+                {/* Ссылки для гостя в шапке */}
+                <NavLink to="/catalog" className="text-sm font-medium text-muted hover:text-navy hidden sm:block">
+                  Каталог услуг
+                </NavLink>
+                <NavLink to="/support" className="text-sm font-medium text-muted hover:text-navy hidden sm:block">
+                  Поддержка
+                </NavLink>
+                <Link to="/login" className="bg-navy text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-navy-deep transition-colors">
+                  Войти
+                </Link>
+              </div>
+            )}
+          </div>
+        </header>
+        
+        {/* Контент страницы */}
+        <main className="flex-1 p-4 md:p-7">
+          <Breadcrumbs />
+          <Outlet />
+        </main>
+      </div>
+
+      {/* --- НИЖНЯЯ НАВИГАЦИЯ (только для авторизованных на мобилках) --- */}
+      {isAuthenticated && (
+        <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-line flex justify-around items-center h-16 z-40 pb-safe">
+          {navItems.map((item) => (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              end={item.end}
+              className={({ isActive }) =>
+                clsx(
+                  "flex flex-col items-center justify-center w-full h-full text-[10px] font-medium transition-colors",
+                  isActive ? "text-navy" : "text-muted hover:text-navy"
+                )
+              }
+            >
+              <MobileIcon name={item.icon} />
+              {item.label}
+            </NavLink>
+          ))}
+        </nav>
+      )}
+      
+      <AiAssistant />
     </div>
   )
 }

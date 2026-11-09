@@ -4,9 +4,9 @@ import { categories } from '../../data/categories'
 import { lifeSituations } from '../../data/situations'
 import { searchServices } from '../../lib/search'
 import { useFavorites } from '../../lib/favorites'
+import { getSituationIcon } from '../../lib/situationIcons'
 import { CatalogCard } from './CatalogCard'
 import { CategoryGrid } from './CategoryGrid'
-// Убираем CatalogToolbar, так как поиск теперь глобальный
 import { EmptyState, Card, Input, Button } from '../../design-system'
 import clsx from 'clsx'
 
@@ -28,14 +28,12 @@ export function CatalogPage() {
 
   const activeCategory = categories.find((c) => c.id === categoryId)
 
-  // Фильтрация услуг
   const filteredServices = useMemo(() => {
     let list = searchServices(query).map((h) => h.service)
     if (categoryId) list = list.filter((s) => s.category === categoryId)
     return list
   }, [query, categoryId])
 
-  // Фильтрация ситуаций
   const filteredSituations = useMemo(() => {
     if (!query) return lifeSituations
     const q = query.toLowerCase()
@@ -153,13 +151,18 @@ export function CatalogPage() {
               {filteredSituations.map((sit) => (
                 <Link key={sit.id} to={`/situation/${sit.id}`} className="block group h-full">
                   <Card variant="interactive" className="h-full flex flex-col p-5">
-                    <h3 className="text-lg font-bold text-navy mb-2 group-hover:text-navy-deep transition-colors">
-                      {sit.title}
-                    </h3>
+                    <div className="flex items-start gap-3 mb-3">
+                      <span className="text-3xl shrink-0" aria-hidden="true">
+                        {getSituationIcon(sit.id)}
+                      </span>
+                      <h3 className="text-lg font-bold text-navy group-hover:text-navy-deep transition-colors leading-tight">
+                        {sit.title}
+                      </h3>
+                    </div>
                     <p className="text-sm text-muted mb-4 flex-1 line-clamp-3">{sit.painPoint}</p>
                     <div className="mt-auto pt-4 border-t border-line flex justify-between items-center text-sm font-semibold text-navy">
                       <span className="bg-[#e8eeff] text-navy px-2 py-1 rounded text-xs">
-                        {sit.steps.length} шагов
+                        {sit.steps.length} {pluralizeSteps(sit.steps.length)}
                       </span>
                       <span className="group-hover:translate-x-1 transition-transform">Начать →</span>
                     </div>
@@ -236,4 +239,13 @@ export function CatalogPage() {
       )}
     </div>
   )
+}
+
+/** Склонение слова «шаг» для бейджа. */
+function pluralizeSteps(n: number): string {
+  const mod10 = n % 10
+  const mod100 = n % 100
+  if (mod10 === 1 && mod100 !== 11) return 'шаг'
+  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20)) return 'шага'
+  return 'шагов'
 }

@@ -1,8 +1,10 @@
 import { createHashRouter } from 'react-router-dom'
 import { Layout } from './Layout'
-// Заменяем импорт HomePage на GuestHomePage
-import { GuestHomePage } from '../features/guest-home/GuestHomePage' 
-// import { HomePage } from '../features/home/HomePage' // Оставили для будущего
+import { useAuth } from '../contexts/AuthContext'
+
+// Страницы
+import { HomePage } from '../features/home/HomePage'
+import { GuestHomePage } from '../features/guest-home/GuestHomePage'
 import { CatalogPage } from '../features/catalog/CatalogPage'
 import { ServicePage } from '../features/service/ServicePage'
 import { LoginPage } from '../features/auth/LoginPage'
@@ -14,17 +16,18 @@ import { MyServicesPage } from '../features/my-services/MyServicesPage'
 import { NotificationsPage } from '../features/notifications/NotificationsPage'
 import { SituationPage } from '../features/situations/SituationPage'
 
+// Компонент-переключатель для главной страницы
+function HomeSwitcher() {
+  const { isAuthenticated } = useAuth()
+  return isAuthenticated ? <HomePage /> : <GuestHomePage />
+}
+
 export const router = createHashRouter([
   {
     path: '/',
     element: <Layout />,
     children: [
-      // Роутим на гостевую версию
-      { index: true, element: <GuestHomePage /> },
-      
-      // В будущем здесь будет проверка:
-      // { index: true, element: isAuthenticated ? <HomePage /> : <GuestHomePage /> },
-      
+      { index: true, element: <HomeSwitcher /> },
       { path: 'catalog', element: <CatalogPage /> },
       { path: 'situation/:id', element: <SituationPage /> },
       { path: 'service/:id', element: <ServicePage /> },

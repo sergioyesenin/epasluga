@@ -10,7 +10,7 @@ export function GuestHomePage() {
     <div className="max-w-5xl mx-auto space-y-12 pb-16 pt-4">
       
       {/* 1. HERO SECTION */}
-      <section className="text-center md:text-left md:flex md:items-center md:justify-between gap-8 bg-gradient-to-r from-[#f8f9ff] to-white p-8 md:p-12 rounded-card border border-line shadow-sm">
+      <section className="text-center md:text-left md:flex md:items-center md:justify-between gap-8 bg-linear-to-r from-[#f8f9ff] to-white p-8 md:p-12 rounded-card border border-line shadow-sm">
         <div className="md:w-3/5 mb-6 md:mb-0">
           <h1 className="text-3xl md:text-4xl font-bold text-navy-deep mb-4 leading-tight">
             Госуслуги <span className="text-navy">онлайн</span> — без очередей и бумаг

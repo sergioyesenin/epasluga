@@ -1,7 +1,8 @@
-import { NavLink, Outlet, Link } from 'react-router-dom'
+import { NavLink, Outlet, Link, useNavigate } from 'react-router-dom'
 import { AiAssistant } from '../features/support/AiAssistant'
 import { Breadcrumbs } from './Breadcrumbs'
 import { useNotifications } from '../lib/notifications'
+import { useAuth } from '../contexts/AuthContext'
 import clsx from 'clsx'
 
 const navItems = [
@@ -23,108 +24,148 @@ const MobileIcon = ({ name }: { name: string }) => {
 
 export function Layout() {
   const { items } = useNotifications()
+  const { isAuthenticated, user, logout } = useAuth()
+  const navigate = useNavigate()
+
   const unreadCount = items.filter((n) => !n.archived).length
+
+  const handleLogout = () => {
+    logout()
+    navigate('/')
+  }
 
   return (
     <div className="min-h-screen flex bg-bg relative">
       
-      {/* --- САЙДБАР (только для десктопа) --- */}
-      <aside className="hidden md:flex flex-col w-64 bg-navy text-white shrink-0">
-        <div className="p-5 font-bold text-xl">Е-Паслуга</div>
-        <nav className="flex flex-col">
-          {navItems.map((item) => (
+      {/* --- САЙДБАР (только для авторизованных) --- */}
+      {isAuthenticated && (
+        <aside className="hidden md:flex flex-col w-64 bg-navy text-white shrink-0">
+          <Link to="/" className="p-5 font-bold text-xl hover:opacity-90 transition-opacity">
+            Е-Паслуга
+          </Link>
+          <nav className="flex flex-col">
+            {navItems.map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                end={item.end}
+                className={({ isActive }) =>
+                  `px-5 py-3 text-sm hover:bg-white/10 ${isActive ? 'bg-white/15 font-semibold' : ''}`
+                }
+              >
+                {item.label}
+              </NavLink>
+            ))}
             <NavLink
-              key={item.to}
-              to={item.to}
-              end={item.end}
+              to="/support"
               className={({ isActive }) =>
                 `px-5 py-3 text-sm hover:bg-white/10 ${isActive ? 'bg-white/15 font-semibold' : ''}`
               }
             >
-              {item.label}
+              Поддержка
             </NavLink>
-          ))}
-          <NavLink
-            to="/notifications"
-            className={({ isActive }) =>
-              `px-5 py-3 text-sm hover:bg-white/10 ${isActive ? 'bg-white/15 font-semibold' : ''}`
-            }
-          >
-            Уведомления
-          </NavLink>
-          <NavLink
-            to="/support"
-            className={({ isActive }) =>
-              `px-5 py-3 text-sm hover:bg-white/10 ${isActive ? 'bg-white/15 font-semibold' : ''}`
-            }
-          >
-            Поддержка
-          </NavLink>
-          <NavLink
-            to="/about"
-            className={({ isActive }) =>
-              `px-5 py-3 text-sm hover:bg-white/10 ${isActive ? 'bg-white/15 font-semibold' : ''}`
-            }
-          >
-            О портале
-          </NavLink>
-        </nav>
-      </aside>
+            <NavLink
+              to="/about"
+              className={({ isActive }) =>
+                `px-5 py-3 text-sm hover:bg-white/10 ${isActive ? 'bg-white/15 font-semibold' : ''}`
+              }
+            >
+              О портале
+            </NavLink>
+          </nav>
+        </aside>
+      )}
 
       {/* --- ОСНОВНОЙ КОНТЕНТ --- */}
       <div className="flex-1 flex flex-col min-w-0 pb-16 md:pb-0">
+        
+        {/* Шапка */}
         <header className="h-16 bg-white border-b border-line flex items-center justify-between px-4 md:px-7 sticky top-0 z-30">
           <div className="flex items-center gap-3">
-            {/* Логотип для мобилки (т.к. сайдбар скрыт) */}
-            <span className="md:hidden font-bold text-navy text-lg">Е-Паслуга</span>
-            <span className="text-muted text-sm hidden md:block">Личный кабинет гражданина</span>
+            <Link to="/" className="font-bold text-navy text-lg md:text-xl">
+              Е-Паслуга
+            </Link>
+            <span className="text-muted text-sm hidden md:block">
+              {isAuthenticated ? 'Личный кабинет гражданина' : 'Единый портал электронных услуг'}
+            </span>
           </div>
           
           <div className="flex items-center gap-4">
-            {/* Уведомления в шапке (на всех экранах, но особенно важно на мобилках) */}
-            <Link to="/notifications" className="relative p-2 text-muted hover:text-navy transition-colors rounded-lg hover:bg-soft">
-              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 16h12l-1.2-2.2V10a4.8 4.8 0 1 0-9.6 0v3.8L6 16ZM10 16a2 2 0 0 0 4 0" />
-              </svg>
-              {unreadCount > 0 && (
-                <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-danger rounded-full border-2 border-white"></span>
-              )}
-            </Link>
+            {isAuthenticated ? (
+              <>
+                {/* Уведомления */}
+                <Link to="/notifications" className="relative p-2 text-muted hover:text-navy transition-colors rounded-lg hover:bg-soft">
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 16h12l-1.2-2.2V10a4.8 4.8 0 1 0-9.6 0v3.8L6 16ZM10 16a2 2 0 0 0 4 0" />
+                  </svg>
+                  {unreadCount > 0 && (
+                    <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-danger rounded-full border-2 border-white"></span>
+                  )}
+                </Link>
 
-            <Link to="/profile" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <span className="text-ink font-semibold text-sm hidden sm:block"></span>
-              <div className="w-8 h-8 bg-navy text-white rounded-full flex items-center justify-center text-xs font-bold">
-                ИА
+                {/* Профиль и кнопка выхода */}
+                <div className="flex items-center gap-3 border-l border-line pl-4">
+                  <Link to="/profile" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <span className="text-ink font-semibold text-sm hidden sm:block">
+                      {user?.name.split(' ')[0] || 'Профиль'}
+                    </span>
+                    <div className="w-8 h-8 bg-navy text-white rounded-full flex items-center justify-center text-xs font-bold">
+                      {user?.name.substring(0, 2) || 'ИА'}
+                    </div>
+                  </Link>
+                  <button 
+                    onClick={handleLogout}
+                    className="text-sm font-medium text-muted hover:text-danger transition-colors hidden sm:block ml-2"
+                  >
+                    Выйти
+                  </button>
+                </div>
+              </>
+            ) : (
+              <div className="flex items-center gap-4">
+                {/* Ссылки для гостя в шапке */}
+                <NavLink to="/catalog" className="text-sm font-medium text-muted hover:text-navy hidden sm:block">
+                  Каталог услуг
+                </NavLink>
+                <NavLink to="/support" className="text-sm font-medium text-muted hover:text-navy hidden sm:block">
+                  Поддержка
+                </NavLink>
+                <Link to="/login" className="bg-navy text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-navy-deep transition-colors">
+                  Войти
+                </Link>
               </div>
-            </Link>
+            )}
           </div>
         </header>
         
+        {/* Контент страницы */}
         <main className="flex-1 p-4 md:p-7">
           <Breadcrumbs />
           <Outlet />
         </main>
       </div>
 
-      {/* --- НИЖНЯЯ НАВИГАЦИЯ (только для мобилок) --- */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-line flex justify-around items-center h-16 z-40 pb-safe">
-        {navItems.map((item) => (
-          <NavLink
-            key={item.to}
-            to={item.to}
-            end={item.end}
-            className={({ isActive }) =>
-              clsx(
-                "flex flex-col items-center justify-center w-full h-full text-[10px] font-medium transition-colors",
-                isActive ? "text-navy" : "text-muted hover:text-navy"
-              )
-            }
-          >
-            <MobileIcon name={item.icon} />
-            {item.label}
-          </NavLink>
-        ))}
-      </nav>
+      {/* --- НИЖНЯЯ НАВИГАЦИЯ (только для авторизованных на мобилках) --- */}
+      {isAuthenticated && (
+        <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-line flex justify-around items-center h-16 z-40 pb-safe">
+          {navItems.map((item) => (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              end={item.end}
+              className={({ isActive }) =>
+                clsx(
+                  "flex flex-col items-center justify-center w-full h-full text-[10px] font-medium transition-colors",
+                  isActive ? "text-navy" : "text-muted hover:text-navy"
+                )
+              }
+            >
+              <MobileIcon name={item.icon} />
+              {item.label}
+            </NavLink>
+          ))}
+        </nav>
+      )}
       
       <AiAssistant />
     </div>
