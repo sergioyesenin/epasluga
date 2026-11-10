@@ -3,61 +3,11 @@ import { Button, Card } from '../../design-system'
 import { QuickSearch } from '../home/QuickSearch'
 import { LifeSituations } from '../home/LifeSituations'
 import { services } from '../../data/services'
-
-function ShieldCheckIcon({ className = 'w-7 h-7' }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={1.6}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M12 3 4 6v6c0 4.5 3.4 8.4 8 9 4.6-.6 8-4.5 8-9V6l-8-3Z" />
-      <path d="m8.5 12 2.5 2.5L15.5 10" />
-    </svg>
-  )
-}
-
-function IdCardIcon({ className = 'w-7 h-7' }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={1.6}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <rect x="3" y="6" width="18" height="12" rx="2" />
-      <circle cx="9" cy="12" r="2" />
-      <path d="M13 11h5M13 14h4" />
-    </svg>
-  )
-}
-
-function ClockIcon({ className = 'w-7 h-7' }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={1.6}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <circle cx="12" cy="12" r="9" />
-      <path d="M12 7v5l3 2" />
-    </svg>
-  )
-}
+import {
+  ShieldCheckIcon,
+  IdCardIcon,
+  ClockIcon,
+} from '../../lib/situationIcons'
 
 function StatePortalIcon({ className = 'w-24 h-24' }: { className?: string }) {
   return (
@@ -80,7 +30,6 @@ function StatePortalIcon({ className = 'w-24 h-24' }: { className?: string }) {
 export function GuestHomePage() {
   return (
     <div className="max-w-5xl mx-auto space-y-12 pb-16 pt-4">
-      {/* 1. HERO SECTION */}
       <section className="text-center md:text-left md:flex md:items-center md:justify-between gap-8 bg-linear-to-r from-[#f8f9ff] to-white p-8 md:p-12 rounded-card border border-line shadow-sm">
         <div className="md:w-3/5 mb-6 md:mb-0">
           <h1 className="text-3xl md:text-4xl font-bold text-navy-deep mb-4 leading-tight">
@@ -108,7 +57,6 @@ export function GuestHomePage() {
         </div>
       </section>
 
-      {/* 2. ПОИСК */}
       <section>
         <div className="max-w-3xl mx-auto text-center mb-6">
           <h2 className="text-2xl font-bold text-navy-deep mb-2">Что вы хотите сделать?</h2>
@@ -119,12 +67,10 @@ export function GuestHomePage() {
         </div>
       </section>
 
-      {/* 3. ЖИЗНЕННЫЕ СИТУАЦИИ */}
       <section>
         <LifeSituations />
       </section>
 
-      {/* 4. ПОПУЛЯРНЫЕ УСЛУГИ */}
       <section>
         <div className="flex justify-between items-end mb-4">
           <div>
@@ -146,7 +92,7 @@ export function GuestHomePage() {
                   {service.plainDescription}
                 </p>
                 <div className="mt-auto pt-3 border-t border-line flex items-center gap-1.5 text-xs font-semibold text-navy">
-                  <ClockIcon className="w-4 h-4" />
+                  <ClockIcon className="w-3.5 h-3.5" />
                   {service.timeToComplete}
                 </div>
               </Card>
@@ -155,7 +101,6 @@ export function GuestHomePage() {
         </div>
       </section>
 
-      {/* 5. БЛОК ДОВЕРИЯ */}
       <section className="bg-soft rounded-card p-6 md:p-8 text-center">
         <h2 className="text-xl font-bold text-navy-deep mb-6">Почему это безопасно</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

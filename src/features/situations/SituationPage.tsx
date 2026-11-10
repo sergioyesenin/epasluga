@@ -4,6 +4,7 @@ import { lifeSituations } from '../../data/situations'
 import { Card, Badge, Button } from '../../design-system'
 import { useSituationProgress } from '../../lib/situationProgress'
 import { useApplications } from '../../lib/applications'
+import { CheckIcon } from '../../lib/situationIcons'
 
 export function SituationPage() {
   const { id } = useParams()
@@ -113,7 +114,7 @@ export function SituationPage() {
                           : 'border-line text-muted hover:border-navy hover:text-navy',
                     )}
                   >
-                    {isDone ? '✓' : isInProgress ? '⋯' : index + 1}
+                    {isDone ? <CheckIcon className="w-4 h-4" /> : isInProgress ? '⋯' : index + 1}
                   </button>
 
                   <div className="flex-1">

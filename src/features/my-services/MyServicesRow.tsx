@@ -3,6 +3,7 @@ import { Badge } from '../../design-system'
 import type { Application } from '../../types/service'
 import { formatWhen, statusClass } from '../../lib/format'
 import { lifeSituations } from '../../data/situations'
+import { CompassIcon } from '../../lib/situationIcons'
 
 type MyServicesRowProps = {
   app: Application
@@ -29,7 +30,7 @@ export function MyServicesRow({ app, href, onPay, onDownload, help }: MyServices
               className="inline-flex items-center gap-1 text-navy hover:underline"
               title="Перейти к жизненной ситуации"
             >
-              <span aria-hidden="true">🧭</span>
+              <CompassIcon className="w-3.5 h-3.5" />
               Из ситуации: {situation.title}
             </Link>
           </div>

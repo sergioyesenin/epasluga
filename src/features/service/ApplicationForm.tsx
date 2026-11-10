@@ -6,6 +6,7 @@ import { Button, Card, Input } from '../../design-system'
 import type { Service } from '../../types/service'
 import { SuccessScreen } from './SuccessScreen'
 import { useApplications } from '../../lib/applications'
+import { CheckIcon } from '../../lib/situationIcons'
 
 // Схема валидации (эвристика #9 — понятные сообщения рядом с полем)
 const PHONE_RE = /^\+375\s?\(?(?:17|25|29|33|44)\)?[\s-]?\d{3}[\s-]?\d{2}[\s-]?\d{2}$/
@@ -244,7 +245,12 @@ export function ApplicationForm({
 
           <div className="pt-4 border-t border-line flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div className="text-sm text-ok font-semibold min-h-5">
-              {draftSavedAt && `✓ Черновик сохранён ${draftSavedAt}`}
+              {draftSavedAt && (
+                <span className="flex items-center gap-1.5">
+                  <CheckIcon className="w-4 h-4" />
+                  Черновик сохранён {draftSavedAt}
+                </span>
+              )}
             </div>
             <div className="flex gap-2">
               <Button variant="ghost" type="button" onClick={onSaveAndExit}>

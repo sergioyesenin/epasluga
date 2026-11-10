@@ -1,5 +1,13 @@
 ﻿import { Accordion, Card, Button } from '../../design-system'
 import { Link } from 'react-router-dom'
+import { HomeIcon, CarIcon, FamilyIcon, BriefcaseIcon } from '../../lib/situationIcons'
+
+const TOPICS = [
+  { Icon: HomeIcon, text: 'Недвижимость' },
+  { Icon: CarIcon, text: 'Транспорт' },
+  { Icon: FamilyIcon, text: 'Семья' },
+  { Icon: BriefcaseIcon, text: 'Работа' },
+]
 
 export function AboutPage() {
   return (
@@ -11,17 +19,13 @@ export function AboutPage() {
         </p>
       </div>
 
-      {/* Блок с иконками (эвристика #8) */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
-        {[
-          { icon: '🏠', text: 'Недвижимость' },
-          { icon: '🚗', text: 'Транспорт' },
-          { icon: '👨‍👩‍👧', text: 'Семья' },
-          { icon: '💼', text: 'Работа' },
-        ].map((item) => (
-          <Card key={item.text} className="items-center text-center p-5 bg-soft border-0">
-            <span className="text-3xl mb-2">{item.icon}</span>
-            <span className="text-sm font-semibold text-navy-deep">{item.text}</span>
+        {TOPICS.map(({ Icon, text }) => (
+          <Card key={text} className="items-center text-center p-5 bg-soft border-0">
+            <span className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-white text-navy mb-3">
+              <Icon className="w-6 h-6" />
+            </span>
+            <span className="text-sm font-semibold text-navy-deep">{text}</span>
           </Card>
         ))}
       </div>
@@ -31,26 +35,28 @@ export function AboutPage() {
       <div className="space-y-2">
         <Accordion title="Что такое Е-Паслуга?" defaultOpen>
           <p className="mb-3">
-            Это государственный портал, который позволяет подать заявление на получение госуслуг в электронном виде. 
+            Это государственный портал, который позволяет подать заявление на получение госуслуг в электронном виде.
             Вместо похода в министерство, вы заполняете форму на сайте.
           </p>
         </Accordion>
-        
+
         <Accordion title="Как войти и активировать кабинет?">
           <p className="mb-3">Для входа понадобится ID-карта и PIN-код.</p>
           <ul className="list-disc pl-5 space-y-1 mb-5">
             <li>Вставьте карту в картридер или приложите к телефону (если есть NFC).</li>
-            <li>Введите <strong>PIN 1</strong> (не PIN 2 и не PUK).</li>
+            <li>
+              Введите <strong>PIN 1</strong> (не PIN 2 и не PUK).
+            </li>
             <li>Если вы здесь впервые, кабинет активируется автоматически.</li>
           </ul>
           <Link to="/login">
             <Button className="w-full md:w-auto">Войти и активировать</Button>
           </Link>
         </Accordion>
-        
+
         <Accordion title="Что делать, если не получается войти?">
           <p className="mb-3">
-            Проверьте, включен ли NFC на телефоне, и правильно ли вы вводите PIN-код. 
+            Проверьте, включен ли NFC на телефоне, и правильно ли вы вводите PIN-код.
             Если проблема не решается, обратитесь в поддержку.
           </p>
           <Link to="/support">
