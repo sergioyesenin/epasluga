@@ -136,7 +136,7 @@ export function QuickSearch() {
                 onClick={goToCatalog}
                 className="w-full text-left px-4 py-3 text-sm text-navy font-semibold hover:bg-soft border-t border-line"
               >
-                Показать все результаты для «{query}» →
+                Показать все результаты для «{query}»
               </button>
             </>
           ) : (

@@ -15,7 +15,7 @@ export function LifeSituations() {
           to="/catalog?view=situations"
           className="text-sm text-navy hover:underline"
         >
-          Все ситуации →
+          Все ситуации
         </Link>
       </div>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">

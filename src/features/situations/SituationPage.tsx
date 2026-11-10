@@ -4,7 +4,7 @@ import { lifeSituations } from '../../data/situations'
 import { Card, Badge, Button } from '../../design-system'
 import { useSituationProgress } from '../../lib/situationProgress'
 import { useApplications } from '../../lib/applications'
-import { CheckIcon } from '../../lib/situationIcons'
+import { CheckIcon, ClockIcon } from '../../lib/situationIcons'
 
 export function SituationPage() {
   const { id } = useParams()
@@ -165,7 +165,10 @@ export function SituationPage() {
                         </Button>
                       ) : null}
                       {step.estimatedTime && (
-                        <span className="text-xs text-muted">⏱ {step.estimatedTime}</span>
+                                                <span className="text-xs text-muted flex items-center gap-1">
+                          <ClockIcon className="w-3.5 h-3.5" />
+                          {step.estimatedTime}
+                        </span>
                       )}
                     </div>
                   </div>

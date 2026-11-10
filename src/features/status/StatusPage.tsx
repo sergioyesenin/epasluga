@@ -90,7 +90,7 @@ export function StatusPage() {
             </div>
           </div>
           <Link to={`/service/${service.id}`} className="text-sm font-semibold text-navy hover:underline">
-            Вернуться к описанию услуги →
+            Вернуться к описанию услуги 
           </Link>
         </Card>
       )}

@@ -815,7 +815,7 @@ def main():
         encoding="utf-8",
     )
 
-    print(f"wrote {len(services)} services → src/data/")
+    print(f"wrote {len(services)} services src/data/")
 
 
 if __name__ == "__main__":
