@@ -38,12 +38,25 @@ export function useBreadcrumbs(): Crumb[] {
     } else {
       crumbs.push({ label: 'Услуга' })
     }
+  } else if (pathname === '/profile') {
+    const tab = params.get('tab')
+    crumbs.push({ label: 'Личный кабинет', href: '/profile' })
+    const tabLabels: Record<string, string> = {
+      apps: 'Заявления',
+      docs: 'Документы',
+      mail: 'Почта',
+      repo: 'Репозиторий',
+      data: 'Данные',
+    }
+    if (tab && tabLabels[tab]) crumbs.push({ label: tabLabels[tab] })
   } else if (pathname === '/apps') {
-    crumbs.push({ label: 'Мои услуги' })
+    crumbs.push({ label: 'Личный кабинет', href: '/profile' })
+    crumbs.push({ label: 'Заявления' })
   } else if (pathname === '/notifications') {
     crumbs.push({ label: 'Мои уведомления' })
-  } else if (pathname === '/profile') {
-    crumbs.push({ label: 'Личный кабинет' })
+  } else if (pathname.startsWith('/status/')) {
+    crumbs.push({ label: 'Личный кабинет', href: '/profile?tab=apps' })
+    crumbs.push({ label: 'Статус заявления' })
   } else if (pathname === '/support') {
     crumbs.push({ label: 'Поддержка' })
   } else if (pathname === '/about') {

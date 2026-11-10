@@ -2,14 +2,14 @@ export type AuthLevel = 'none' | 'id' | 'ecp'
 
 export interface Service {
   id: string
-  code: string              // «3.05.03» — вторично, мелким шрифтом
-  shortTitle: string        // «Справка о доходах» — главное
-  officialTitle: string     // «Сведения о доходах физического лица...»
-  plainDescription: string  // 1–2 предложения по-человечески
-  official: string          // полное юридическое — в аккордеон
-  category: string          // id категории (ip/law/edu/...)
-  categoryTitle: string     // «Налоги и торговля» — для отображения
-  situations: string[]      // ['tax', 'work', 'housing']
+  code: string
+  shortTitle: string
+  officialTitle: string
+  plainDescription: string
+  official: string
+  category: string
+  categoryTitle: string
+  situations: string[]
   authLevel: AuthLevel
   timeToComplete: string
   cost: string
@@ -49,6 +49,10 @@ export interface Application {
   status: ApplicationStatus
   at: string
   comment: string
+  /** Если заявление оформлено из шага жизненной ситуации — её id. */
+  situationId?: string
+  /** id шага в этой ситуации. */
+  situationStepId?: string
 }
 
 export type NotificationKind = 'legal' | 'info'
@@ -63,45 +67,113 @@ export interface AppNotification {
 }
 
 export interface Agency {
-  id: string;
-  name: string;
-  shortName: string;
-  // Можно добавить logo или ссылку на сайт
+  id: string
+  name: string
+  shortName: string
 }
 
 export type SituationStep = {
-  id: string;
-  order: number;
-  title: string; // «Подать заявление на регистрацию»
-  description?: string; // «Понадобится паспорт и документ на авто»
-  serviceId?: string; // Ссылка на ID услуги из вашего data/services.ts (если шаг онлайн)
-  externalAction?: string; // Если процедура офлайн (например, «Получить медсправку»)
-  agencyId: string; // Кто оказывает
-  estimatedTime?: string;
-  isOptional?: boolean;
-};
-
-export interface LifeSituation {
-  id: string;
-  title: string; // «Покупка автомобиля»
-  painPoint: string; // «Вы купили машину и не знаете, с чего начать»
-  outcome: string; // «Авто зарегистрировано, страховка оформлена»
-  categoryIds: string[]; // ['transport', 'tax']
-  steps: SituationStep[];
-  faq?: { question: string; answer: string }[];
+  id: string
+  order: number
+  title: string
+  description?: string
+  serviceId?: string
+  externalAction?: string
+  agencyId: string
+  estimatedTime?: string
+  isOptional?: boolean
 }
 
-export interface Application {
+export interface LifeSituation {
   id: string
-  num: string
   title: string
-  serviceId: string
-  initiator: string
-  status: ApplicationStatus
+  painPoint: string
+  outcome: string
+  categoryIds: string[]
+  steps: SituationStep[]
+  faq?: { question: string; answer: string }[]
+}
+
+/* --- Новые сущности для «Личного кабинета» --- */
+
+export type DocumentFormat = 'pdf' | 'xml' | 'zip'
+
+export interface Document {
+  id: string
+  /** Название документа для пользователя. */
+  title: string
+  /** Связанное заявление, если есть. */
+  applicationId?: string
+  /** Номер заявления для отображения. */
+  applicationNum?: string
+  /** Ведомство, выдавшее документ. */
+  issuer: string
+  /** Формат файла. */
+  format: DocumentFormat
+  /** Размер в КБ. */
+  sizeKb: number
+  /** Дата выдачи (ISO). */
+  issuedAt: string
+  /** Действителен до (ISO), для справок со сроком. */
+  validUntil?: string
+  /** Содержимое для QR-кода (короткая ссылка/подпись). */
+  qrPayload: string
+}
+
+/** Направление: от госоргана или от гражданина. */
+export type MailDirection = 'in' | 'out'
+
+/** Вложение — официальный документ в электронной форме. */
+export interface MailAttachment {
+  id: string
+  name: string
+  format: 'pdf' | 'xml' | 'zip'
+  sizeKb: number
+  /** Подпись ЭЦП ведомства/гражданина. */
+  signed: boolean
+}
+
+/**
+ * Официальное сообщение в «Почте гражданина».
+ * Все сообщения юридически значимы по определению — это не обычная почта.
+ * Отличаются только действием: требуется подпись/оплата или чисто информационное.
+ */
+export interface MailMessage {
+  id: string
+  direction: MailDirection
+  /** Тема — официальная. */
+  subject: string
+  /** Краткое сопроводительное сообщение от ведомства (1–3 предложения). */
+  summary: string
+  /** Госорган — отправитель (in) или получатель (out). */
+  agency: string
+  /** УНП ведомства (для отображения). */
+  agencyUnp?: string
+  /** Связанное заявление. */
+  applicationId?: string
+  applicationNum?: string
   at: string
-  comment: string
-  /** Если заявление оформлено из шага жизненной ситуации — её id. */
-  situationId?: string
-  /** id шага в этой ситуации (чтобы подсветить конкретный шаг). */
-  situationStepId?: string
+  read: boolean
+  /** Требуется действие гражданина (подписать, оплатить, донести). */
+  actionRequired?: 'sign' | 'pay' | 'provide' | null
+  /** Вложения — официальные документы. */
+  attachments: MailAttachment[]
+  /**
+   * Подлинность подписи. В реальном приложении — проверка по ЭЦП отправителя.
+   * В моке — true для входящих (все подписаны ведомством) и false для исходящих
+   * без ЭЦП (например, черновик).
+   */
+  signatureVerified: boolean
+  /** ISO — когда подписано (в демо совпадает с at). */
+  signedAt?: string
+}
+
+export interface RepositoryFile {
+  id: string
+  name: string
+  format: DocumentFormat
+  sizeKb: number
+  uploadedAt: string
+  /** Куда приложен (например, «К заявлению №…»). */
+  attachedTo?: string
 }

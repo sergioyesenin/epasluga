@@ -1,11 +1,12 @@
 import { useMemo, useState } from 'react'
-import { useApplications } from '../../lib/applications'
-import { services } from '../../data/services'
-import { statusHelp } from '../../lib/format'
-import { downloadDemoPdf } from '../../lib/download'
-import { MyServicesRow } from './MyServicesRow'
-import { EmptyState, ErrorState, SkeletonList } from '../../design-system'
-import type { ApplicationStatus } from '../../types/service'
+import { Link } from 'react-router-dom'
+import { useApplications } from '../../../lib/applications'
+import { services } from '../../../data/services'
+import { statusHelp } from '../../../lib/format'
+import { downloadDemoPdf } from '../../../lib/download'
+import { MyServicesRow } from '../../my-services/MyServicesRow'
+import { EmptyState, ErrorState, SkeletonList } from '../../../design-system'
+import type { ApplicationStatus } from '../../../types/service'
 import clsx from 'clsx'
 
 const FILTERS: Array<{ id: ApplicationStatus | 'all'; label: string }> = [
@@ -17,7 +18,7 @@ const FILTERS: Array<{ id: ApplicationStatus | 'all'; label: string }> = [
 
 type ViewState = 'idle' | 'loading' | 'error'
 
-export function MyServicesPage() {
+export function AppsTab() {
   const { apps, update } = useApplications()
   const [statusFilter, setStatusFilter] = useState<ApplicationStatus | 'all'>('all')
   const [viewState, setViewState] = useState<ViewState>('idle')
@@ -32,33 +33,11 @@ export function MyServicesPage() {
     window.setTimeout(() => setViewState('idle'), 500)
   }
 
-  if (viewState === 'loading') {
-    return (
-      <div className="max-w-5xl mx-auto pb-12">
-        <h1 className="text-3xl font-bold text-navy-deep mb-6">Мои услуги</h1>
-        <SkeletonList rows={5} />
-      </div>
-    )
-  }
-
-  if (viewState === 'error') {
-    return (
-      <div className="max-w-5xl mx-auto pb-12">
-        <h1 className="text-3xl font-bold text-navy-deep mb-6">Мои услуги</h1>
-        <ErrorState onRetry={() => setViewState('idle')} />
-      </div>
-    )
-  }
+  if (viewState === 'loading') return <SkeletonList rows={5} />
+  if (viewState === 'error') return <ErrorState onRetry={() => setViewState('idle')} />
 
   return (
-    <div className="max-w-5xl mx-auto pb-12">
-      <header className="mb-6">
-        <h1 className="text-3xl font-bold text-navy-deep mb-2">Мои услуги</h1>
-        <p className="text-muted max-w-2xl">
-          Заявления, которые вы начали или отправили. Быстрые действия — прямо в таблице.
-        </p>
-      </header>
-
+    <div>
       <div className="flex flex-wrap gap-2 mb-4">
         {FILTERS.map((f) => (
           <button
@@ -89,12 +68,12 @@ export function MyServicesPage() {
           title="У вас пока нет заявлений"
           description="Откройте каталог и начните с любой услуги — черновик сохранится автоматически."
           action={
-            <a
-              href="#/catalog"
+            <Link
+              to="/catalog"
               className="inline-flex items-center justify-center rounded-control px-4 min-h-11 text-[15px] font-semibold bg-navy text-white hover:bg-navy-deep"
             >
               Перейти в каталог
-            </a>
+            </Link>
           }
         />
       ) : (
