@@ -12,13 +12,36 @@ const navItems = [
   { to: '/profile', label: 'Профиль', icon: 'user' },
 ]
 
-// Иконки для мобильного меню
 const MobileIcon = ({ name }: { name: string }) => {
-  const cls = "w-6 h-6 mb-1"
-  if (name === 'home') return <svg className={cls} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><path strokeLinecap="round" strokeLinejoin="round" d="m4 11 8-7 8 7v9H4v-9Z" /></svg>
-  if (name === 'grid') return <svg className={cls} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><rect x="4" y="5" width="6" height="6" rx="1"/><rect x="14" y="5" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></svg>
-  if (name === 'file') return <svg className={cls} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><path strokeLinecap="round" strokeLinejoin="round" d="M7 4h7l5 5v11H7V4ZM14 4v5h5" /></svg>
-  if (name === 'user') return <svg className={cls} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><circle cx="12" cy="8" r="3.2"/><path strokeLinecap="round" strokeLinejoin="round" d="M5 19c1.5-3 4-4.5 7-4.5S17.5 16 19 19"/></svg>
+  const cls = 'w-6 h-6 mb-1'
+  if (name === 'home')
+    return (
+      <svg className={cls} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="m4 11 8-7 8 7v9H4v-9Z" />
+      </svg>
+    )
+  if (name === 'grid')
+    return (
+      <svg className={cls} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+        <rect x="4" y="5" width="6" height="6" rx="1" />
+        <rect x="14" y="5" width="6" height="6" rx="1" />
+        <rect x="4" y="14" width="6" height="6" rx="1" />
+        <rect x="14" y="14" width="6" height="6" rx="1" />
+      </svg>
+    )
+  if (name === 'file')
+    return (
+      <svg className={cls} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M7 4h7l5 5v11H7V4ZM14 4v5h5" />
+      </svg>
+    )
+  if (name === 'user')
+    return (
+      <svg className={cls} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+        <circle cx="12" cy="8" r="3.2" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M5 19c1.5-3 4-4.5 7-4.5S17.5 16 19 19" />
+      </svg>
+    )
   return null
 }
 
@@ -35,13 +58,14 @@ export function Layout() {
   }
 
   return (
-    // h-screen + overflow-hidden — фиксируем общий каркас приложения на высоту окна
     <div className="h-screen flex bg-bg relative overflow-hidden">
-      
-      {/* --- САЙДБАР (только для авторизованных) --- */}
+      {/* --- САЙДБАР (только для авторизованных, desktop) --- */}
       {isAuthenticated && (
         <aside className="hidden md:flex flex-col w-64 bg-navy text-white shrink-0 h-full">
-          <Link to="/" className="p-5 font-bold text-xl hover:opacity-90 transition-opacity shrink-0">
+          <Link
+            to="/"
+            className="p-5 font-bold text-xl hover:opacity-90 transition-opacity shrink-0"
+          >
             Е-Паслуга
           </Link>
           <nav className="flex flex-col overflow-y-auto pb-4">
@@ -79,7 +103,6 @@ export function Layout() {
 
       {/* --- ОСНОВНОЙ КОНТЕНТ --- */}
       <div className="flex-1 flex flex-col min-w-0 h-full">
-        
         {/* Шапка */}
         <header className="h-16 bg-white border-b border-line flex items-center justify-between px-4 md:px-7 sticky top-0 z-30 shrink-0">
           <div className="flex items-center gap-3">
@@ -90,23 +113,38 @@ export function Layout() {
               {isAuthenticated ? 'Личный кабинет гражданина' : 'Единый портал электронных услуг'}
             </span>
           </div>
-          
+
           <div className="flex items-center gap-4">
             {isAuthenticated ? (
               <>
-                {/* Уведомления */}
-                <Link to="/notifications" className="relative p-2 text-muted hover:text-navy transition-colors rounded-lg hover:bg-soft">
-                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 16h12l-1.2-2.2V10a4.8 4.8 0 1 0-9.6 0v3.8L6 16ZM10 16a2 2 0 0 0 4 0" />
+                <Link
+                  to="/notifications"
+                  className="relative p-2 text-muted hover:text-navy transition-colors rounded-lg hover:bg-soft"
+                  aria-label="Уведомления"
+                >
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={1.8}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M6 16h12l-1.2-2.2V10a4.8 4.8 0 1 0-9.6 0v3.8L6 16ZM10 16a2 2 0 0 0 4 0"
+                    />
                   </svg>
                   {unreadCount > 0 && (
-                    <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-danger rounded-full border-2 border-white"></span>
+                    <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-danger rounded-full border-2 border-white" />
                   )}
                 </Link>
 
-                {/* Профиль и кнопка выхода */}
                 <div className="flex items-center gap-3 border-l border-line pl-4">
-                  <Link to="/profile" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+                  <Link
+                    to="/profile"
+                    className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+                  >
                     <span className="text-ink font-semibold text-sm hidden sm:block">
                       {user?.name.split(' ')[0] || 'Профиль'}
                     </span>
@@ -114,7 +152,7 @@ export function Layout() {
                       {user?.name.substring(0, 2) || 'ИА'}
                     </div>
                   </Link>
-                  <button 
+                  <button
                     onClick={handleLogout}
                     className="text-sm font-medium text-muted hover:text-danger transition-colors hidden sm:block ml-2"
                   >
@@ -124,26 +162,63 @@ export function Layout() {
               </>
             ) : (
               <div className="flex items-center gap-4">
-                {/* Ссылки для гостя в шапке */}
-                <NavLink to="/catalog" className="text-sm font-medium text-muted hover:text-navy hidden sm:block">
+                <NavLink
+                  to="/catalog"
+                  className="text-sm font-medium text-muted hover:text-navy hidden sm:block"
+                >
                   Каталог услуг
                 </NavLink>
-                <NavLink to="/support" className="text-sm font-medium text-muted hover:text-navy hidden sm:block">
+                <NavLink
+                  to="/support"
+                  className="text-sm font-medium text-muted hover:text-navy hidden sm:block"
+                >
                   Поддержка
                 </NavLink>
-                <Link to="/login" className="bg-navy text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-navy-deep transition-colors">
+                <Link
+                  to="/login"
+                  className="bg-navy text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-navy-deep transition-colors"
+                >
                   Войти
                 </Link>
               </div>
             )}
           </div>
         </header>
-        
+
         {/* Контент страницы — скроллится только эта часть */}
         <main className="flex-1 p-4 md:p-7 pb-20 md:pb-7 overflow-y-auto">
           <Breadcrumbs />
           <Outlet />
         </main>
+
+        {/* Футер: элементы доверия */}
+        <footer className="bg-navy text-white/85 text-xs shrink-0 px-4 md:px-7 py-3 md:py-3">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+            <div className="leading-relaxed flex flex-wrap items-center gap-x-2 gap-y-1">
+              <span>© 2026 НЦЭУ</span>
+              <span className="text-white/40">·</span>
+              <a
+                href="https://nces.by"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:text-white"
+              >
+                nces.by
+              </a>
+              <span className="text-white/40">·</span>
+              <Link to="/about" className="underline hover:text-white">
+                Политика обработки персональных данных
+              </Link>
+              <span className="text-white/40">·</span>
+              <Link to="/about" className="underline hover:text-white">
+                Безопасность
+              </Link>
+            </div>
+            <div className="text-white/60">
+              Оператор — Национальный центр электронных услуг (УНП 191700161)
+            </div>
+          </div>
+        </footer>
       </div>
 
       {/* --- НИЖНЯЯ НАВИГАЦИЯ (только для авторизованных на мобилках) --- */}
@@ -156,8 +231,8 @@ export function Layout() {
               end={item.end}
               className={({ isActive }) =>
                 clsx(
-                  "flex flex-col items-center justify-center w-full h-full text-[10px] font-medium transition-colors",
-                  isActive ? "text-navy" : "text-muted hover:text-navy"
+                  'flex flex-col items-center justify-center w-full h-full text-[10px] font-medium transition-colors',
+                  isActive ? 'text-navy' : 'text-muted hover:text-navy',
                 )
               }
             >
@@ -167,7 +242,7 @@ export function Layout() {
           ))}
         </nav>
       )}
-      
+
       <AiAssistant />
     </div>
   )
