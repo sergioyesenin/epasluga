@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { clsx } from 'clsx'
 
 type Message = { role: 'user' | 'ai'; text: string }
@@ -11,14 +12,16 @@ export function AiAssistant() {
   const [input, setInput] = useState('')
   const [isTyping, setIsTyping] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
+  const navigate = useNavigate()
 
+  // Быстрые действия: навигация и демо-вопросы
   const quickQuestions = [
-    'Как получить справку о доходах?',
+    'Частые вопросы',
+    'Написать в поддержку',
     'Как войти через ID-карту?',
     'Где посмотреть статус заявления?',
   ]
 
-  // Автоскролл вниз при новых сообщениях
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight
@@ -27,12 +30,25 @@ export function AiAssistant() {
 
   const handleSend = (text: string) => {
     if (!text.trim()) return
+
+    // Навигационные опции — не уходят в чат
+    if (text === 'Частые вопросы') {
+      navigate('/about')
+      setIsOpen(false)
+      return
+    }
+    if (text === 'Написать в поддержку') {
+      navigate('/support')
+      setIsOpen(false)
+      return
+    }
+
     setMessages((prev) => [...prev, { role: 'user', text }])
     setInput('')
     setIsTyping(true)
 
     // Имитация ответа
-    setTimeout(() => {
+    window.setTimeout(() => {
       setIsTyping(false)
       setMessages((prev) => [
         ...prev,
@@ -56,7 +72,12 @@ export function AiAssistant() {
         aria-label="Открыть ИИ-помощника"
       >
         <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
+          />
         </svg>
       </button>
 
@@ -71,7 +92,7 @@ export function AiAssistant() {
           {/* Шапка */}
           <div className="bg-navy text-white p-4 flex justify-between items-center shrink-0">
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-[#4ade80] rounded-full animate-pulse"></div>
+              <div className="w-2 h-2 bg-[#4ade80] rounded-full animate-pulse" />
               <span className="font-semibold text-sm">ИИ-Помощник</span>
             </div>
             <button
@@ -80,7 +101,12 @@ export function AiAssistant() {
               aria-label="Закрыть чат"
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
           </div>
@@ -88,7 +114,10 @@ export function AiAssistant() {
           {/* История сообщений */}
           <div ref={scrollRef} className="flex-1 p-4 overflow-y-auto space-y-4 bg-bg/50">
             {messages.map((msg, i) => (
-              <div key={i} className={clsx('flex', msg.role === 'user' ? 'justify-end' : 'justify-start')}>
+              <div
+                key={i}
+                className={clsx('flex', msg.role === 'user' ? 'justify-end' : 'justify-start')}
+              >
                 <div
                   className={clsx(
                     'max-w-[85%] rounded-2xl px-4 py-2 text-sm',
@@ -104,15 +133,15 @@ export function AiAssistant() {
             {isTyping && (
               <div className="flex justify-start">
                 <div className="bg-white border border-line rounded-2xl rounded-bl-none px-4 py-2 shadow-sm flex gap-1 items-center h-9">
-                  <span className="w-1.5 h-1.5 bg-muted rounded-full animate-bounce [animation-delay:-0.3s]"></span>
-                  <span className="w-1.5 h-1.5 bg-muted rounded-full animate-bounce [animation-delay:-0.15s]"></span>
-                  <span className="w-1.5 h-1.5 bg-muted rounded-full animate-bounce"></span>
+                  <span className="w-1.5 h-1.5 bg-muted rounded-full animate-bounce [animation-delay:-0.3s]" />
+                  <span className="w-1.5 h-1.5 bg-muted rounded-full animate-bounce [animation-delay:-0.15s]" />
+                  <span className="w-1.5 h-1.5 bg-muted rounded-full animate-bounce" />
                 </div>
               </div>
             )}
           </div>
 
-          {/* Чипсы с быстрыми вопросами (только в начале) */}
+          {/* Чипсы с быстрыми опциями (только в начале) */}
           {messages.length === 1 && (
             <div className="px-4 pb-2 flex flex-wrap gap-2 shrink-0 bg-bg/50">
               {quickQuestions.map((q) => (
@@ -144,7 +173,12 @@ export function AiAssistant() {
               aria-label="Отправить"
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+                />
               </svg>
             </button>
           </div>
