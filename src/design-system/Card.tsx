@@ -9,9 +9,10 @@ export function Card({ variant = 'default', className, children, ...props }: Car
   return (
     <div
       className={clsx(
-        'bg-card border border-line rounded-card p-4 shadow-card flex flex-col',
-        variant === 'interactive' && 'cursor-pointer transition-all hover:border-navy hover:-translate-y-px',
-        className
+        'bg-card border border-line rounded-card p-4 shadow-card flex flex-col transition-all duration-150',
+        variant === 'interactive' &&
+          'cursor-pointer hover:border-navy hover:-translate-y-px hover:shadow-md active:scale-[0.995] active:border-navy-deep',
+        className,
       )}
       {...props}
     >
