@@ -32,13 +32,13 @@ export function HomePage() {
         <section>
           <div className="flex justify-between items-end mb-4">
             <h2 className="text-lg font-bold text-navy-deep">Статус последних заявлений</h2>
-            <Link to="/apps" className="text-sm text-navy hover:underline">
+            <Link to="/profile?tab=apps" className="text-sm text-navy hover:underline">
               Все услуги
             </Link>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             {active.map((a) => (
-              <Link key={a.id} to="/apps" className="block h-full">
+              <Link key={a.id} to="/profile?tab=apps" className="block h-full">
                 <Card variant="interactive" className="h-full">
                   <h3 className="font-semibold text-navy mb-2 leading-tight">{a.title}</h3>
                   <Badge className={statusClass(a.status)}>{a.status}</Badge>

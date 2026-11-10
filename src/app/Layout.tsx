@@ -7,8 +7,6 @@ import clsx from 'clsx'
 
 const navItems = [
   { to: '/', label: 'Главная', end: true, icon: 'home' },
-  { to: '/catalog', label: 'Каталог', icon: 'grid' },
-  { to: '/apps', label: 'Мои услуги', icon: 'file' },
   { to: '/profile', label: 'Профиль', icon: 'user' },
 ]
 

@@ -14,7 +14,7 @@ export function StatusPage() {
       <div className="max-w-3xl mx-auto py-12 text-center">
         <h1 className="text-2xl font-bold text-navy-deep mb-4">Выберите заявление</h1>
         <p className="text-muted mb-6">Чтобы увидеть статус, перейдите в «Мои услуги» и выберите заявку.</p>
-        <Link to="/apps" className="inline-flex items-center justify-center rounded-control px-4 py-2.5 text-[15px] font-semibold bg-navy text-white hover:bg-navy-deep">
+        <Link to="/profile?tab=apps" className="inline-flex items-center justify-center rounded-control px-4 py-2.5 text-[15px] font-semibold bg-navy text-white hover:bg-navy-deep">
           Перейти в Мои услуги
         </Link>
       </div>
@@ -28,7 +28,7 @@ export function StatusPage() {
     return (
       <div className="max-w-3xl mx-auto py-12 text-center">
         <h1 className="text-2xl font-bold text-navy-deep mb-4">Заявление не найдено</h1>
-        <Link to="/apps" className="text-navy hover:underline">Вернуться к списку</Link>
+        <Link to="/profile?tab=apps" className="text-navy hover:underline">Вернуться к списку</Link>
       </div>
     )
   }

@@ -38,7 +38,7 @@ export function SuccessScreen({ service, applicationNum, situationId }: SuccessS
             <Button className="w-full">Вернуться к ситуации</Button>
           </Link>
         )}
-        <Link to="/apps" className="w-64">
+        <Link to="/profile?tab=apps" className="w-64">
           <Button variant={situationId ? 'ghost' : 'primary'} className="w-full">
             Перейти к моим услугам
           </Button>

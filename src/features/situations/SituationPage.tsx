@@ -110,7 +110,7 @@ export function SituationPage() {
                 {isPaused ? 'Продолжить' : 'Приостановить'}
               </Button>
               <Link
-                to="/apps"
+                to="/profile?tab=apps"
                 className="text-xs font-semibold text-navy hover:underline whitespace-nowrap"
               >
                 Мои заявления
@@ -217,7 +217,7 @@ export function SituationPage() {
                       {step.serviceId ? (
                         isInProgress ? (
                           <Link
-                            to="/apps"
+                            to="/profile?tab=apps"
                             className="inline-flex items-center justify-center rounded-control px-4 py-2.5 text-[15px] font-semibold bg-white text-navy border border-navy hover:bg-soft transition-colors"
                           >
                             Открыть в «Моих услугах»
@@ -286,7 +286,7 @@ export function SituationPage() {
             </ul>
             <div className="mt-4 pt-3 border-t border-line">
               <Link
-                to="/apps"
+                to="/profile?tab=apps"
                 className="text-sm font-semibold text-navy hover:underline inline-flex items-center gap-1"
               >
                 Мои заявления по этой ситуации
