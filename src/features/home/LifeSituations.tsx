@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { Card } from '../../design-system'
 import { lifeSituations } from '../../data/situations'
-import { getSituationIcon } from '../../lib/situationIcons'
+import { SituationIcon } from '../../lib/situationIcons'
 
 export function LifeSituations() {
   // Показываем первые 3 ситуации для превью на главной
@@ -29,7 +29,9 @@ export function LifeSituations() {
               variant="interactive"
               className="h-full items-center text-center justify-center p-6 gap-3"
             >
-              <span className="text-4xl">{getSituationIcon(sit.id)}</span>
+              <span className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-[#e8eeff] text-navy">
+                <SituationIcon id={sit.id} className="w-6 h-6" />
+              </span>
               <span className="font-semibold text-navy-deep text-sm">
                 {sit.title}
               </span>

@@ -1,14 +1,14 @@
-﻿import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams, Link } from 'react-router-dom'
 import { categories } from '../../data/categories'
 import { lifeSituations } from '../../data/situations'
 import { searchServices } from '../../lib/search'
 import { useFavorites } from '../../lib/favorites'
-import { getSituationIcon } from '../../lib/situationIcons'
+import { SituationIcon } from '../../lib/situationIcons'
 import { useAllSituationProgress } from '../../lib/situationProgress'
 import { CatalogCard } from './CatalogCard'
 import { CategoryGrid } from './CategoryGrid'
-import { EmptyState, Card, Input, Button } from '../../design-system'
+import { EmptyState, Card, Input, SkeletonList, ErrorState } from '../../design-system'
 import clsx from 'clsx'
 
 type Mode = 'cats' | 'list' | 'favs' | 'situations'
@@ -25,10 +25,44 @@ export function CatalogPage() {
   const query = params.get('q') ?? ''
 
   const [draftQuery, setDraftQuery] = useState(query)
+  const [isLoading, setIsLoading] = useState(false)
+  const [hasError, setHasError] = useState(false)
+  const debounceRef = useRef<number | null>(null)
+
   const { favs, toggle, has } = useFavorites()
   const situationProgress = useAllSituationProgress()
 
   const activeCategory = categories.find((c) => c.id === categoryId)
+
+  const patchParams = (patch: Record<string, string | null>) => {
+    const next = new URLSearchParams(params)
+    Object.entries(patch).forEach(([k, v]) => {
+      if (v === null || v === '') next.delete(k)
+      else next.set(k, v)
+    })
+    setParams(next)
+  }
+
+  useEffect(() => {
+    setDraftQuery(query)
+  }, [query])
+
+  useEffect(() => {
+    if (debounceRef.current) window.clearTimeout(debounceRef.current)
+    debounceRef.current = window.setTimeout(() => {
+      if (draftQuery.trim() !== query) {
+        setIsLoading(true)
+        window.setTimeout(() => {
+          patchParams({ q: draftQuery.trim() || null })
+          setIsLoading(false)
+        }, 250)
+      }
+    }, 350)
+    return () => {
+      if (debounceRef.current) window.clearTimeout(debounceRef.current)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [draftQuery])
 
   const filteredServices = useMemo(() => {
     let list = searchServices(query).map((h) => h.service)
@@ -52,21 +86,21 @@ export function CatalogPage() {
     [filteredServices, favs],
   )
 
-  const patchParams = (patch: Record<string, string | null>) => {
-    const next = new URLSearchParams(params)
-    Object.entries(patch).forEach(([k, v]) => {
-      if (v === null || v === '') next.delete(k)
-      else next.set(k, v)
-    })
-    setParams(next)
-  }
-
   const setMode = (m: Mode) => patchParams({ view: m, cat: null, q: null })
-  const submitQuery = () => patchParams({ q: draftQuery.trim() || null })
   const resetFilters = () => {
     setDraftQuery('')
     setParams(new URLSearchParams())
   }
+
+  const retry = () => {
+    setHasError(false)
+    setIsLoading(true)
+    window.setTimeout(() => setIsLoading(false), 400)
+  }
+
+  useEffect(() => {
+    if (query.trim().toLowerCase() === 'ошибка') setHasError(true)
+  }, [query])
 
   return (
     <div className="max-w-6xl mx-auto pb-12">
@@ -93,35 +127,32 @@ export function CatalogPage() {
         </p>
       </header>
 
-      {/* ГЛОБАЛЬНЫЙ ПОИСК */}
-      <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-end mb-6">
-        <div className="flex-1">
-          <label htmlFor="catalog-q" className="block text-xs text-muted mb-1">
-            Что вы хотите сделать?
-          </label>
-          <Input
-            id="catalog-q"
-            type="search"
-            value={draftQuery}
-            onChange={(e) => setDraftQuery(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && submitQuery()}
-            placeholder="Например: справка о доходах, регистрация авто, пособие..."
-            className="h-11"
-          />
-        </div>
-        <div className="flex gap-2">
-          <Button onClick={submitQuery} className="h-11">
-            Найти
-          </Button>
-          {query && (
-            <Button variant="ghost" onClick={resetFilters} className="h-11">
-              Сбросить
-            </Button>
-          )}
-        </div>
+      <div className="relative mb-6">
+        <Input
+          id="catalog-q"
+          type="search"
+          value={draftQuery}
+          onChange={(e) => setDraftQuery(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && patchParams({ q: draftQuery.trim() || null })}
+          placeholder="Например: справка о доходах, регистрация авто…"
+          className="h-11 pr-10"
+        />
+        <svg
+          className="absolute right-3 top-3 w-5 h-5 text-navy pointer-events-none"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          aria-hidden="true"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
       </div>
+      {query && (
+        <button type="button" onClick={resetFilters} className="text-sm text-navy underline mb-4">
+          Сбросить поиск
+        </button>
+      )}
 
-      {/* Переключатель режимов */}
       <div className="inline-flex flex-wrap gap-1 mb-5 bg-soft p-1 rounded-full">
         {(
           [
@@ -145,124 +176,120 @@ export function CatalogPage() {
         ))}
       </div>
 
-      {/* Жизненные ситуации */}
-      {mode === 'situations' && (
+      {hasError ? (
+        <ErrorState onRetry={retry} />
+      ) : isLoading ? (
+        <SkeletonList rows={6} />
+      ) : (
         <>
-          {filteredSituations.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 animate-in fade-in duration-300">
-              {filteredSituations.map((sit) => {
-                const doneCount = situationProgress[sit.id] ?? 0
-                const totalCount = sit.steps.length
-                const inProgress = doneCount > 0 && doneCount < totalCount
-                const isComplete = totalCount > 0 && doneCount >= totalCount
-
-                return (
-                  <Link
-                    key={sit.id}
-                    to={`/situation/${sit.id}`}
-                    className="block group h-full"
-                  >
-                    <Card variant="interactive" className="h-full flex flex-col p-5">
-                      <div className="flex items-start gap-3 mb-3">
-                        <span className="text-3xl shrink-0" aria-hidden="true">
-                          {getSituationIcon(sit.id)}
-                        </span>
-                        <h3 className="text-lg font-bold text-navy group-hover:text-navy-deep transition-colors leading-tight">
-                          {sit.title}
-                        </h3>
-                      </div>
-                      <p className="text-sm text-muted mb-4 flex-1 line-clamp-3">
-                        {sit.painPoint}
-                      </p>
-                      <div className="mt-auto pt-4 border-t border-line flex justify-between items-center text-sm font-semibold text-navy gap-2">
-                        <div className="flex items-center gap-2">
-                          <span className="bg-[#e8eeff] text-navy px-2 py-1 rounded text-xs">
-                            {totalCount} {pluralizeSteps(totalCount)}
+          {mode === 'situations' &&
+            (filteredSituations.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {filteredSituations.map((sit) => {
+                  const doneCount = situationProgress[sit.id] ?? 0
+                  const totalCount = sit.steps.length
+                  const inProgress = doneCount > 0 && doneCount < totalCount
+                  const isComplete = totalCount > 0 && doneCount >= totalCount
+                  return (
+                    <Link key={sit.id} to={`/situation/${sit.id}`} className="block group h-full">
+                      <Card variant="interactive" className="h-full flex flex-col p-5">
+                        <div className="flex items-start gap-3 mb-3">
+                          <span className="shrink-0 inline-flex items-center justify-center w-12 h-12 rounded-xl bg-[#e8eeff] text-navy">
+                            <SituationIcon id={sit.id} className="w-6 h-6" />
                           </span>
-                          {inProgress && (
-                            <span className="bg-[#fff4e5] text-accent-warm px-2 py-1 rounded text-xs">
-                              {doneCount}/{totalCount}
-                            </span>
-                          )}
-                          {isComplete && (
-                            <span className="bg-[#e6f6ec] text-ok px-2 py-1 rounded text-xs">
-                              Готово
-                            </span>
-                          )}
+                          <h3 className="text-lg font-bold text-navy group-hover:text-navy-deep transition-colors leading-tight">
+                            {sit.title}
+                          </h3>
                         </div>
-                        <span className="group-hover:translate-x-1 transition-transform whitespace-nowrap">
-                          {isComplete ? 'Открыть →' : inProgress ? 'Продолжить →' : 'Начать →'}
-                        </span>
-                      </div>
-                    </Card>
-                  </Link>
-                )
-              })}
-            </div>
-          ) : (
-            <EmptyState
-              title="Ничего не найдено"
-              description="По вашему запросу нет подходящих ситуаций. Попробуйте изменить запрос."
-            />
-          )}
-        </>
-      )}
+                        <p className="text-sm text-muted mb-4 flex-1 line-clamp-3">{sit.painPoint}</p>
+                        <div className="mt-auto pt-4 border-t border-line flex justify-between items-center text-sm font-semibold text-navy gap-2">
+                          <div className="flex items-center gap-2">
+                            <span className="bg-[#e8eeff] text-navy px-2 py-1 rounded text-xs">
+                              {totalCount} {pluralizeSteps(totalCount)}
+                            </span>
+                            {inProgress && (
+                              <span className="bg-[#fff4e5] text-accent-warm px-2 py-1 rounded text-xs">
+                                {doneCount}/{totalCount}
+                              </span>
+                            )}
+                            {isComplete && (
+                              <span className="bg-[#e6f6ec] text-ok px-2 py-1 rounded text-xs">
+                                Готово
+                              </span>
+                            )}
+                          </div>
+                          <span className="group-hover:translate-x-1 transition-transform whitespace-nowrap">
+                            {isComplete ? 'Открыть' : inProgress ? 'Продолжить' : 'Начать'}
+                          </span>
+                        </div>
+                      </Card>
+                    </Link>
+                  )
+                })}
+              </div>
+            ) : (
+              <EmptyState
+                title="Ничего не найдено"
+                description="По вашему запросу нет подходящих ситуаций. Попробуйте изменить запрос."
+              />
+            ))}
 
-      {/* Категории */}
-      {mode === 'cats' && !activeCategory && <CategoryGrid categories={categories} />}
+          {mode === 'cats' && !activeCategory && <CategoryGrid categories={categories} />}
 
-      {/* Список услуг и Избранное */}
-      {(mode === 'list' || mode === 'favs' || (mode === 'cats' && activeCategory)) && (
-        <>
-          {mode === 'list' && (
-            <div className="text-sm text-muted mb-3">
-              {filteredServices.length > 0 ? (
-                <>Найдено: <b className="text-ink">{filteredServices.length}</b></>
-              ) : (
-                'Ничего не найдено'
+          {(mode === 'list' || mode === 'favs' || (mode === 'cats' && activeCategory)) && (
+            <>
+              {mode === 'list' && (
+                <div className="text-sm text-muted mb-3">
+                  {filteredServices.length > 0 ? (
+                    <>
+                      Найдено: <b className="text-ink">{filteredServices.length}</b>
+                    </>
+                  ) : (
+                    'Ничего не найдено'
+                  )}
+                </div>
               )}
-            </div>
-          )}
-
-          {(mode === 'list' || mode === 'cats' ? filteredServices : favList).length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {(mode === 'list' || mode === 'cats' ? filteredServices : favList).map((s) => (
-                <CatalogCard
-                  key={s.id}
-                  service={s}
-                  isFavorite={has(s.id)}
-                  onToggleFavorite={() => toggle(s.id)}
+              {(mode === 'list' || mode === 'cats' ? filteredServices : favList).length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {(mode === 'list' || mode === 'cats' ? filteredServices : favList).map((s) => (
+                    <CatalogCard
+                      key={s.id}
+                      service={s}
+                      isFavorite={has(s.id)}
+                      onToggleFavorite={() => toggle(s.id)}
+                    />
+                  ))}
+                </div>
+              ) : mode === 'favs' ? (
+                <EmptyState
+                  title="Пока пусто"
+                  description="Откройте каталог и нажмите звёздочку на карточке — услуга появится здесь."
+                  action={
+                    <button
+                      type="button"
+                      onClick={() => setMode('list')}
+                      className="inline-flex items-center justify-center rounded-control px-4 min-h-11 text-[15px] font-semibold bg-navy text-white hover:bg-navy-deep"
+                    >
+                      Открыть все услуги
+                    </button>
+                  }
                 />
-              ))}
-            </div>
-          ) : mode === 'favs' ? (
-            <EmptyState
-              title="Пока пусто"
-              description="Откройте каталог и нажмите звёздочку на карточке — услуга появится здесь."
-              action={
-                <button
-                  type="button"
-                  onClick={() => setMode('list')}
-                  className="inline-flex items-center justify-center rounded-control px-4 py-2.5 text-[15px] font-semibold bg-navy text-white hover:bg-navy-deep"
-                >
-                  Открыть все услуги
-                </button>
-              }
-            />
-          ) : (
-            <EmptyState
-              title="Ничего не найдено"
-              description="Попробуйте изменить запрос или сбросить фильтры."
-              action={
-                <button
-                  type="button"
-                  onClick={resetFilters}
-                  className="inline-flex items-center justify-center rounded-control px-4 py-2.5 text-[15px] font-semibold border border-navy text-navy hover:bg-soft"
-                >
-                  Сбросить
-                </button>
-              }
-            />
+              ) : (
+                <EmptyState
+                  title="Ничего не найдено"
+                  description="Попробуйте изменить запрос или сбросить фильтры."
+                  action={
+                    <button
+                      type="button"
+                      onClick={resetFilters}
+                      className="inline-flex items-center justify-center rounded-control px-4 min-h-11 text-[15px] font-semibold border border-navy text-navy hover:bg-soft"
+                    >
+                      Сбросить
+                    </button>
+                  }
+                />
+              )}
+            </>
           )}
         </>
       )}
@@ -270,7 +297,6 @@ export function CatalogPage() {
   )
 }
 
-/** Склонение слова «шаг» для бейджа. */
 function pluralizeSteps(n: number): string {
   const mod10 = n % 10
   const mod100 = n % 100

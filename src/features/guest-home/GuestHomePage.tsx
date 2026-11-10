@@ -1,14 +1,85 @@
 import { Link } from 'react-router-dom'
 import { Button, Card } from '../../design-system'
-// Импортируем существующие компоненты поиска и ситуаций
 import { QuickSearch } from '../home/QuickSearch'
 import { LifeSituations } from '../home/LifeSituations'
 import { services } from '../../data/services'
 
+function ShieldCheckIcon({ className = 'w-7 h-7' }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.6}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M12 3 4 6v6c0 4.5 3.4 8.4 8 9 4.6-.6 8-4.5 8-9V6l-8-3Z" />
+      <path d="m8.5 12 2.5 2.5L15.5 10" />
+    </svg>
+  )
+}
+
+function IdCardIcon({ className = 'w-7 h-7' }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.6}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <rect x="3" y="6" width="18" height="12" rx="2" />
+      <circle cx="9" cy="12" r="2" />
+      <path d="M13 11h5M13 14h4" />
+    </svg>
+  )
+}
+
+function ClockIcon({ className = 'w-7 h-7' }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.6}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 7v5l3 2" />
+    </svg>
+  )
+}
+
+function StatePortalIcon({ className = 'w-24 h-24' }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 96 96"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M48 12 20 24v24c0 18 13 33 28 36 15-3 28-18 28-36V24L48 12Z" />
+      <path d="m34 48 10 10 18-20" />
+    </svg>
+  )
+}
+
 export function GuestHomePage() {
   return (
     <div className="max-w-5xl mx-auto space-y-12 pb-16 pt-4">
-      
       {/* 1. HERO SECTION */}
       <section className="text-center md:text-left md:flex md:items-center md:justify-between gap-8 bg-linear-to-r from-[#f8f9ff] to-white p-8 md:p-12 rounded-card border border-line shadow-sm">
         <div className="md:w-3/5 mb-6 md:mb-0">
@@ -19,23 +90,20 @@ export function GuestHomePage() {
             Единый портал для решения любых жизненных ситуаций. От рождения ребёнка до покупки автомобиля.
           </p>
           <div className="flex flex-col sm:flex-row gap-3">
-            <Link to="/login">
-              <Button className="w-full sm:w-auto text-lg px-8 py-3">
-                Войти через ID-карту
-              </Button>
+            <Link to="/login" className="w-full sm:w-auto">
+              <Button className="w-full text-lg px-8">Войти</Button>
             </Link>
-            <Link to="/catalog?view=situations">
-              <Button variant="ghost" className="w-full sm:w-auto text-lg px-8 py-3">
+            <Link to="/catalog?view=situations" className="w-full sm:w-auto">
+              <Button variant="ghost" className="w-full text-lg px-8">
                 Смотреть ситуации
               </Button>
             </Link>
           </div>
         </div>
-        
-        {/* Декоративный элемент */}
+
         <div className="hidden md:flex md:w-2/5 justify-center">
-          <div className="w-48 h-48 bg-navy rounded-full flex items-center justify-center text-7xl shadow-xl text-white">
-            🇧🇾
+          <div className="w-48 h-48 bg-navy rounded-full flex items-center justify-center text-white shadow-xl">
+            <StatePortalIcon className="w-24 h-24" />
           </div>
         </div>
       </section>
@@ -51,7 +119,7 @@ export function GuestHomePage() {
         </div>
       </section>
 
-      {/* 3. ЖИЗНЕННЫЕ СИТУАЦИИ (Превью) */}
+      {/* 3. ЖИЗНЕННЫЕ СИТУАЦИИ */}
       <section>
         <LifeSituations />
       </section>
@@ -64,7 +132,7 @@ export function GuestHomePage() {
             <p className="text-sm text-muted">Самые популярные услуги на портале</p>
           </div>
           <Link to="/catalog?view=list" className="text-sm font-semibold text-navy hover:underline">
-            Все услуги →
+            Все услуги
           </Link>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -77,9 +145,9 @@ export function GuestHomePage() {
                 <p className="text-sm text-muted mb-4 line-clamp-2 flex-1">
                   {service.plainDescription}
                 </p>
-                <div className="mt-auto pt-3 border-t border-line flex items-center justify-between text-xs font-semibold text-navy">
-                  <span>⏱ {service.timeToComplete}</span>
-                  <span>Оформить →</span>
+                <div className="mt-auto pt-3 border-t border-line flex items-center gap-1.5 text-xs font-semibold text-navy">
+                  <ClockIcon className="w-4 h-4" />
+                  {service.timeToComplete}
                 </div>
               </Card>
             </Link>
@@ -92,23 +160,28 @@ export function GuestHomePage() {
         <h2 className="text-xl font-bold text-navy-deep mb-6">Почему это безопасно</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="flex flex-col items-center">
-            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-2xl shadow-sm mb-3">🛡️</div>
+            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-navy shadow-sm mb-3">
+              <ShieldCheckIcon />
+            </div>
             <h3 className="font-semibold text-ink mb-1">Защита данных</h3>
             <p className="text-sm text-muted">Работает на базе защищенных государственных систем</p>
           </div>
           <div className="flex flex-col items-center">
-            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-2xl shadow-sm mb-3">🆔</div>
+            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-navy shadow-sm mb-3">
+              <IdCardIcon />
+            </div>
             <h3 className="font-semibold text-ink mb-1">Вход по ID-карте</h3>
             <p className="text-sm text-muted">Надежная идентификация через ГосСУОК</p>
           </div>
           <div className="flex flex-col items-center">
-            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-2xl shadow-sm mb-3">⏱️</div>
+            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-navy shadow-sm mb-3">
+              <ClockIcon />
+            </div>
             <h3 className="font-semibold text-ink mb-1">Экономия времени</h3>
             <p className="text-sm text-muted">Без визитов в ведомства и бумажных справок</p>
           </div>
         </div>
       </section>
-
     </div>
   )
 }

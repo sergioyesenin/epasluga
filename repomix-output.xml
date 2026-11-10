@@ -137,6 +137,8 @@ src/
     format.ts
     notifications.ts
     search.ts
+    situationIcons.ts
+    situationProgress.ts
   styles/
     globals.css
   types/
@@ -157,61 +159,6 @@ vite.config.ts
 
 <files>
 This section contains the contents of the repository's files.
-
-<file path="src/contexts/AuthContext.tsx">
-import { createContext, useContext, useState, type ReactNode } from 'react'
-
-type User = {
-  id: string
-  name: string
-  email: string
-}
-
-type AuthContextType = {
-  isAuthenticated: boolean
-  user: User | null
-  login: () => void
-  logout: () => void
-}
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined)
-
-const MOCK_USER: User = {
-  id: '1140390A012PB8',
-  name: 'Иванов Алексей Сергеевич',
-  email: 'a.ivanov@example.by',
-}
-
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
-    return localStorage.getItem('epasluga-auth') === 'true'
-  })
-
-  const login = () => {
-    localStorage.setItem('epasluga-auth', 'true')
-    setIsAuthenticated(true)
-  }
-
-  const logout = () => {
-    localStorage.removeItem('epasluga-auth')
-    setIsAuthenticated(false)
-  }
-
-  return (
-    <AuthContext.Provider value={{ isAuthenticated, user: isAuthenticated ? MOCK_USER : null, login, logout }}>
-      {children}
-    </AuthContext.Provider>
-  )
-}
-
-export function useAuth() {
-  const context = useContext(AuthContext)
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider')
-  }
-  return context
-}
-</file>
 
 <file path="legacy/js/app.js">
 ;(() => {
@@ -6673,6 +6620,61 @@ export const ru = {
 }
 </file>
 
+<file path="src/contexts/AuthContext.tsx">
+import { createContext, useContext, useState, type ReactNode } from 'react'
+
+type User = {
+  id: string
+  name: string
+  email: string
+}
+
+type AuthContextType = {
+  isAuthenticated: boolean
+  user: User | null
+  login: () => void
+  logout: () => void
+}
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined)
+
+const MOCK_USER: User = {
+  id: '1140390A012PB8',
+  name: 'Иванов Алексей Сергеевич',
+  email: 'a.ivanov@example.by',
+}
+
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
+    return localStorage.getItem('epasluga-auth') === 'true'
+  })
+
+  const login = () => {
+    localStorage.setItem('epasluga-auth', 'true')
+    setIsAuthenticated(true)
+  }
+
+  const logout = () => {
+    localStorage.removeItem('epasluga-auth')
+    setIsAuthenticated(false)
+  }
+
+  return (
+    <AuthContext.Provider value={{ isAuthenticated, user: isAuthenticated ? MOCK_USER : null, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  )
+}
+
+export function useAuth() {
+  const context = useContext(AuthContext)
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider')
+  }
+  return context
+}
+</file>
+
 <file path="src/data/agencies.ts">
 import type { Agency } from '../types/service'
 
@@ -12126,123 +12128,6 @@ export function CategoryGrid({ categories }: { categories: Category[] }) {
 }
 </file>
 
-<file path="src/features/guest-home/GuestHomePage.tsx">
-import { Link } from 'react-router-dom'
-import { Button, Card } from '../../design-system'
-// Импортируем существующие компоненты поиска и ситуаций
-import { QuickSearch } from '../home/QuickSearch'
-import { LifeSituations } from '../home/LifeSituations'
-import { services } from '../../data/services'
-
-export function GuestHomePage() {
-  return (
-    <div className="max-w-5xl mx-auto space-y-12 pb-16 pt-4">
-      
-      {/* 1. HERO SECTION */}
-      <section className="text-center md:text-left md:flex md:items-center md:justify-between gap-8 bg-gradient-to-r from-[#f8f9ff] to-white p-8 md:p-12 rounded-card border border-line shadow-sm">
-        <div className="md:w-3/5 mb-6 md:mb-0">
-          <h1 className="text-3xl md:text-4xl font-bold text-navy-deep mb-4 leading-tight">
-            Госуслуги <span className="text-navy">онлайн</span> — без очередей и бумаг
-          </h1>
-          <p className="text-lg text-muted mb-8">
-            Единый портал для решения любых жизненных ситуаций. От рождения ребёнка до покупки автомобиля.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-3">
-            <Link to="/login">
-              <Button className="w-full sm:w-auto text-lg px-8 py-3">
-                Войти через ID-карту
-              </Button>
-            </Link>
-            <Link to="/catalog?view=situations">
-              <Button variant="ghost" className="w-full sm:w-auto text-lg px-8 py-3">
-                Смотреть ситуации
-              </Button>
-            </Link>
-          </div>
-        </div>
-        
-        {/* Декоративный элемент */}
-        <div className="hidden md:flex md:w-2/5 justify-center">
-          <div className="w-48 h-48 bg-navy rounded-full flex items-center justify-center text-7xl shadow-xl text-white">
-            🇧🇾
-          </div>
-        </div>
-      </section>
-
-      {/* 2. ПОИСК */}
-      <section>
-        <div className="max-w-3xl mx-auto text-center mb-6">
-          <h2 className="text-2xl font-bold text-navy-deep mb-2">Что вы хотите сделать?</h2>
-          <p className="text-muted">Начните с поиска или выберите из популярных категорий ниже.</p>
-        </div>
-        <div className="flex justify-center">
-          <QuickSearch />
-        </div>
-      </section>
-
-      {/* 3. ЖИЗНЕННЫЕ СИТУАЦИИ (Превью) */}
-      <section>
-        <LifeSituations />
-      </section>
-
-      {/* 4. ПОПУЛЯРНЫЕ УСЛУГИ */}
-      <section>
-        <div className="flex justify-between items-end mb-4">
-          <div>
-            <h2 className="text-lg font-bold text-navy-deep">Часто запрашивают</h2>
-            <p className="text-sm text-muted">Самые популярные услуги на портале</p>
-          </div>
-          <Link to="/catalog?view=list" className="text-sm font-semibold text-navy hover:underline">
-            Все услуги →
-          </Link>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {services.slice(0, 3).map((service) => (
-            <Link key={service.id} to={`/service/${service.id}`} className="block h-full group">
-              <Card variant="interactive" className="h-full flex flex-col p-5">
-                <h3 className="font-semibold text-navy mb-2 group-hover:text-navy-deep transition-colors">
-                  {service.shortTitle}
-                </h3>
-                <p className="text-sm text-muted mb-4 line-clamp-2 flex-1">
-                  {service.plainDescription}
-                </p>
-                <div className="mt-auto pt-3 border-t border-line flex items-center justify-between text-xs font-semibold text-navy">
-                  <span>⏱ {service.timeToComplete}</span>
-                  <span>Оформить →</span>
-                </div>
-              </Card>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      {/* 5. БЛОК ДОВЕРИЯ */}
-      <section className="bg-soft rounded-card p-6 md:p-8 text-center">
-        <h2 className="text-xl font-bold text-navy-deep mb-6">Почему это безопасно</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="flex flex-col items-center">
-            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-2xl shadow-sm mb-3">🛡️</div>
-            <h3 className="font-semibold text-ink mb-1">Защита данных</h3>
-            <p className="text-sm text-muted">Работает на базе защищенных государственных систем</p>
-          </div>
-          <div className="flex flex-col items-center">
-            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-2xl shadow-sm mb-3">🆔</div>
-            <h3 className="font-semibold text-ink mb-1">Вход по ID-карте</h3>
-            <p className="text-sm text-muted">Надежная идентификация через ГосСУОК</p>
-          </div>
-          <div className="flex flex-col items-center">
-            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-2xl shadow-sm mb-3">⏱️</div>
-            <h3 className="font-semibold text-ink mb-1">Экономия времени</h3>
-            <p className="text-sm text-muted">Без визитов в ведомства и бумажных справок</p>
-          </div>
-        </div>
-      </section>
-
-    </div>
-  )
-}
-</file>
-
 <file path="src/features/notifications/NotificationCard.tsx">
 import type { AppNotification } from '../../types/service'
 import { Badge } from '../../design-system'
@@ -12369,169 +12254,6 @@ export function NotificationsPage() {
 }
 </file>
 
-<file path="src/features/situations/SituationPage.tsx">
-import { useState } from 'react'
-import { useParams, Link, useNavigate } from 'react-router-dom'
-import clsx from 'clsx'
-import { lifeSituations } from '../../data/situations'
-import { Card, Badge, Button } from '../../design-system'
-
-export function SituationPage() {
-  const { id } = useParams()
-  const navigate = useNavigate()
-  const situation = lifeSituations.find((s) => s.id === id)
-  const [completed, setCompleted] = useState<Set<string>>(new Set())
-
-  if (!situation) {
-    return (
-      <div className="text-center py-12">
-        <h1 className="text-2xl font-bold text-navy-deep mb-4">Ситуация не найдена</h1>
-        <Link to="/catalog?view=situations" className="text-navy hover:underline">
-          Вернуться к списку ситуаций
-        </Link>
-      </div>
-    )
-  }
-
-  const progress = Math.round((completed.size / situation.steps.length) * 100)
-
-  const toggleStep = (stepId: string) => {
-    setCompleted((prev) => {
-      const next = new Set(prev)
-      if (next.has(stepId)) next.delete(stepId)
-      else next.add(stepId)
-      return next
-    })
-  }
-
-  return (
-    <div className="max-w-4xl mx-auto pb-12">
-      <div className="mb-8">
-        <div className="text-sm text-muted mb-2">
-          <Link to="/catalog?view=situations" className="hover:text-navy">
-            Жизненные ситуации
-          </Link>{' '}
-          / <span>{situation.title}</span>
-        </div>
-        <h1 className="text-3xl font-bold text-navy-deep mb-3">{situation.title}</h1>
-        <p className="text-lg text-ink mb-4">{situation.painPoint}</p>
-
-        <Card className="bg-[#f8f9ff] border-line flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div>
-            <span className="text-sm text-muted block mb-1">Результат</span>
-            <span className="font-semibold text-navy">{situation.outcome}</span>
-          </div>
-          <div className="flex items-center gap-3 w-full md:w-auto">
-            <div className="h-2 w-full md:w-48 bg-line rounded-full overflow-hidden">
-              <div
-                className="h-full bg-navy transition-all duration-500"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
-            <span className="text-sm font-bold text-navy whitespace-nowrap">
-              {progress}%
-            </span>
-          </div>
-        </Card>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 space-y-4">
-          <h2 className="text-lg font-bold text-navy-deep mb-2">Ваши шаги</h2>
-          {situation.steps.map((step, index) => {
-            const isDone = completed.has(step.id)
-            return (
-              <Card
-                key={step.id}
-                className={clsx('relative', isDone && 'opacity-60 bg-soft')}
-              >
-                <div className="flex gap-4">
-                  <button
-                    type="button"
-                    onClick={() => toggleStep(step.id)}
-                    aria-pressed={isDone}
-                    className={clsx(
-                      'shrink-0 w-8 h-8 rounded-full border-2 flex items-center justify-center mt-1 transition-colors',
-                      isDone
-                        ? 'bg-ok border-ok text-white'
-                        : 'border-line text-muted hover:border-navy hover:text-navy',
-                    )}
-                  >
-                    {isDone ? '✓' : index + 1}
-                  </button>
-
-                  <div className="flex-1">
-                    <div className="flex justify-between items-start mb-1 gap-2">
-                      <h3
-                        className={clsx(
-                          'font-semibold text-navy-deep text-lg',
-                          isDone && 'line-through',
-                        )}
-                      >
-                        {step.title}
-                      </h3>
-                      {step.isOptional && <Badge>Опционально</Badge>}
-                    </div>
-                    {step.description && (
-                      <p className="text-muted text-sm mb-4">{step.description}</p>
-                    )}
-
-                    <div className="flex flex-wrap gap-3 items-center">
-                      {step.serviceId ? (
-                        <Button onClick={() => navigate(`/service/${step.serviceId}`)}>
-                          Оформить онлайн
-                        </Button>
-                      ) : step.externalAction ? (
-                        <Button
-                          variant="ghost"
-                          onClick={() => alert(step.externalAction)}
-                        >
-                          Как сделать офлайн
-                        </Button>
-                      ) : null}
-                      {step.estimatedTime && (
-                        <span className="text-xs text-muted">
-                          ⏱ {step.estimatedTime}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </Card>
-            )
-          })}
-        </div>
-
-        <div className="space-y-6">
-          <Card>
-            <h3 className="font-bold text-navy-deep mb-3">Полезно знать</h3>
-            <ul className="space-y-3 text-sm text-muted">
-              <li>• Шаги можно выполнять в любом порядке, если не указано иначе.</li>
-              <li>• Для онлайн-услуг понадобится ID-карта или ЭЦП.</li>
-              <li>• Прогресс сохраняется только в этой сессии — не закрывайте вкладку.</li>
-            </ul>
-          </Card>
-
-          {situation.faq && situation.faq.length > 0 && (
-            <Card className="bg-soft border-line">
-              <h3 className="font-bold text-navy-deep mb-3">Частые вопросы</h3>
-              {situation.faq.map((item, i) => (
-                <div key={i} className="mb-3 last:mb-0">
-                  <p className="font-semibold text-ink text-sm mb-1">
-                    {item.question}
-                  </p>
-                  <p className="text-sm text-muted">{item.answer}</p>
-                </div>
-              ))}
-            </Card>
-          )}
-        </div>
-      </div>
-    </div>
-  )
-}
-</file>
-
 <file path="src/hooks/useBreadcrumbs.ts">
 import { useLocation } from 'react-router-dom'
 import { services } from '../data/services'
@@ -12615,63 +12337,6 @@ export function useSuggestions(query: string, delay = 120) {
 /** Полный поиск (для страницы каталога). */
 export function useSearchResults(query: string): Service[] {
   return useMemo(() => searchServices(query).map((h) => h.service), [query])
-}
-</file>
-
-<file path="src/lib/applications.ts">
-import { useCallback, useEffect, useState } from 'react'
-import type { Application } from '../types/service'
-
-const APPS_KEY = 'epasluga-apps'
-
-const SEED: Application[] = [
-  { id: 'a1', num: '453346557107272', title: 'Справка о доходах', serviceId: '3-05-03', initiator: 'Министерство по налогам и сборам', status: 'Выполнено', at: new Date().toISOString(), comment: '' },
-  { id: 'a2', num: '289953663290680', title: 'Справка о доходах', serviceId: '3-05-03', initiator: 'Министерство по налогам и сборам', status: 'Ожидает оплаты', at: new Date().toISOString(), comment: '' },
-  { id: 'a3', num: '100294837561002', title: 'Паспорт гражданина РБ', serviceId: '200-12-1', initiator: 'Министерство внутренних дел', status: 'На проверке', at: new Date(Date.now() - 86400000).toISOString(), comment: '' },
-  { id: 'a4', num: '100294837561088', title: 'Регистрация автомобиля', serviceId: '200-15-11', initiator: 'Министерство внутренних дел', status: 'Черновик', at: new Date(Date.now() - 2 * 86400000).toISOString(), comment: '' },
-  { id: 'a5', num: '100294837561201', title: 'Справка призывнику', serviceId: '200-20-5', initiator: 'Министерство обороны', status: 'Отозвано', at: new Date(Date.now() - 4 * 86400000).toISOString(), comment: '' },
-  { id: 'a6', num: '100294837561333', title: 'Лицензия адвоката', serviceId: '200-17-1-1', initiator: 'Министерство юстиции', status: 'Отказано', at: new Date(Date.now() - 8 * 86400000).toISOString(), comment: 'Неполный комплект документов' },
-]
-
-function read(): Application[] {
-  try {
-    const raw = JSON.parse(localStorage.getItem(APPS_KEY) || 'null')
-    if (Array.isArray(raw)) return raw
-  } catch { /* ignore */ }
-  localStorage.setItem(APPS_KEY, JSON.stringify(SEED))
-  return SEED
-}
-
-function write(rows: Application[]) {
-  localStorage.setItem(APPS_KEY, JSON.stringify(rows))
-}
-
-export function useApplications() {
-  const [apps, setApps] = useState<Application[]>(() => read())
-
-  useEffect(() => {
-    const onStorage = (e: StorageEvent) => { if (e.key === APPS_KEY) setApps(read()) }
-    window.addEventListener('storage', onStorage)
-    return () => window.removeEventListener('storage', onStorage)
-  }, [])
-
-  const update = useCallback((id: string, patch: Partial<Application>) => {
-    setApps((prev) => {
-      const next = prev.map((a) => (a.id === id ? { ...a, ...patch } : a))
-      write(next)
-      return next
-    })
-  }, [])
-
-  const remove = useCallback((id: string) => {
-    setApps((prev) => {
-      const next = prev.filter((a) => a.id !== id)
-      write(next)
-      return next
-    })
-  }, [])
-
-  return { apps, update, remove }
 }
 </file>
 
@@ -12919,6 +12584,132 @@ export function searchServices(query: string): SearchHit[] {
 /** Топ-N подсказок для выпадающего списка. */
 export function suggestServices(query: string, limit = 6): Service[] {
   return searchServices(query).slice(0, limit).map((h) => h.service)
+}
+</file>
+
+<file path="src/lib/situationIcons.ts">
+/**
+ * Единый источник эмодзи-иконок для жизненных ситуаций.
+ * Используется в превью на главной и в каталоге.
+ */
+export const situationIcons: Record<string, string> = {
+  birth: '👶',
+  'buy-car': '🚗',
+  university: '🎓',
+  kindergarten: '🎒',
+  retirement: '🧓',
+  'start-business': '💼',
+  'real-estate': '🏠',
+  'change-residence': '📦',
+  'loss-of-relative': '🕊️',
+  'lost-documents': '🆔',
+}
+
+/** Безопасное получение иконки с фоллбэком. */
+export function getSituationIcon(id: string): string {
+  return situationIcons[id] ?? '📋'
+}
+</file>
+
+<file path="src/lib/situationProgress.ts">
+import { useCallback, useEffect, useState } from 'react'
+
+const STORAGE_KEY = 'epasluga-situation-progress'
+
+/** Формат хранения: { [situationId]: Set<stepId> } — но в JSON Set не сериализуется,
+ * поэтому храним как { [situationId]: string[] } и оборачиваем в Set в памяти. */
+type StoredProgress = Record<string, string[]>
+
+function read(): StoredProgress {
+  try {
+    const raw = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}')
+    if (raw && typeof raw === 'object' && !Array.isArray(raw)) {
+      return raw as StoredProgress
+    }
+  } catch {
+    // ignore corrupt storage
+  }
+  return {}
+}
+
+function write(data: StoredProgress) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
+}
+
+/**
+ * Хук прогресса прохождения жизненной ситуации.
+ * Возвращает список выполненных шагов, функцию переключения и сброса.
+ */
+export function useSituationProgress(situationId: string) {
+  const [completed, setCompleted] = useState<Set<string>>(() => {
+    const stored = read()[situationId] ?? []
+    return new Set(stored)
+  })
+
+  // Синхронизация между вкладками
+  useEffect(() => {
+    const onStorage = (e: StorageEvent) => {
+      if (e.key !== STORAGE_KEY) return
+      const stored = read()[situationId] ?? []
+      setCompleted(new Set(stored))
+    }
+    window.addEventListener('storage', onStorage)
+    return () => window.removeEventListener('storage', onStorage)
+  }, [situationId])
+
+  const toggle = useCallback(
+    (stepId: string) => {
+      setCompleted((prev) => {
+        const next = new Set(prev)
+        if (next.has(stepId)) next.delete(stepId)
+        else next.add(stepId)
+
+        // Сохраняем в localStorage
+        const all = read()
+        all[situationId] = [...next]
+        write(all)
+
+        return next
+      })
+    },
+    [situationId],
+  )
+
+  const reset = useCallback(() => {
+    setCompleted(new Set())
+    const all = read()
+    delete all[situationId]
+    write(all)
+  }, [situationId])
+
+  return { completed, toggle, reset }
+}
+
+/**
+ * Читает весь прогресс по всем ситуациям — для отображения в каталоге.
+ * Возвращает объект вида { [situationId]: number } — количество выполненных шагов.
+ */
+export function useAllSituationProgress() {
+  const [summary, setSummary] = useState<Record<string, number>>(() => computeSummary())
+
+  function computeSummary() {
+    const all = read()
+    const result: Record<string, number> = {}
+    for (const [k, v] of Object.entries(all)) {
+      if (Array.isArray(v) && v.length > 0) result[k] = v.length
+    }
+    return result
+  }
+
+  useEffect(() => {
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === STORAGE_KEY) setSummary(computeSummary())
+    }
+    window.addEventListener('storage', onStorage)
+    return () => window.removeEventListener('storage', onStorage)
+  }, [])
+
+  return summary
 }
 </file>
 
@@ -16177,48 +15968,118 @@ export function CatalogCard({ service, isFavorite, onToggleFavorite }: CatalogCa
 }
 </file>
 
-<file path="src/features/home/LifeSituations.tsx">
+<file path="src/features/guest-home/GuestHomePage.tsx">
 import { Link } from 'react-router-dom'
-import { Card } from '../../design-system'
-import { lifeSituations } from '../../data/situations'
+import { Button, Card } from '../../design-system'
+// Импортируем существующие компоненты поиска и ситуаций
+import { QuickSearch } from '../home/QuickSearch'
+import { LifeSituations } from '../home/LifeSituations'
+import { services } from '../../data/services'
 
-const ICONS: Record<string, string> = {
-  birth: '👶',
-  'buy-car': '🚗',
-  university: '🎓',
-}
-
-export function LifeSituations() {
+export function GuestHomePage() {
   return (
-    <div>
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-bold text-navy-deep">Жизненные ситуации</h2>
-        <Link
-          to="/catalog?view=situations"
-          className="text-sm text-navy hover:underline"
-        >
-          Все ситуации →
-        </Link>
-      </div>
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-        {lifeSituations.map((sit) => (
-          <Link
-            key={sit.id}
-            to={`/situation/${sit.id}`}
-            className="block h-full group"
-          >
-            <Card
-              variant="interactive"
-              className="h-full items-center text-center justify-center p-6 gap-3"
-            >
-              <span className="text-4xl">{ICONS[sit.id] ?? '📋'}</span>
-              <span className="font-semibold text-navy-deep text-sm">
-                {sit.title}
-              </span>
-            </Card>
+    <div className="max-w-5xl mx-auto space-y-12 pb-16 pt-4">
+      
+      {/* 1. HERO SECTION */}
+      <section className="text-center md:text-left md:flex md:items-center md:justify-between gap-8 bg-linear-to-r from-[#f8f9ff] to-white p-8 md:p-12 rounded-card border border-line shadow-sm">
+        <div className="md:w-3/5 mb-6 md:mb-0">
+          <h1 className="text-3xl md:text-4xl font-bold text-navy-deep mb-4 leading-tight">
+            Госуслуги <span className="text-navy">онлайн</span> — без очередей и бумаг
+          </h1>
+          <p className="text-lg text-muted mb-8">
+            Единый портал для решения любых жизненных ситуаций. От рождения ребёнка до покупки автомобиля.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Link to="/login">
+              <Button className="w-full sm:w-auto text-lg px-8 py-3">
+                Войти через ID-карту
+              </Button>
+            </Link>
+            <Link to="/catalog?view=situations">
+              <Button variant="ghost" className="w-full sm:w-auto text-lg px-8 py-3">
+                Смотреть ситуации
+              </Button>
+            </Link>
+          </div>
+        </div>
+        
+        {/* Декоративный элемент */}
+        <div className="hidden md:flex md:w-2/5 justify-center">
+          <div className="w-48 h-48 bg-navy rounded-full flex items-center justify-center text-7xl shadow-xl text-white">
+            🇧🇾
+          </div>
+        </div>
+      </section>
+
+      {/* 2. ПОИСК */}
+      <section>
+        <div className="max-w-3xl mx-auto text-center mb-6">
+          <h2 className="text-2xl font-bold text-navy-deep mb-2">Что вы хотите сделать?</h2>
+          <p className="text-muted">Начните с поиска или выберите из популярных категорий ниже.</p>
+        </div>
+        <div className="flex justify-center">
+          <QuickSearch />
+        </div>
+      </section>
+
+      {/* 3. ЖИЗНЕННЫЕ СИТУАЦИИ (Превью) */}
+      <section>
+        <LifeSituations />
+      </section>
+
+      {/* 4. ПОПУЛЯРНЫЕ УСЛУГИ */}
+      <section>
+        <div className="flex justify-between items-end mb-4">
+          <div>
+            <h2 className="text-lg font-bold text-navy-deep">Часто запрашивают</h2>
+            <p className="text-sm text-muted">Самые популярные услуги на портале</p>
+          </div>
+          <Link to="/catalog?view=list" className="text-sm font-semibold text-navy hover:underline">
+            Все услуги →
           </Link>
-        ))}
-      </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {services.slice(0, 3).map((service) => (
+            <Link key={service.id} to={`/service/${service.id}`} className="block h-full group">
+              <Card variant="interactive" className="h-full flex flex-col p-5">
+                <h3 className="font-semibold text-navy mb-2 group-hover:text-navy-deep transition-colors">
+                  {service.shortTitle}
+                </h3>
+                <p className="text-sm text-muted mb-4 line-clamp-2 flex-1">
+                  {service.plainDescription}
+                </p>
+                <div className="mt-auto pt-3 border-t border-line flex items-center justify-between text-xs font-semibold text-navy">
+                  <span>⏱ {service.timeToComplete}</span>
+                  <span>Оформить →</span>
+                </div>
+              </Card>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* 5. БЛОК ДОВЕРИЯ */}
+      <section className="bg-soft rounded-card p-6 md:p-8 text-center">
+        <h2 className="text-xl font-bold text-navy-deep mb-6">Почему это безопасно</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="flex flex-col items-center">
+            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-2xl shadow-sm mb-3">🛡️</div>
+            <h3 className="font-semibold text-ink mb-1">Защита данных</h3>
+            <p className="text-sm text-muted">Работает на базе защищенных государственных систем</p>
+          </div>
+          <div className="flex flex-col items-center">
+            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-2xl shadow-sm mb-3">🆔</div>
+            <h3 className="font-semibold text-ink mb-1">Вход по ID-карте</h3>
+            <p className="text-sm text-muted">Надежная идентификация через ГосСУОК</p>
+          </div>
+          <div className="flex flex-col items-center">
+            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-2xl shadow-sm mb-3">⏱️</div>
+            <h3 className="font-semibold text-ink mb-1">Экономия времени</h3>
+            <p className="text-sm text-muted">Без визитов в ведомства и бумажных справок</p>
+          </div>
+        </div>
+      </section>
+
     </div>
   )
 }
@@ -16418,71 +16279,209 @@ export function QuickSearch() {
 }
 </file>
 
-<file path="src/features/my-services/MyServicesRow.tsx">
-import { Link } from 'react-router-dom'
-import { Badge } from '../../design-system'
-import type { Application } from '../../types/service'
-import { formatWhen, statusClass } from '../../lib/format'
+<file path="src/features/situations/SituationPage.tsx">
+import { useParams, Link, useNavigate } from 'react-router-dom'
+import clsx from 'clsx'
+import { lifeSituations } from '../../data/situations'
+import { Card, Badge, Button } from '../../design-system'
+import { useSituationProgress } from '../../lib/situationProgress'
+import { useApplications } from '../../lib/applications'
 
-type MyServicesRowProps = {
-  app: Application
-  href: string | null
-  onPay: () => void
-  onDownload: () => void // <-- добавили
-  help: string
-}
+export function SituationPage() {
+  const { id } = useParams()
+  const navigate = useNavigate()
+  const situation = lifeSituations.find((s) => s.id === id)
+  const { completed, toggle, reset } = useSituationProgress(id ?? '__none__')
+  const { apps } = useApplications()
 
-export function MyServicesRow({ app, href, onPay, onDownload, help }: MyServicesRowProps) {
+  if (!situation) {
+    return (
+      <div className="text-center py-12">
+        <h1 className="text-2xl font-bold text-navy-deep mb-4">Ситуация не найдена</h1>
+        <Link to="/catalog?view=situations" className="text-navy hover:underline">
+          Вернуться к списку ситуаций
+        </Link>
+      </div>
+    )
+  }
+
+  const progress = situation.steps.length
+    ? Math.round((completed.size / situation.steps.length) * 100)
+    : 0
+
+  /** Найти активную заявку (не завершённую и не отказ) для данного шага. */
+  const findActiveApp = (stepServiceId?: string) => {
+    if (!stepServiceId) return undefined
+    return apps.find(
+      (a) =>
+        a.serviceId === stepServiceId &&
+        a.status !== 'Выполнено' &&
+        a.status !== 'Отказано' &&
+        a.status !== 'Отозвано',
+    )
+  }
+
   return (
-    <tr>
-      <td className="px-4 py-3 align-top">
-        <div className="font-semibold text-navy-deep">{app.title}</div>
-        <div className="text-xs text-muted mt-0.5">№ {app.num}</div>
-      </td>
-      <td className="px-4 py-3 align-top whitespace-nowrap text-muted">{formatWhen(app.at)}</td>
-      <td className="px-4 py-3 align-top">
-        <Badge className={statusClass(app.status)}>{app.status}</Badge>
-        {help && <div className="text-xs text-muted mt-1 max-w-xs">{help}</div>}
-        {app.comment && <div className="text-xs text-danger mt-1 max-w-xs">{app.comment}</div>}
-      </td>
-      <td className="px-4 py-3 align-top">
-        <div className="flex flex-col gap-2 items-end">
-          {app.status === 'Выполнено' && (
-            <button 
-              type="button" 
-              onClick={onDownload}
-              className="inline-flex items-center justify-center rounded-control px-4 min-h-11 text-sm font-semibold bg-navy text-white hover:bg-navy-deep transition-colors w-full sm:w-auto"
-            >
-              Скачать
-            </button>
-          )}
-          {app.status === 'Ожидает оплаты' && (
-            <button 
-              type="button" 
-              onClick={onPay} 
-              className="inline-flex items-center justify-center rounded-control px-4 min-h-11 text-sm font-semibold bg-navy text-white hover:bg-navy-deep transition-colors w-full sm:w-auto"
-            >
-              Оплатить
-            </button>
-          )}
-          {href && (app.status === 'Черновик' || app.status === 'На проверке') && (
-            <Link 
-              to={href} 
-              className="inline-flex items-center justify-center rounded-control px-4 min-h-11 text-sm font-semibold border border-navy text-navy hover:bg-soft transition-colors w-full sm:w-auto"
-            >
-              Открыть
-            </Link>
-          )}
-          {/* Кнопка "Статус" для всех заявок */}
-          <Link 
-            to={`/status/${app.id}`} 
-            className="inline-flex items-center justify-center rounded-control px-4 min-h-11 text-sm font-semibold border border-line text-muted hover:text-navy hover:border-navy transition-colors w-full sm:w-auto"
-          >
-            Детали
-          </Link>
+    <div className="max-w-4xl mx-auto pb-12">
+      <div className="mb-8">
+        <div className="text-sm text-muted mb-2">
+          <Link to="/catalog?view=situations" className="hover:text-navy">
+            Жизненные ситуации
+          </Link>{' '}
+          / <span>{situation.title}</span>
         </div>
-      </td>
-    </tr>
+        <h1 className="text-3xl font-bold text-navy-deep mb-3">{situation.title}</h1>
+        <p className="text-lg text-ink mb-4">{situation.painPoint}</p>
+
+        <Card className="bg-[#f8f9ff] border-line flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <span className="text-sm text-muted block mb-1">Результат</span>
+            <span className="font-semibold text-navy">{situation.outcome}</span>
+          </div>
+          <div className="flex items-center gap-3 w-full md:w-auto">
+            <div className="h-2 w-full md:w-48 bg-line rounded-full overflow-hidden">
+              <div
+                className="h-full bg-navy transition-all duration-500"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+            <span className="text-sm font-bold text-navy whitespace-nowrap">
+              {progress}%
+            </span>
+          </div>
+        </Card>
+
+        {completed.size > 0 && (
+          <div className="mt-3 text-right">
+            <button
+              type="button"
+              onClick={reset}
+              className="text-xs text-muted hover:text-danger transition-colors underline"
+            >
+              Сбросить прогресс
+            </button>
+          </div>
+        )}
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2 space-y-4">
+          <h2 className="text-lg font-bold text-navy-deep mb-2">Ваши шаги</h2>
+          {situation.steps.map((step, index) => {
+            const isDone = completed.has(step.id)
+            const activeApp = findActiveApp(step.serviceId)
+            const isInProgress = !isDone && !!activeApp
+
+            return (
+              <Card
+                key={step.id}
+                className={clsx(
+                  'relative',
+                  isDone && 'opacity-60 bg-soft',
+                  isInProgress && 'border-navy/30 ring-1 ring-navy/10',
+                )}
+              >
+                <div className="flex gap-4">
+                  <button
+                    type="button"
+                    onClick={() => toggle(step.id)}
+                    aria-pressed={isDone}
+                    className={clsx(
+                      'shrink-0 w-8 h-8 rounded-full border-2 flex items-center justify-center mt-1 transition-colors',
+                      isDone
+                        ? 'bg-ok border-ok text-white'
+                        : isInProgress
+                          ? 'border-navy text-navy bg-white'
+                          : 'border-line text-muted hover:border-navy hover:text-navy',
+                    )}
+                  >
+                    {isDone ? '✓' : isInProgress ? '⋯' : index + 1}
+                  </button>
+
+                  <div className="flex-1">
+                    <div className="flex justify-between items-start mb-1 gap-2 flex-wrap">
+                      <h3
+                        className={clsx(
+                          'font-semibold text-navy-deep text-lg',
+                          isDone && 'line-through',
+                        )}
+                      >
+                        {step.title}
+                      </h3>
+                      <div className="flex gap-2">
+                        {step.isOptional && <Badge>Опционально</Badge>}
+                        {isInProgress && <Badge variant="need-id">В процессе</Badge>}
+                      </div>
+                    </div>
+                    {step.description && (
+                      <p className="text-muted text-sm mb-4">{step.description}</p>
+                    )}
+
+                    <div className="flex flex-wrap gap-3 items-center">
+                      {step.serviceId ? (
+                        isInProgress ? (
+                          <Link
+                            to="/apps"
+                            className="inline-flex items-center justify-center rounded-control px-4 py-2.5 text-[15px] font-semibold bg-white text-navy border border-navy hover:bg-soft transition-colors"
+                          >
+                            Открыть в «Моих услугах»
+                          </Link>
+                        ) : (
+                          <Button
+                            onClick={() =>
+                              navigate(
+                                `/service/${step.serviceId}?from=situation&situation=${situation.id}&step=${step.id}`,
+                              )
+                            }
+                          >
+                            Оформить онлайн
+                          </Button>
+                        )
+                      ) : step.externalAction ? (
+                        <Button
+                          variant="ghost"
+                          onClick={() => alert(step.externalAction)}
+                        >
+                          Как сделать офлайн
+                        </Button>
+                      ) : null}
+                      {step.estimatedTime && (
+                        <span className="text-xs text-muted">⏱ {step.estimatedTime}</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            )
+          })}
+        </div>
+
+        <div className="space-y-6">
+          <Card>
+            <h3 className="font-bold text-navy-deep mb-3">Полезно знать</h3>
+            <ul className="space-y-3 text-sm text-muted">
+              <li>• Шаги можно выполнять в любом порядке, если не указано иначе.</li>
+              <li>• Для онлайн-услуг понадобится ID-карта или ЭЦП.</li>
+              <li>• Прогресс сохраняется автоматически и доступен с этого устройства.</li>
+            </ul>
+          </Card>
+
+          {situation.faq && situation.faq.length > 0 && (
+            <Card className="bg-soft border-line">
+              <h3 className="font-bold text-navy-deep mb-3">Частые вопросы</h3>
+              {situation.faq.map((item, i) => (
+                <div key={i} className="mb-3 last:mb-0">
+                  <p className="font-semibold text-ink text-sm mb-1">
+                    {item.question}
+                  </p>
+                  <p className="text-sm text-muted">{item.answer}</p>
+                </div>
+              ))}
+            </Card>
+          )}
+        </div>
+      </div>
+    </div>
   )
 }
 </file>
@@ -16492,6 +16491,67 @@ import { setupWorker } from 'msw/browser'
 import { handlers } from './handlers'
 
 export const worker = setupWorker(...handlers)
+</file>
+
+<file path="src/lib/applications.ts">
+import { useCallback, useEffect, useState } from 'react'
+import type { Application } from '../types/service'
+
+const APPS_KEY = 'epasluga-apps'
+
+const SEED: Application[] = [
+  // ... существующие 6 записей без изменений
+]
+
+function read(): Application[] {
+  try {
+    const raw = JSON.parse(localStorage.getItem(APPS_KEY) || 'null')
+    if (Array.isArray(raw)) return raw
+  } catch { /* ignore */ }
+  localStorage.setItem(APPS_KEY, JSON.stringify(SEED))
+  return SEED
+}
+
+function write(rows: Application[]) {
+  localStorage.setItem(APPS_KEY, JSON.stringify(rows))
+}
+
+export function useApplications() {
+  const [apps, setApps] = useState<Application[]>(() => read())
+
+  useEffect(() => {
+    const onStorage = (e: StorageEvent) => { if (e.key === APPS_KEY) setApps(read()) }
+    window.addEventListener('storage', onStorage)
+    return () => window.removeEventListener('storage', onStorage)
+  }, [])
+
+  const update = useCallback((id: string, patch: Partial<Application>) => {
+    setApps((prev) => {
+      const next = prev.map((a) => (a.id === id ? { ...a, ...patch } : a))
+      write(next)
+      return next
+    })
+  }, [])
+
+  const remove = useCallback((id: string) => {
+    setApps((prev) => {
+      const next = prev.filter((a) => a.id !== id)
+      write(next)
+      return next
+    })
+  }, [])
+
+  /** Создать новую заявку (используется формой подачи). */
+  const add = useCallback((app: Application) => {
+    setApps((prev) => {
+      const next = [app, ...prev]
+      write(next)
+      return next
+    })
+  }, [])
+
+  return { apps, update, remove, add }
+}
 </file>
 
 <file path="eslint.config.js">
@@ -16529,147 +16589,6 @@ export default tseslint.config(
   "files": [],
   "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }]
 }
-</file>
-
-<file path="src/data/situations.ts">
-import type { LifeSituation } from '../types/service'
-
-export const lifeSituations: LifeSituation[] = [
-  {
-    id: 'birth',
-    title: 'Рождение ребёнка',
-    painPoint: 'Вы стали родителями и не знаете, какие документы оформить в первую очередь.',
-    outcome: 'Свидетельство о рождении получено, ребёнок прописан, пособия назначены.',
-    categoryIds: ['family', 'social', 'docs'],
-    steps: [
-      {
-        id: 'birth-1',
-        order: 1,
-        title: 'Зарегистрировать рождение в ЗАГС',
-        description: 'Получите свидетельство о рождении. Это можно сделать в роддоме или онлайн.',
-        serviceId: '200-5-1',
-        agencyId: 'justice',
-        estimatedTime: '1 день',
-      },
-      {
-        id: 'birth-2',
-        order: 2,
-        title: 'Прописать ребёнка',
-        description: 'Зарегистрируйте ребёнка по месту жительства родителей.',
-        serviceId: '200-13-1',
-        agencyId: 'mvd',
-        estimatedTime: '1–3 дня',
-      },
-      {
-        id: 'birth-3',
-        order: 3,
-        title: 'Оформить пособие при рождении',
-        description: 'Единовременная выплата от государства.',
-        serviceId: '200-2-6',
-        agencyId: 'mintrud',
-        estimatedTime: 'до 10 дней',
-      },
-      {
-        id: 'birth-4',
-        order: 4,
-        title: 'Оформить пособие по уходу до 3 лет',
-        description: 'Ежемесячная выплата на ребёнка.',
-        serviceId: '200-2-9',
-        agencyId: 'mintrud',
-        estimatedTime: 'до 10 дней',
-      },
-      {
-        id: 'birth-5',
-        order: 5,
-        title: 'Поставить в очередь в детский сад',
-        description: 'Можно сделать сразу после получения свидетельства о рождении.',
-        serviceId: '200-6-6',
-        agencyId: 'minedu',
-        estimatedTime: '15 минут',
-        isOptional: true,
-      },
-    ],
-    faq: [
-      {
-        question: 'Что делать, если мы не состоим в браке?',
-        answer:
-          'Потребуется совместное заявление в ЗАГС или установление отцовства через суд, если отец не согласен.',
-      },
-    ],
-  },
-  {
-    id: 'buy-car',
-    title: 'Покупка автомобиля',
-    painPoint: 'Купили машину, но не знаете, как её правильно оформить и проверить.',
-    outcome: 'Автомобиль проверен, зарегистрирован на вас, страховка есть.',
-    categoryIds: ['transport', 'law'],
-    steps: [
-      {
-        id: 'car-1',
-        order: 1,
-        title: 'Проверить автомобиль по VIN',
-        description: 'Убедитесь, что машина не в розыске и не в залоге.',
-        serviceId: '3-59-01',
-        agencyId: 'mvd',
-        estimatedTime: '5 минут',
-      },
-      {
-        id: 'car-2',
-        order: 2,
-        title: 'Проверить наличие страховки (ОСАГО)',
-        description: 'Убедитесь, что у продавца есть действующий полис.',
-        serviceId: '3-53-01',
-        agencyId: 'mvd',
-        estimatedTime: '5 минут',
-      },
-      {
-        id: 'car-3',
-        order: 3,
-        title: 'Заключить договор купли-продажи',
-        description: 'Оформите договор в 3 экземплярах (один для ГАИ).',
-        externalAction: 'Оформить договор вручную или через нотариуса',
-        agencyId: 'justice',
-        estimatedTime: '30 минут',
-      },
-      {
-        id: 'car-4',
-        order: 4,
-        title: 'Зарегистрировать авто в ГАИ',
-        description: 'Поставьте машину на учёт на ваше имя.',
-        serviceId: '200-15-11',
-        agencyId: 'mvd',
-        estimatedTime: '1 день',
-      },
-    ],
-  },
-  {
-    id: 'university',
-    title: 'Поступление в вуз',
-    painPoint: 'Заканчиваете школу и хотите подать документы в университет.',
-    outcome: 'Документы поданы, вы зачислены.',
-    categoryIds: ['education'],
-    steps: [
-      {
-        id: 'uni-1',
-        order: 1,
-        title: 'Проверить документы об образовании',
-        description: 'Убедитесь, что ваш аттестат или диплом в порядке.',
-        serviceId: '3-101-01',
-        agencyId: 'minedu',
-        estimatedTime: '15 минут',
-      },
-      {
-        id: 'uni-2',
-        order: 2,
-        title: 'Подать документы в приёмную комиссию',
-        description: 'В большинстве вузов это делается через личный кабинет абитуриента.',
-        externalAction: 'Подать документы на сайте вуза',
-        agencyId: 'minedu',
-        estimatedTime: '1 день',
-      },
-    ],
-  },
-]
 </file>
 
 <file path="src/design-system/Tooltip.tsx">
@@ -16727,355 +16646,136 @@ export function Tooltip({ text, children, className }: TooltipProps) {
 }
 </file>
 
-<file path="src/features/my-services/MyServicesPage.tsx">
-import { useApplications } from '../../lib/applications'
-import { services } from '../../data/services'
-import { statusHelp } from '../../lib/format'
-import { downloadDemoPdf } from '../../lib/download'
-import { MyServicesRow } from './MyServicesRow'
-
-export function MyServicesPage() {
-  const { apps, update } = useApplications()
-
-  return (
-    <div className="max-w-5xl mx-auto pb-12">
-      <header className="mb-6">
-        <h1 className="text-3xl font-bold text-navy-deep mb-2">Мои услуги</h1>
-        <p className="text-muted max-w-2xl">
-          Заявления, которые вы начали или отправили. Быстрые действия — прямо в таблице.
-        </p>
-      </header>
-
-      <div className="bg-white border border-line rounded-card overflow-x-auto">
-        <table className="w-full text-left text-sm responsive-table">
-          <thead className="bg-soft text-muted text-xs uppercase tracking-wider">
-            <tr>
-              <th className="px-4 py-3 font-semibold">Услуга</th>
-              <th className="px-4 py-3 font-semibold">Дата</th>
-              <th className="px-4 py-3 font-semibold">Статус</th>
-              <th className="px-4 py-3 font-semibold text-right">Действия</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-line">
-            {apps.map((app) => {
-              const svc = services.find((s) => s.id === app.serviceId)
-              return (
-                <MyServicesRow
-                  key={app.id}
-                  app={app}
-                  href={svc ? `/service/${svc.id}` : null}
-                  onPay={() => update(app.id, { status: 'Выполнено' })}
-                  onDownload={() => downloadDemoPdf(app)}
-                  help={statusHelp(app.status)}
-                />
-              )
-            })}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  )
-}
-</file>
-
-<file path="src/features/service/ApplicationForm.tsx">
-import { useEffect, useRef, useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
-import { Button, Card, Input } from '../../design-system'
-import type { Service } from '../../types/service'
-import { SuccessScreen } from './SuccessScreen'
-
-// Схема валидации (эвристика #9 — понятные сообщения рядом с полем)
-const PHONE_RE = /^\+375\s?\(?(?:17|25|29|33|44)\)?[\s-]?\d{3}[\s-]?\d{2}[\s-]?\d{2}$/
-
-const schema = z.object({
-  lastName: z.string().trim().min(2, 'Укажите фамилию, минимум 2 буквы'),
-  firstName: z.string().trim().min(2, 'Укажите имя, минимум 2 буквы'),
-  middleName: z.string().trim().optional().or(z.literal('')),
-  phone: z.string().trim().regex(PHONE_RE, 'Формат: +375 29 000-00-00'),
-  email: z.string().trim().email('Похоже на неверный адрес').optional().or(z.literal('')),
-  comment: z.string().max(500, 'Не больше 500 символов').optional().or(z.literal('')),
-  consent: z.literal(true, {
-    error: () => ({ message: 'Нужно согласие, чтобы отправить заявление' }),
-  }),
-})
-
-type FormData = z.infer<typeof schema>
-
-const DRAFT_PREFIX = 'epasluga-draft:'
-
-function readDraft(id: string): Partial<FormData> | null {
-  try {
-    return JSON.parse(localStorage.getItem(DRAFT_PREFIX + id) || 'null')
-  } catch {
-    return null
-  }
-}
-
-type ApplicationFormProps = {
-  service: Service
-  onBack: () => void
-}
-
-export function ApplicationForm({ service, onBack }: ApplicationFormProps) {
-  const [isSubmitted, setIsSubmitted] = useState(false)
-  const [draftSavedAt, setDraftSavedAt] = useState<string | null>(null)
-  const saveTimer = useRef<number | null>(null)
-
-  const {
-    register,
-    handleSubmit,
-    watch,
-    reset,
-    formState: { errors, isSubmitting },
-  } = useForm<FormData>({
-    resolver: zodResolver(schema),
-    mode: 'onBlur',
-    defaultValues: {
-      lastName: '',
-      firstName: '',
-      middleName: '',
-      phone: '',
-      email: '',
-      comment: '',
-    },
-  })
-
-  // Восстановление черновика при монтировании
-  useEffect(() => {
-    const saved = readDraft(service.id)
-    if (saved) {
-      reset(saved as FormData)
-      setDraftSavedAt('черновик восстановлен')
-    }
-  }, [service.id, reset])
-
-  // Автосохранение при любом изменении (эвристика #3)
-  useEffect(() => {
-    const sub = watch((values) => {
-      if (saveTimer.current) window.clearTimeout(saveTimer.current)
-      saveTimer.current = window.setTimeout(() => {
-        const draft = { ...values }
-        // consent не сохраняем — пользователь должен явно поставить галочку
-        delete draft.consent
-        localStorage.setItem(DRAFT_PREFIX + service.id, JSON.stringify(draft))
-        setDraftSavedAt(
-          new Date().toLocaleTimeString('ru-BY', { hour: '2-digit', minute: '2-digit' }),
-        )
-      }, 400)
-    })
-    return () => {
-      sub.unsubscribe()
-      if (saveTimer.current) window.clearTimeout(saveTimer.current)
-    }
-  }, [watch, service.id])
-
-  const onSubmit = async (data: FormData) => {
-    // TODO шаг 5: записать в «Мои услуги» и уведомления
-    console.info('application submitted', { serviceId: service.id, ...data })
-    localStorage.removeItem(DRAFT_PREFIX + service.id)
-    setIsSubmitted(true)
-  }
-
-  const onSaveAndExit = () => {
-    const values = watch()
-    localStorage.setItem(DRAFT_PREFIX + service.id, JSON.stringify(values))
-    onBack()
-  }
-
-  if (isSubmitted) {
-    return <SuccessScreen service={service} />
-  }
-
-  return (
-    <div className="max-w-2xl mx-auto py-8">
-      <div className="text-sm text-muted mb-6">
-        <button type="button" onClick={onBack} className="hover:text-navy">
-          ← Вернуться к описанию
-        </button>
-      </div>
-
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-navy-deep mb-2">Заполнение заявления</h1>
-        <p className="text-muted">{service.shortTitle}</p>
-      </div>
-
-      <Card>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
-          <div>
-            <label htmlFor="lastName" className="block text-sm font-semibold mb-1">
-              Фамилия <span className="text-danger">*</span>
-            </label>
-            <Input
-              id="lastName"
-              {...register('lastName')}
-              placeholder="Иванов"
-              isError={!!errors.lastName}
-              aria-invalid={!!errors.lastName}
-              aria-describedby={errors.lastName ? 'lastName-error' : undefined}
-            />
-            {errors.lastName && (
-              <p id="lastName-error" className="text-danger text-xs mt-1">
-                {errors.lastName.message}
-              </p>
-            )}
-          </div>
-
-          <div>
-            <label htmlFor="firstName" className="block text-sm font-semibold mb-1">
-              Имя <span className="text-danger">*</span>
-            </label>
-            <Input
-              id="firstName"
-              {...register('firstName')}
-              placeholder="Алексей"
-              isError={!!errors.firstName}
-              aria-invalid={!!errors.firstName}
-            />
-            {errors.firstName && (
-              <p className="text-danger text-xs mt-1">{errors.firstName.message}</p>
-            )}
-          </div>
-
-          <div>
-            <label htmlFor="middleName" className="block text-sm font-semibold mb-1">
-              Отчество
-            </label>
-            <Input id="middleName" {...register('middleName')} placeholder="Сергеевич" />
-          </div>
-
-          <div>
-            <label htmlFor="phone" className="block text-sm font-semibold mb-1">
-              Телефон <span className="text-danger">*</span>
-            </label>
-            <Input
-              id="phone"
-              {...register('phone')}
-              placeholder="+375 29 123-45-67"
-              isError={!!errors.phone}
-              aria-invalid={!!errors.phone}
-            />
-            {errors.phone && <p className="text-danger text-xs mt-1">{errors.phone.message}</p>}
-          </div>
-
-          <div>
-            <label htmlFor="email" className="block text-sm font-semibold mb-1">
-              Email
-            </label>
-            <Input
-              id="email"
-              type="email"
-              {...register('email')}
-              placeholder="example@mail.com"
-              isError={!!errors.email}
-            />
-            {errors.email && <p className="text-danger text-xs mt-1">{errors.email.message}</p>}
-          </div>
-
-          <div>
-            <label htmlFor="comment" className="block text-sm font-semibold mb-1">
-              Комментарий
-            </label>
-            <textarea
-              id="comment"
-              {...register('comment')}
-              placeholder="Дополнительная информация (необязательно)"
-              className="w-full rounded-control border border-line px-3 py-2.5 text-[15px] outline-none focus:border-navy focus:ring-4 focus:ring-navy/12 min-h-24"
-            />
-            {errors.comment && <p className="text-danger text-xs mt-1">{errors.comment.message}</p>}
-          </div>
-
-          <div>
-            <label className="flex gap-2 items-start text-sm">
-              <input type="checkbox" {...register('consent')} className="mt-0.5" />
-              <span>
-                Согласен на обработку персональных данных для оказания услуги.{' '}
-                <span className="text-danger">*</span>
-              </span>
-            </label>
-            {errors.consent && (
-              <p className="text-danger text-xs mt-1">{errors.consent.message}</p>
-            )}
-          </div>
-
-          <div className="pt-4 border-t border-line flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <div className="text-sm text-ok font-semibold min-h-5">
-              {draftSavedAt && `✓ Черновик сохранён ${draftSavedAt}`}
-            </div>
-            <div className="flex gap-2">
-              <Button variant="ghost" type="button" onClick={onSaveAndExit}>
-                Сохранить и выйти
-              </Button>
-              <Button type="submit" disabled={isSubmitting}>
-                Подписать и отправить
-              </Button>
-            </div>
-          </div>
-        </form>
-      </Card>
-    </div>
-  )
-}
-</file>
-
-<file path="src/features/service/SuccessScreen.tsx">
-import { useState } from 'react'
+<file path="src/features/home/LifeSituations.tsx">
 import { Link } from 'react-router-dom'
-import { Button, Card } from '../../design-system'
-import type { Service } from '../../types/service'
+import { Card } from '../../design-system'
+import { lifeSituations } from '../../data/situations'
+import { getSituationIcon } from '../../lib/situationIcons'
 
-export function SuccessScreen({ service }: { service: Service }) {
-  const [rating, setRating] = useState<number | null>(null)
-  const [isRated, setIsRated] = useState(false)
+export function LifeSituations() {
+  // Показываем первые 3 ситуации для превью на главной
+  const featuredSituations = lifeSituations.slice(0, 3)
 
   return (
-    <div className="max-w-xl mx-auto py-12 text-center">
-      <div className="w-20 h-20 bg-[#e6f6ec] text-ok rounded-full flex items-center justify-center mx-auto mb-6">
-        <svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-        </svg>
-      </div>
-
-      <h1 className="text-3xl font-bold text-navy-deep mb-4">Заявление принято!</h1>
-      <p className="text-lg text-ink mb-2">Услуга: {service.shortTitle}</p>
-      
-      <p className="text-muted mb-8">
-        Срок оказания: <strong className="text-ink">{service.timeToComplete}</strong>.<br />
-        Мы пришлем уведомление, когда документ будет готов.
-      </p>
-
-      <div className="flex flex-col gap-3 items-center mb-12">
-        <Link to="/apps">
-          <Button className="w-64">Перейти к моим услугам</Button>
-        </Link>
-        <Link to="/" className="text-sm text-navy hover:underline mt-2">
-          Вернуться на главную
+    <div>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-lg font-bold text-navy-deep">Жизненные ситуации</h2>
+        <Link
+          to="/catalog?view=situations"
+          className="text-sm text-navy hover:underline"
+        >
+          Все ситуации →
         </Link>
       </div>
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        {featuredSituations.map((sit) => (
+          <Link
+            key={sit.id}
+            to={`/situation/${sit.id}`}
+            className="block h-full group"
+          >
+            <Card
+              variant="interactive"
+              className="h-full items-center text-center justify-center p-6 gap-3"
+            >
+              <span className="text-4xl">{getSituationIcon(sit.id)}</span>
+              <span className="font-semibold text-navy-deep text-sm">
+                {sit.title}
+              </span>
+            </Card>
+          </Link>
+        ))}
+      </div>
+    </div>
+  )
+}
+</file>
 
-      <Card className="bg-soft border-line text-left">
-        <h3 className="font-bold text-navy-deep mb-2 text-center">Насколько легко было получить услугу?</h3>
-        {isRated ? (
-          <p className="text-center text-ok font-semibold">Спасибо за ваш отзыв! Это помогает нам становиться лучше.</p>
-        ) : (
-          <div className="flex justify-center gap-2 mt-4">
-            {[1, 2, 3, 4, 5].map(star => (
-              <button
-                key={star}
-                onClick={() => { setRating(star); setIsRated(true) }}
-                className={`w-10 h-10 rounded-full font-bold transition-colors ${
-                  rating && rating >= star ? 'bg-navy text-white' : 'bg-white text-navy border border-navy hover:bg-soft'
-                }`}
-              >
-                {star}
-              </button>
-            ))}
+<file path="src/features/my-services/MyServicesRow.tsx">
+import { Link } from 'react-router-dom'
+import { Badge } from '../../design-system'
+import type { Application } from '../../types/service'
+import { formatWhen, statusClass } from '../../lib/format'
+import { lifeSituations } from '../../data/situations'
+
+type MyServicesRowProps = {
+  app: Application
+  href: string | null
+  onPay: () => void
+  onDownload: () => void
+  help: string
+}
+
+export function MyServicesRow({ app, href, onPay, onDownload, help }: MyServicesRowProps) {
+  const situation = app.situationId
+    ? lifeSituations.find((s) => s.id === app.situationId)
+    : undefined
+
+  return (
+    <tr>
+      <td className="px-4 py-3 align-top">
+        <div className="font-semibold text-navy-deep">{app.title}</div>
+        <div className="text-xs text-muted mt-0.5">№ {app.num}</div>
+        {situation && (
+          <div className="text-xs mt-1.5">
+            <Link
+              to={`/situation/${situation.id}`}
+              className="inline-flex items-center gap-1 text-navy hover:underline"
+              title="Перейти к жизненной ситуации"
+            >
+              <span aria-hidden="true">🧭</span>
+              Из ситуации: {situation.title}
+            </Link>
           </div>
         )}
-      </Card>
-    </div>
+      </td>
+      <td className="px-4 py-3 align-top whitespace-nowrap text-muted">
+        {formatWhen(app.at)}
+      </td>
+      <td className="px-4 py-3 align-top">
+        <Badge className={statusClass(app.status)}>{app.status}</Badge>
+        {help && <div className="text-xs text-muted mt-1 max-w-xs">{help}</div>}
+        {app.comment && (
+          <div className="text-xs text-danger mt-1 max-w-xs">{app.comment}</div>
+        )}
+      </td>
+      <td className="px-4 py-3 align-top">
+        <div className="flex flex-col gap-2 items-end">
+          {app.status === 'Выполнено' && (
+            <button
+              type="button"
+              onClick={onDownload}
+              className="inline-flex items-center justify-center rounded-control px-4 min-h-11 text-sm font-semibold bg-navy text-white hover:bg-navy-deep transition-colors w-full sm:w-auto"
+            >
+              Скачать
+            </button>
+          )}
+          {app.status === 'Ожидает оплаты' && (
+            <button
+              type="button"
+              onClick={onPay}
+              className="inline-flex items-center justify-center rounded-control px-4 min-h-11 text-sm font-semibold bg-navy text-white hover:bg-navy-deep transition-colors w-full sm:w-auto"
+            >
+              Оплатить
+            </button>
+          )}
+          {href && (app.status === 'Черновик' || app.status === 'На проверке') && (
+            <Link
+              to={href}
+              className="inline-flex items-center justify-center rounded-control px-4 min-h-11 text-sm font-semibold border border-navy text-navy hover:bg-soft transition-colors w-full sm:w-auto"
+            >
+              Открыть
+            </Link>
+          )}
+          <Link
+            to={`/status/${app.id}`}
+            className="inline-flex items-center justify-center rounded-control px-4 min-h-11 text-sm font-semibold border border-line text-muted hover:text-navy hover:border-navy transition-colors w-full sm:w-auto"
+          >
+            Детали
+          </Link>
+        </div>
+      </td>
+    </tr>
   )
 }
 </file>
@@ -17282,101 +16982,6 @@ body {
 }
 </file>
 
-<file path="src/types/service.ts">
-export type AuthLevel = 'none' | 'id' | 'ecp'
-
-export interface Service {
-  id: string
-  code: string              // «3.05.03» — вторично, мелким шрифтом
-  shortTitle: string        // «Справка о доходах» — главное
-  officialTitle: string     // «Сведения о доходах физического лица...»
-  plainDescription: string  // 1–2 предложения по-человечески
-  official: string          // полное юридическое — в аккордеон
-  category: string          // id категории (ip/law/edu/...)
-  categoryTitle: string     // «Налоги и торговля» — для отображения
-  situations: string[]      // ['tax', 'work', 'housing']
-  authLevel: AuthLevel
-  timeToComplete: string
-  cost: string
-  format: string
-  orgName: string
-  orgUnp: string
-  steps: string[]
-}
-
-export interface Situation {
-  id: string
-  title: string
-  hint: string
-}
-
-export interface Category {
-  id: string
-  title: string
-  desc: string
-  icon: string
-}
-
-export type ApplicationStatus =
-  | 'Черновик'
-  | 'На проверке'
-  | 'Ожидает оплаты'
-  | 'Выполнено'
-  | 'Отозвано'
-  | 'Отказано'
-
-export interface Application {
-  id: string
-  num: string
-  title: string
-  serviceId: string
-  initiator: string
-  status: ApplicationStatus
-  at: string
-  comment: string
-}
-
-export type NotificationKind = 'legal' | 'info'
-
-export interface AppNotification {
-  id: string
-  kind: NotificationKind
-  title: string
-  body: string
-  at: string
-  archived: boolean
-}
-
-export interface Agency {
-  id: string;
-  name: string;
-  shortName: string;
-  // Можно добавить logo или ссылку на сайт
-}
-
-export type SituationStep = {
-  id: string;
-  order: number;
-  title: string; // «Подать заявление на регистрацию»
-  description?: string; // «Понадобится паспорт и документ на авто»
-  serviceId?: string; // Ссылка на ID услуги из вашего data/services.ts (если шаг онлайн)
-  externalAction?: string; // Если процедура офлайн (например, «Получить медсправку»)
-  agencyId: string; // Кто оказывает
-  estimatedTime?: string;
-  isOptional?: boolean;
-};
-
-export interface LifeSituation {
-  id: string;
-  title: string; // «Покупка автомобиля»
-  painPoint: string; // «Вы купили машину и не знаете, с чего начать»
-  outcome: string; // «Авто зарегистрировано, страховка оформлена»
-  categoryIds: string[]; // ['transport', 'tax']
-  steps: SituationStep[];
-  faq?: { question: string; answer: string }[];
-}
-</file>
-
 <file path=".gitignore">
 # Logs
 logs
@@ -17500,6 +17105,452 @@ export default defineConfig([
 ```
 </file>
 
+<file path="src/data/situations.ts">
+import type { LifeSituation } from '../types/service'
+
+export const lifeSituations: LifeSituation[] = [
+  {
+    id: 'birth',
+    title: 'Рождение ребёнка',
+    painPoint: 'Вы стали родителями и не знаете, какие документы оформить в первую очередь.',
+    outcome: 'Свидетельство о рождении получено, ребёнок прописан, пособия назначены.',
+    categoryIds: ['family', 'social', 'docs'],
+    steps: [
+      {
+        id: 'birth-1',
+        order: 1,
+        title: 'Зарегистрировать рождение в ЗАГС',
+        description: 'Получите свидетельство о рождении. Это можно сделать в роддоме или онлайн.',
+        serviceId: '200-5-1', // Регистрация рождения
+        agencyId: 'justice',
+        estimatedTime: '1 день',
+      },
+      {
+        id: 'birth-2',
+        order: 2,
+        title: 'Прописать ребёнка',
+        description: 'Зарегистрируйте ребёнка по месту жительства родителей.',
+        serviceId: '200-13-1', // Регистрация по месту жительства
+        agencyId: 'mvd',
+        estimatedTime: '1–3 дня',
+      },
+      {
+        id: 'birth-3',
+        order: 3,
+        title: 'Оформить пособие при рождении',
+        description: 'Единовременная выплата от государства.',
+        serviceId: '200-2-6', // Пособие в связи с рождением ребенка
+        agencyId: 'mintrud',
+        estimatedTime: 'до 10 дней',
+      },
+      {
+        id: 'birth-4',
+        order: 4,
+        title: 'Оформить пособие по уходу до 3 лет',
+        description: 'Ежемесячная выплата на ребёнка.',
+        serviceId: '200-2-9', // Пособие по уходу за ребенком в возрасте до 3 лет
+        agencyId: 'mintrud',
+        estimatedTime: 'до 10 дней',
+      },
+      {
+        id: 'birth-5',
+        order: 5,
+        title: 'Поставить в очередь в детский сад',
+        description: 'Можно сделать сразу после получения свидетельства о рождении.',
+        serviceId: '200-6-6', // Постановка на учет детей в целях получения дошкольного образования
+        agencyId: 'minedu',
+        estimatedTime: '15 минут',
+        isOptional: true,
+      },
+    ],
+    faq: [
+      {
+        question: 'Что делать, если мы не состоим в браке?',
+        answer:
+          'Потребуется совместное заявление в ЗАГС или установление отцовства через суд, если отец не согласен.',
+      },
+    ],
+  },
+  {
+    id: 'buy-car',
+    title: 'Покупка автомобиля',
+    painPoint: 'Купили машину, но не знаете, как её правильно оформить и проверить.',
+    outcome: 'Автомобиль проверен, зарегистрирован на вас, страховка есть.',
+    categoryIds: ['transport', 'law'],
+    steps: [
+      {
+        id: 'car-1',
+        order: 1,
+        title: 'Проверить автомобиль по VIN',
+        description: 'Убедитесь, что машина не в розыске и не в залоге.',
+        serviceId: '3-59-01', // Проверка нахождения ТС в розыске по VIN
+        agencyId: 'mvd',
+        estimatedTime: '5 минут',
+      },
+      {
+        id: 'car-2',
+        order: 2,
+        title: 'Проверить наличие страховки (ОСАГО)',
+        description: 'Убедитесь, что у продавца есть действующий полис.',
+        serviceId: '3-53-01', // Запрос на проверку договора ОСАГО
+        agencyId: 'mvd',
+        estimatedTime: '5 минут',
+      },
+      {
+        id: 'car-3',
+        order: 3,
+        title: 'Заключить договор купли-продажи',
+        description: 'Оформите договор в 3 экземплярах (один для ГАИ).',
+        externalAction: 'Оформить договор вручную или через нотариуса',
+        agencyId: 'justice',
+        estimatedTime: '30 минут',
+      },
+      {
+        id: 'car-4',
+        order: 4,
+        title: 'Зарегистрировать авто в ГАИ',
+        description: 'Поставьте машину на учёт на ваше имя.',
+        serviceId: '200-15-11', // Государственная регистрация ТС
+        agencyId: 'mvd',
+        estimatedTime: '1 день',
+      },
+    ],
+  },
+  {
+    id: 'university',
+    title: 'Поступление в вуз',
+    painPoint: 'Заканчиваете школу и хотите подать документы в университет.',
+    outcome: 'Документы поданы, вы зачислены.',
+    categoryIds: ['education'],
+    steps: [
+      {
+        id: 'uni-1',
+        order: 1,
+        title: 'Проверить документы об образовании',
+        description: 'Убедитесь, что ваш аттестат или диплом в порядке.',
+        serviceId: '3-101-01', // Получение сведений о документах об образовании
+        agencyId: 'minedu',
+        estimatedTime: '15 минут',
+      },
+      {
+        id: 'uni-2',
+        order: 2,
+        title: 'Подать документы в приёмную комиссию',
+        description: 'В большинстве вузов это делается через личный кабинет абитуриента.',
+        externalAction: 'Подать документы на сайте вуза',
+        agencyId: 'minedu',
+        estimatedTime: '1 день',
+      },
+    ],
+  },
+  {
+    id: 'kindergarten',
+    title: 'Устройство в детский сад',
+    painPoint: 'Ребёнку пора в садик, но очередь и оформление кажутся сложными.',
+    outcome: 'Ребёнок в очереди, место получено, документы оформлены.',
+    categoryIds: ['family', 'education'],
+    steps: [
+      {
+        id: 'kg-1',
+        order: 1,
+        title: 'Поставить ребёнка в очередь',
+        description: 'Подайте заявление на постановку в очередь в детский сад онлайн.',
+        serviceId: '200-6-6', // Постановка на учет детей
+        agencyId: 'minedu',
+        estimatedTime: '15 минут',
+      },
+      {
+        id: 'kg-2',
+        order: 2,
+        title: 'Проверить статус в очереди',
+        description: 'Узнайте, на каком месте вы находитесь.',
+        serviceId: '3-08-02', // Сведения о состоянии в очереди
+        agencyId: 'minedu',
+        estimatedTime: '5 минут',
+        isOptional: true,
+      },
+      {
+        id: 'kg-3',
+        order: 3,
+        title: 'Получить направление в садик',
+        description: 'Когда подойдёт очередь, вы получите направление.',
+        serviceId: '200-6-7', // Выдача направления в учреждение образования
+        agencyId: 'minedu',
+        estimatedTime: '5 дней',
+      },
+      {
+        id: 'kg-4',
+        order: 4,
+        title: 'Пройти медосмотр',
+        description: 'Для оформления в садик потребуется медицинская справка.',
+        externalAction: 'Обратиться в поликлинику по месту жительства',
+        agencyId: 'minzdrav',
+        estimatedTime: '1-2 дня',
+      },
+    ],
+  },
+  {
+    id: 'retirement',
+    title: 'Выход на пенсию',
+    painPoint: 'Приближается пенсионный возраст, и вы хотите заранее подготовить документы.',
+    outcome: 'Пенсия назначена, справки получены, льготы оформлены.',
+    categoryIds: ['social', 'finance'],
+    steps: [
+      {
+        id: 'retire-1',
+        order: 1,
+        title: 'Проверить свой стаж и заработок',
+        description: 'Закажите выписку из ФСЗН, чтобы убедиться, что все данные верны.',
+        serviceId: '3-25-09', // Выписка из ИЛС
+        agencyId: 'mintrud',
+        estimatedTime: '1 день',
+      },
+      {
+        id: 'retire-2',
+        order: 2,
+        title: 'Подать заявление на пенсию',
+        description: 'Обратитесь в орган по труду и социальной защите.',
+        externalAction: 'Подать заявление в службу по труду, занятости и соцзащите',
+        agencyId: 'mintrud',
+        estimatedTime: '1 день',
+      },
+      {
+        id: 'retire-3',
+        order: 3,
+        title: 'Получить пенсионное удостоверение',
+        description: 'Документ, подтверждающий ваш статус.',
+        serviceId: '200-3-14', // Выдача пенсионного удостоверения
+        agencyId: 'mintrud',
+        estimatedTime: '10 дней',
+      },
+      {
+        id: 'retire-4',
+        order: 4,
+        title: 'Узнать размер пенсии',
+        description: 'Получите актуальную справку о размере вашей пенсии.',
+        serviceId: '200-2-26ф', // Справка о размере пенсии
+        agencyId: 'mintrud',
+        estimatedTime: '1 день',
+        isOptional: true,
+      },
+    ],
+  },
+  {
+    id: 'start-business',
+    title: 'Открытие бизнеса (ИП)',
+    painPoint: 'Хотите начать своё дело, но не знаете, с чего начать и какие документы нужны.',
+    outcome: 'ИП зарегистрировано, счёт открыт, можно работать легально.',
+    categoryIds: ['business', 'law'],
+    steps: [
+      {
+        id: 'biz-1',
+        order: 1,
+        title: 'Зарегистрироваться как ИП',
+        description: 'Подайте документы на государственную регистрацию.',
+        serviceId: '200-4-2', // Государственная регистрация ИП
+        agencyId: 'justice',
+        estimatedTime: '1 день',
+      },
+      {
+        id: 'biz-2',
+        order: 2,
+        title: 'Поставиться на учёт в налоговой',
+        description: 'Это происходит автоматически после регистрации, но стоит проверить.',
+        serviceId: '3-01-01', // Сведения о юридических лицах и ИП в ЕГР
+        agencyId: 'mns',
+        estimatedTime: '5 минут',
+      },
+      {
+        id: 'biz-3',
+        order: 3,
+        title: 'Получить ЭЦП для бизнеса',
+        description: 'Электронная подпись нужна для сдачи отчётности.',
+        serviceId: '6-0-00', // Дистанционное издание сертификата ИП
+        agencyId: 'nces',
+        estimatedTime: '1 день',
+      },
+      {
+        id: 'biz-4',
+        order: 4,
+        title: 'Проверить деловую репутацию',
+        description: 'Перед сделками проверяйте своих контрагентов.',
+        serviceId: '3-36-01', // Проверка деловой репутации
+        agencyId: 'nces',
+        estimatedTime: 'Сразу',
+        isOptional: true,
+      },
+    ],
+  },
+  {
+    id: 'real-estate',
+    title: 'Покупка/продажа недвижимости',
+    painPoint: 'Сделка с квартирой или домом — это стресс и множество юридических тонкостей.',
+    outcome: 'Сделка проверена, документы оформлены, право собственности зарегистрировано.',
+    categoryIds: ['housing', 'finance'],
+    steps: [
+      {
+        id: 're-1',
+        order: 1,
+        title: 'Проверить объект недвижимости',
+        description: 'Убедитесь в отсутствии обременений и прав третьих лиц.',
+        serviceId: '3-02-01', // Информация о правах и ограничениях на земельный участок
+        agencyId: 'goskomim',
+        estimatedTime: '5 минут',
+      },
+      {
+        id: 're-2',
+        order: 2,
+        title: 'Получить справку о стоимости',
+        description: 'Для расчёта налогов при продаже может потребоваться справка.',
+        serviceId: '3-02-05', // Сведения о кадастровой стоимости участка
+        agencyId: 'goskomim',
+        estimatedTime: 'Сразу',
+        isOptional: true,
+      },
+      {
+        id: 're-3',
+        order: 3,
+        title: 'Зарегистрировать сделку',
+        description: 'Государственная регистрация перехода прав собственности.',
+        serviceId: '200-22', // Регистрация недвижимости
+        agencyId: 'goskomim',
+        estimatedTime: '5-15 дней',
+      },
+      {
+        id: 're-4',
+        order: 4,
+        title: 'Оформить договор найма (если нужно)',
+        description: 'Если вы сдаёте или снимаете жильё, договор нужно зарегистрировать.',
+        serviceId: '200-1-8', // Регистрация договора найма
+        agencyId: 'goskomim',
+        estimatedTime: '1 день',
+        isOptional: true,
+      },
+    ],
+  },
+  {
+    id: 'change-residence',
+    title: 'Смена места жительства',
+    painPoint: 'Переехали в другой город или квартиру, и нужно обновить все документы.',
+    outcome: 'Регистрация обновлена, все инстанции уведомлены.',
+    categoryIds: ['social', 'docs'],
+    steps: [
+      {
+        id: 'res-1',
+        order: 1,
+        title: 'Сняться с регистрационного учёта',
+        description: 'Обязательно сделайте это по старому месту жительства.',
+        serviceId: '200-13-3', // Снятие с регистрационного учета по месту пребывания
+        agencyId: 'mvd',
+        estimatedTime: '1 день',
+      },
+      {
+        id: 'res-2',
+        order: 2,
+        title: 'Зарегистрироваться по новому месту жительства',
+        description: 'Подайте заявление на регистрацию по новому адресу.',
+        serviceId: '200-13-1', // Регистрация по месту жительства
+        agencyId: 'mvd',
+        estimatedTime: '1-3 дня',
+      },
+      {
+        id: 'res-3',
+        order: 3,
+        title: 'Проверить данные в регистре',
+        description: 'Убедитесь, что ваши данные обновлены во всех системах.',
+        serviceId: '3-09-01', // Основные персональные данные
+        agencyId: 'nces',
+        estimatedTime: 'Сразу',
+        isOptional: true,
+      },
+    ],
+  },
+  {
+    id: 'loss-of-relative',
+    title: 'Утрата близкого',
+    painPoint: 'Смерть близкого человека — это не только горе, но и множество юридических формальностей.',
+    outcome: 'Все документы оформлены, наследство принято.',
+    categoryIds: ['social', 'law'],
+    steps: [
+      {
+        id: 'loss-1',
+        order: 1,
+        title: 'Зарегистрировать смерть в ЗАГС',
+        description: 'Получите свидетельство о смерти.',
+        serviceId: '200-5-5', // Регистрация смерти
+        agencyId: 'justice',
+        estimatedTime: '1 день',
+      },
+      {
+        id: 'loss-2',
+        order: 2,
+        title: 'Оформить пособие на погребение',
+        description: 'Государство компенсирует часть расходов на похороны.',
+        serviceId: '200-2-35', // Выплата пособия на погребение
+        agencyId: 'mintrud',
+        estimatedTime: '1 день',
+      },
+      {
+        id: 'loss-3',
+        order: 3,
+        title: 'Получить справку о месте захоронения',
+        description: 'Если могила находится в другом месте, это поможет её найти.',
+        serviceId: '200-2-37', // Справка о месте захоронения
+        agencyId: 'nces',
+        estimatedTime: '5 дней',
+        isOptional: true,
+      },
+      {
+        id: 'loss-4',
+        order: 4,
+        title: 'Подать заявление на наследство',
+        description: 'Обратитесь к нотариусу в течение 6 месяцев.',
+        externalAction: 'Обратиться к нотариусу по месту открытия наследства',
+        agencyId: 'justice',
+        estimatedTime: '1 день',
+      },
+    ],
+  },
+  {
+    id: 'lost-documents',
+    title: 'Потеря документов',
+    painPoint: 'Утеря паспорта или других важных документов — это серьёзная проблема.',
+    outcome: 'Документы восстановлены, все системы уведомлены.',
+    categoryIds: ['docs', 'law'],
+    steps: [
+      {
+        id: 'lost-1',
+        order: 1,
+        title: 'Подать заявление в милицию',
+        description: 'Это необходимо для восстановления документов.',
+        externalAction: 'Обратиться в ближайший отдел милиции',
+        agencyId: 'mvd',
+        estimatedTime: '30 минут',
+      },
+      {
+        id: 'lost-2',
+        order: 2,
+        title: 'Восстановить паспорт',
+        description: 'Подайте заявление на выдачу нового паспорта.',
+        serviceId: '200-12-1', // Выдача, обмен паспорта
+        agencyId: 'mvd',
+        estimatedTime: '15 дней',
+      },
+      {
+        id: 'lost-3',
+        order: 3,
+        title: 'Проверить статус документа',
+        description: 'Убедитесь, что старый паспорт недействителен.',
+        serviceId: '3-75-01', // Проверка действительности документов
+        agencyId: 'mvd',
+        estimatedTime: 'Сразу',
+        isOptional: true,
+      },
+    ],
+  },
+]
+</file>
+
 <file path="src/features/about/AboutPage.tsx">
 import { Accordion, Card, Button } from '../../design-system'
 import { Link } from 'react-router-dom'
@@ -17566,94 +17617,405 @@ export function AboutPage() {
 }
 </file>
 
-<file path="src/features/auth/LoginPage.tsx">
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { Button, Input, Card } from '../../design-system'
-import { useAuth } from '../../contexts/AuthContext'
+<file path="src/features/my-services/MyServicesPage.tsx">
+import { useApplications } from '../../lib/applications'
+import { services } from '../../data/services'
+import { statusHelp } from '../../lib/format'
+import { downloadDemoPdf } from '../../lib/download'
+import { MyServicesRow } from './MyServicesRow'
 
-export function LoginPage() {
-  const [step, setStep] = useState<1 | 2>(1)
-  const [identifier, setIdentifier] = useState('')
-  const [code, setCode] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
-  const navigate = useNavigate()
-  const { login } = useAuth()
+export function MyServicesPage() {
+  const { apps, update } = useApplications()
 
-  const handleSendCode = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!identifier) return
-    setIsLoading(true)
-    // Имитация запроса к серверу
-    setTimeout(() => {
-      setIsLoading(false)
-      setStep(2)
-    }, 800)
+  return (
+    <div className="max-w-5xl mx-auto pb-12">
+      <header className="mb-6">
+        <h1 className="text-3xl font-bold text-navy-deep mb-2">Мои услуги</h1>
+        <p className="text-muted max-w-2xl">
+          Заявления, которые вы начали или отправили. Быстрые действия — прямо в таблице.
+        </p>
+      </header>
+
+      <div className="bg-white border border-line rounded-card overflow-x-auto">
+        <table className="w-full text-left text-sm responsive-table">
+          <thead className="bg-soft text-muted text-xs uppercase tracking-wider">
+            <tr>
+              <th className="px-4 py-3 font-semibold">Услуга</th>
+              <th className="px-4 py-3 font-semibold">Дата</th>
+              <th className="px-4 py-3 font-semibold">Статус</th>
+              <th className="px-4 py-3 font-semibold text-right">Действия</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-line">
+            {apps.map((app) => {
+              const svc = services.find((s) => s.id === app.serviceId)
+              return (
+                <MyServicesRow
+                  key={app.id}
+                  app={app}
+                  href={svc ? `/service/${svc.id}` : null}
+                  onPay={() => update(app.id, { status: 'Выполнено' })}
+                  onDownload={() => downloadDemoPdf(app)}
+                  help={statusHelp(app.status)}
+                />
+              )
+            })}
+          </tbody>
+        </table>
+
+        {apps.length === 0 && (
+          <div className="text-center text-muted py-12">
+            Пока нет ни одной заявки. Откройте{' '}
+            <a href="#/catalog" className="text-navy hover:underline">
+              каталог услуг
+            </a>{' '}
+            или{' '}
+            <a href="#/catalog?view=situations" className="text-navy hover:underline">
+              жизненные ситуации
+            </a>
+            , чтобы начать.
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+</file>
+
+<file path="src/features/service/ApplicationForm.tsx">
+import { useEffect, useRef, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
+import { Button, Card, Input } from '../../design-system'
+import type { Service } from '../../types/service'
+import { SuccessScreen } from './SuccessScreen'
+import { useApplications } from '../../lib/applications'
+
+// Схема валидации (эвристика #9 — понятные сообщения рядом с полем)
+const PHONE_RE = /^\+375\s?\(?(?:17|25|29|33|44)\)?[\s-]?\d{3}[\s-]?\d{2}[\s-]?\d{2}$/
+
+const schema = z.object({
+  lastName: z.string().trim().min(2, 'Укажите фамилию, минимум 2 буквы'),
+  firstName: z.string().trim().min(2, 'Укажите имя, минимум 2 буквы'),
+  middleName: z.string().trim().optional().or(z.literal('')),
+  phone: z.string().trim().regex(PHONE_RE, 'Формат: +375 29 000-00-00'),
+  email: z.string().trim().email('Похоже на неверный адрес').optional().or(z.literal('')),
+  comment: z.string().max(500, 'Не больше 500 символов').optional().or(z.literal('')),
+  consent: z.literal(true, {
+    error: () => ({ message: 'Нужно согласие, чтобы отправить заявление' }),
+  }),
+})
+
+type FormData = z.infer<typeof schema>
+
+const DRAFT_PREFIX = 'epasluga-draft:'
+
+function readDraft(id: string): Partial<FormData> | null {
+  try {
+    return JSON.parse(localStorage.getItem(DRAFT_PREFIX + id) || 'null')
+  } catch {
+    return null
+  }
+}
+
+type ApplicationFormProps = {
+  service: Service
+  onBack: () => void
+  situationId?: string
+  situationStepId?: string
+}
+
+export function ApplicationForm({
+  service,
+  onBack,
+  situationId,
+  situationStepId,
+}: ApplicationFormProps) {
+  const [isSubmitted, setIsSubmitted] = useState(false)
+  const [draftSavedAt, setDraftSavedAt] = useState<string | null>(null)
+  const [generatedNum, setGeneratedNum] = useState<string>('')
+  const saveTimer = useRef<number | null>(null)
+  const { add } = useApplications()
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<FormData>({
+    resolver: zodResolver(schema),
+    mode: 'onBlur',
+    defaultValues: {
+      lastName: '', firstName: '', middleName: '',
+      phone: '', email: '', comment: '',
+    },
+  })
+
+  useEffect(() => {
+    const saved = readDraft(service.id)
+    if (saved) {
+      reset(saved as FormData)
+      setDraftSavedAt('черновик восстановлен')
+    }
+  }, [service.id, reset])
+
+  useEffect(() => {
+    const sub = watch((values) => {
+      if (saveTimer.current) window.clearTimeout(saveTimer.current)
+      saveTimer.current = window.setTimeout(() => {
+        const draft = { ...values }
+        delete draft.consent
+        localStorage.setItem(DRAFT_PREFIX + service.id, JSON.stringify(draft))
+        setDraftSavedAt(
+          new Date().toLocaleTimeString('ru-BY', { hour: '2-digit', minute: '2-digit' }),
+        )
+      }, 400)
+    })
+    return () => {
+      sub.unsubscribe()
+      if (saveTimer.current) window.clearTimeout(saveTimer.current)
+    }
+  }, [watch, service.id])
+
+  const onSubmit = async (data: FormData) => {
+    const num = String(Date.now()).slice(-12)
+    setGeneratedNum(num)
+
+    add({
+      id: 'a' + Date.now(),
+      num,
+      title: service.shortTitle,
+      serviceId: service.id,
+      initiator: service.orgName,
+      status: 'На проверке',
+      at: new Date().toISOString(),
+      comment: data.comment || '',
+      situationId,
+      situationStepId,
+    })
+
+    localStorage.removeItem(DRAFT_PREFIX + service.id)
+    setIsSubmitted(true)
   }
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!code) return
-    setIsLoading(true)
-    // Имитация проверки кода
-    setTimeout(() => {
-      login()
-      navigate('/')
-    }, 800)
+  const onSaveAndExit = () => {
+    const values = watch()
+    localStorage.setItem(DRAFT_PREFIX + service.id, JSON.stringify(values))
+    onBack()
+  }
+
+  if (isSubmitted) {
+    return (
+      <SuccessScreen
+        service={service}
+        applicationNum={generatedNum}
+        situationId={situationId}
+      />
+    )
   }
 
   return (
-    <div className="max-w-md mx-auto py-12">
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-navy-deep mb-2">Вход в Е-Паслуга</h1>
-        <p className="text-muted">Используйте ID-карту или номер телефона</p>
+    <div className="max-w-2xl mx-auto py-8">
+      <div className="text-sm text-muted mb-6">
+        <button type="button" onClick={onBack} className="hover:text-navy">
+          ← Вернуться к описанию
+        </button>
       </div>
 
-      <Card className="p-6 md:p-8 shadow-lg border-line">
-        {step === 1 ? (
-          <form onSubmit={handleSendCode} className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
-            <div>
-              <label className="block text-sm font-semibold mb-2">Номер телефона или ID-карты</label>
-              <Input
-                type="text"
-                placeholder="+375 (XX) XXX-XX-XX"
-                value={identifier}
-                onChange={(e) => setIdentifier(e.target.value)}
-                className="h-12"
-                autoFocus
-              />
-              <p className="text-xs text-muted mt-2">В демо-режиме введите любые данные</p>
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-navy-deep mb-2">Заполнение заявления</h1>
+        <p className="text-muted">{service.shortTitle}</p>
+      </div>
+
+      <Card>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
+          <div>
+            <label htmlFor="lastName" className="block text-sm font-semibold mb-1">
+              Фамилия <span className="text-danger">*</span>
+            </label>
+            <Input
+              id="lastName"
+              {...register('lastName')}
+              placeholder="Иванов"
+              isError={!!errors.lastName}
+              aria-invalid={!!errors.lastName}
+              aria-describedby={errors.lastName ? 'lastName-error' : undefined}
+            />
+            {errors.lastName && (
+              <p id="lastName-error" className="text-danger text-xs mt-1">
+                {errors.lastName.message}
+              </p>
+            )}
+          </div>
+
+          <div>
+            <label htmlFor="firstName" className="block text-sm font-semibold mb-1">
+              Имя <span className="text-danger">*</span>
+            </label>
+            <Input
+              id="firstName"
+              {...register('firstName')}
+              placeholder="Алексей"
+              isError={!!errors.firstName}
+              aria-invalid={!!errors.firstName}
+            />
+            {errors.firstName && (
+              <p className="text-danger text-xs mt-1">{errors.firstName.message}</p>
+            )}
+          </div>
+
+          <div>
+            <label htmlFor="middleName" className="block text-sm font-semibold mb-1">
+              Отчество
+            </label>
+            <Input id="middleName" {...register('middleName')} placeholder="Сергеевич" />
+          </div>
+
+          <div>
+            <label htmlFor="phone" className="block text-sm font-semibold mb-1">
+              Телефон <span className="text-danger">*</span>
+            </label>
+            <Input
+              id="phone"
+              {...register('phone')}
+              placeholder="+375 29 123-45-67"
+              isError={!!errors.phone}
+              aria-invalid={!!errors.phone}
+            />
+            {errors.phone && <p className="text-danger text-xs mt-1">{errors.phone.message}</p>}
+          </div>
+
+          <div>
+            <label htmlFor="email" className="block text-sm font-semibold mb-1">
+              Email
+            </label>
+            <Input
+              id="email"
+              type="email"
+              {...register('email')}
+              placeholder="example@mail.com"
+              isError={!!errors.email}
+            />
+            {errors.email && <p className="text-danger text-xs mt-1">{errors.email.message}</p>}
+          </div>
+
+          <div>
+            <label htmlFor="comment" className="block text-sm font-semibold mb-1">
+              Комментарий
+            </label>
+            <textarea
+              id="comment"
+              {...register('comment')}
+              placeholder="Дополнительная информация (необязательно)"
+              className="w-full rounded-control border border-line px-3 py-2.5 text-[15px] outline-none focus:border-navy focus:ring-4 focus:ring-navy/12 min-h-24"
+            />
+            {errors.comment && <p className="text-danger text-xs mt-1">{errors.comment.message}</p>}
+          </div>
+
+          <div>
+            <label className="flex gap-2 items-start text-sm">
+              <input type="checkbox" {...register('consent')} className="mt-0.5" />
+              <span>
+                Согласен на обработку персональных данных для оказания услуги.{' '}
+                <span className="text-danger">*</span>
+              </span>
+            </label>
+            {errors.consent && (
+              <p className="text-danger text-xs mt-1">{errors.consent.message}</p>
+            )}
+          </div>
+
+          <div className="pt-4 border-t border-line flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div className="text-sm text-ok font-semibold min-h-5">
+              {draftSavedAt && `✓ Черновик сохранён ${draftSavedAt}`}
             </div>
-            <Button type="submit" className="w-full h-12 text-base" disabled={isLoading || !identifier}>
-              {isLoading ? 'Отправка...' : 'Получить код'}
-            </Button>
-          </form>
+            <div className="flex gap-2">
+              <Button variant="ghost" type="button" onClick={onSaveAndExit}>
+                Сохранить и выйти
+              </Button>
+              <Button type="submit" disabled={isSubmitting}>
+                Подписать и отправить
+              </Button>
+            </div>
+          </div>
+        </form>
+      </Card>
+    </div>
+  )
+}
+</file>
+
+<file path="src/features/service/SuccessScreen.tsx">
+import { useState } from 'react'
+import { Link } from 'react-router-dom'
+import { Button, Card } from '../../design-system'
+import type { Service } from '../../types/service'
+
+type SuccessScreenProps = {
+  service: Service
+  applicationNum?: string
+  situationId?: string
+}
+
+export function SuccessScreen({ service, applicationNum, situationId }: SuccessScreenProps) {
+  const [rating, setRating] = useState<number | null>(null)
+  const [isRated, setIsRated] = useState(false)
+
+  return (
+    <div className="max-w-xl mx-auto py-12 text-center">
+      <div className="w-20 h-20 bg-[#e6f6ec] text-ok rounded-full flex items-center justify-center mx-auto mb-6">
+        <svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+        </svg>
+      </div>
+
+      <h1 className="text-3xl font-bold text-navy-deep mb-4">Заявление принято!</h1>
+      <p className="text-lg text-ink mb-2">Услуга: {service.shortTitle}</p>
+      {applicationNum && (
+        <p className="text-sm text-muted mb-2">Номер заявления: <span className="font-mono">{applicationNum}</span></p>
+      )}
+
+      <p className="text-muted mb-8">
+        Срок оказания: <strong className="text-ink">{service.timeToComplete}</strong>.<br />
+        Мы пришлем уведомление, когда документ будет готов.
+      </p>
+
+      <div className="flex flex-col gap-3 items-center mb-12">
+        {situationId && (
+          <Link to={`/situation/${situationId}`} className="w-64">
+            <Button className="w-full">Вернуться к ситуации</Button>
+          </Link>
+        )}
+        <Link to="/apps" className="w-64">
+          <Button variant={situationId ? 'ghost' : 'primary'} className="w-full">
+            Перейти к моим услугам
+          </Button>
+        </Link>
+        <Link to="/" className="text-sm text-navy hover:underline mt-2">
+          Вернуться на главную
+        </Link>
+      </div>
+
+      <Card className="bg-soft border-line text-left">
+        <h3 className="font-bold text-navy-deep mb-2 text-center">Насколько легко было получить услугу?</h3>
+        {isRated ? (
+          <p className="text-center text-ok font-semibold">Спасибо за ваш отзыв! Это помогает нам становиться лучше.</p>
         ) : (
-          <form onSubmit={handleLogin} className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-            <div>
-              <button 
-                type="button" 
-                onClick={() => setStep(1)} 
-                className="text-sm text-navy hover:underline mb-4 flex items-center gap-1"
+          <div className="flex justify-center gap-2 mt-4">
+            {[1, 2, 3, 4, 5].map(star => (
+              <button
+                key={star}
+                onClick={() => { setRating(star); setIsRated(true) }}
+                className={`w-10 h-10 rounded-full font-bold transition-colors ${
+                  rating && rating >= star ? 'bg-navy text-white' : 'bg-white text-navy border border-navy hover:bg-soft'
+                }`}
               >
-                ← Изменить номер
+                {star}
               </button>
-              <label className="block text-sm font-semibold mb-2">Код из SMS</label>
-              <Input
-                type="text"
-                placeholder="Введите 4 цифры"
-                value={code}
-                onChange={(e) => setCode(e.target.value)}
-                className="h-12 text-center text-2xl tracking-[0.5em]"
-                maxLength={4}
-                autoFocus
-              />
-              <p className="text-xs text-muted mt-2">Демо-код: 1234</p>
-            </div>
-            <Button type="submit" className="w-full h-12 text-base" disabled={isLoading || code.length < 4}>
-              {isLoading ? 'Проверка...' : 'Войти в кабинет'}
-            </Button>
-          </form>
+            ))}
+          </div>
         )}
       </Card>
     </div>
@@ -17884,6 +18246,116 @@ export function SupportPage() {
 }
 </file>
 
+<file path="src/types/service.ts">
+export type AuthLevel = 'none' | 'id' | 'ecp'
+
+export interface Service {
+  id: string
+  code: string              // «3.05.03» — вторично, мелким шрифтом
+  shortTitle: string        // «Справка о доходах» — главное
+  officialTitle: string     // «Сведения о доходах физического лица...»
+  plainDescription: string  // 1–2 предложения по-человечески
+  official: string          // полное юридическое — в аккордеон
+  category: string          // id категории (ip/law/edu/...)
+  categoryTitle: string     // «Налоги и торговля» — для отображения
+  situations: string[]      // ['tax', 'work', 'housing']
+  authLevel: AuthLevel
+  timeToComplete: string
+  cost: string
+  format: string
+  orgName: string
+  orgUnp: string
+  steps: string[]
+}
+
+export interface Situation {
+  id: string
+  title: string
+  hint: string
+}
+
+export interface Category {
+  id: string
+  title: string
+  desc: string
+  icon: string
+}
+
+export type ApplicationStatus =
+  | 'Черновик'
+  | 'На проверке'
+  | 'Ожидает оплаты'
+  | 'Выполнено'
+  | 'Отозвано'
+  | 'Отказано'
+
+export interface Application {
+  id: string
+  num: string
+  title: string
+  serviceId: string
+  initiator: string
+  status: ApplicationStatus
+  at: string
+  comment: string
+}
+
+export type NotificationKind = 'legal' | 'info'
+
+export interface AppNotification {
+  id: string
+  kind: NotificationKind
+  title: string
+  body: string
+  at: string
+  archived: boolean
+}
+
+export interface Agency {
+  id: string;
+  name: string;
+  shortName: string;
+  // Можно добавить logo или ссылку на сайт
+}
+
+export type SituationStep = {
+  id: string;
+  order: number;
+  title: string; // «Подать заявление на регистрацию»
+  description?: string; // «Понадобится паспорт и документ на авто»
+  serviceId?: string; // Ссылка на ID услуги из вашего data/services.ts (если шаг онлайн)
+  externalAction?: string; // Если процедура офлайн (например, «Получить медсправку»)
+  agencyId: string; // Кто оказывает
+  estimatedTime?: string;
+  isOptional?: boolean;
+};
+
+export interface LifeSituation {
+  id: string;
+  title: string; // «Покупка автомобиля»
+  painPoint: string; // «Вы купили машину и не знаете, с чего начать»
+  outcome: string; // «Авто зарегистрировано, страховка оформлена»
+  categoryIds: string[]; // ['transport', 'tax']
+  steps: SituationStep[];
+  faq?: { question: string; answer: string }[];
+}
+
+export interface Application {
+  id: string
+  num: string
+  title: string
+  serviceId: string
+  initiator: string
+  status: ApplicationStatus
+  at: string
+  comment: string
+  /** Если заявление оформлено из шага жизненной ситуации — её id. */
+  situationId?: string
+  /** id шага в этой ситуации (чтобы подсветить конкретный шаг). */
+  situationStepId?: string
+}
+</file>
+
 <file path="src/App.tsx">
 import { RouterProvider } from 'react-router-dom'
 import { router } from './app/router'
@@ -17958,6 +18430,101 @@ export * from './StarButton'
 export * from './ConfirmDialog'
 </file>
 
+<file path="src/features/auth/LoginPage.tsx">
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { Button, Input, Card } from '../../design-system'
+import { useAuth } from '../../contexts/AuthContext'
+
+export function LoginPage() {
+  const [step, setStep] = useState<1 | 2>(1)
+  const [identifier, setIdentifier] = useState('')
+  const [code, setCode] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const navigate = useNavigate()
+  const { login } = useAuth()
+
+  const handleSendCode = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!identifier) return
+    setIsLoading(true)
+    // Имитация запроса к серверу
+    setTimeout(() => {
+      setIsLoading(false)
+      setStep(2)
+    }, 800)
+  }
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!code) return
+    setIsLoading(true)
+    // Имитация проверки кода
+    setTimeout(() => {
+      login()
+      navigate('/')
+    }, 800)
+  }
+
+  return (
+    <div className="max-w-md mx-auto py-12">
+      <div className="text-center mb-8">
+        <h1 className="text-3xl font-bold text-navy-deep mb-2">Вход в Е-Паслуга</h1>
+        <p className="text-muted">Используйте ID-карту или номер телефона</p>
+      </div>
+
+      <Card className="p-6 md:p-8 shadow-lg border-line">
+        {step === 1 ? (
+          <form onSubmit={handleSendCode} className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
+            <div>
+              <label className="block text-sm font-semibold mb-2">Номер телефона или ID-карты</label>
+              <Input
+                type="text"
+                placeholder="+375 (XX) XXX-XX-XX"
+                value={identifier}
+                onChange={(e) => setIdentifier(e.target.value)}
+                className="h-12"
+                autoFocus
+              />
+              <p className="text-xs text-muted mt-2">В демо-режиме введите любые данные</p>
+            </div>
+            <Button type="submit" className="w-full h-12 text-base" disabled={isLoading || !identifier}>
+              {isLoading ? 'Отправка...' : 'Получить код'}
+            </Button>
+          </form>
+        ) : (
+          <form onSubmit={handleLogin} className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+            <div>
+              <button 
+                type="button" 
+                onClick={() => setStep(1)} 
+                className="text-sm text-navy hover:underline mb-4 flex items-center gap-1"
+              >
+                ← Изменить номер
+              </button>
+              <label className="block text-sm font-semibold mb-2">Код из SMS</label>
+              <Input
+                type="text"
+                placeholder="Введите 4 цифры"
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                className="h-12 text-center text-2xl tracking-[0.5em]"
+                maxLength={4}
+                autoFocus
+              />
+              <p className="text-xs text-muted mt-2">Демо-код: 1234</p>
+            </div>
+            <Button type="submit" className="w-full h-12 text-base" disabled={isLoading || code.length < 4}>
+              {isLoading ? 'Проверка...' : 'Войти в кабинет'}
+            </Button>
+          </form>
+        )}
+      </Card>
+    </div>
+  )
+}
+</file>
+
 <file path="vite.config.ts">
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
@@ -17972,294 +18539,6 @@ export default defineConfig({
     open: true,
   },
 })
-</file>
-
-<file path="src/app/router.tsx">
-import { createHashRouter } from 'react-router-dom'
-import { Layout } from './Layout'
-import { useAuth } from '../contexts/AuthContext'
-
-// Страницы
-import { HomePage } from '../features/home/HomePage'
-import { GuestHomePage } from '../features/guest-home/GuestHomePage'
-import { CatalogPage } from '../features/catalog/CatalogPage'
-import { ServicePage } from '../features/service/ServicePage'
-import { LoginPage } from '../features/auth/LoginPage'
-import { StatusPage } from '../features/status/StatusPage'
-import { SupportPage } from '../features/support/SupportPage'
-import { AboutPage } from '../features/about/AboutPage'
-import { ProfilePage } from '../features/profile/ProfilePage'
-import { MyServicesPage } from '../features/my-services/MyServicesPage'
-import { NotificationsPage } from '../features/notifications/NotificationsPage'
-import { SituationPage } from '../features/situations/SituationPage'
-
-// Компонент-переключатель для главной страницы
-function HomeSwitcher() {
-  const { isAuthenticated } = useAuth()
-  return isAuthenticated ? <HomePage /> : <GuestHomePage />
-}
-
-export const router = createHashRouter([
-  {
-    path: '/',
-    element: <Layout />,
-    children: [
-      { index: true, element: <HomeSwitcher /> },
-      { path: 'catalog', element: <CatalogPage /> },
-      { path: 'situation/:id', element: <SituationPage /> },
-      { path: 'service/:id', element: <ServicePage /> },
-      { path: 'login', element: <LoginPage /> },
-      { path: 'status/:id?', element: <StatusPage /> },
-      { path: 'support', element: <SupportPage /> },
-      { path: 'about', element: <AboutPage /> },
-      { path: 'profile', element: <ProfilePage /> },
-      { path: 'apps', element: <MyServicesPage /> },
-      { path: 'notifications', element: <NotificationsPage /> },
-    ],
-  },
-])
-</file>
-
-<file path="src/features/catalog/CatalogPage.tsx">
-import { useMemo, useState } from 'react'
-import { useSearchParams, Link } from 'react-router-dom'
-import { categories } from '../../data/categories'
-import { lifeSituations } from '../../data/situations'
-import { searchServices } from '../../lib/search'
-import { useFavorites } from '../../lib/favorites'
-import { CatalogCard } from './CatalogCard'
-import { CategoryGrid } from './CategoryGrid'
-// Убираем CatalogToolbar, так как поиск теперь глобальный
-import { EmptyState, Card, Input, Button } from '../../design-system'
-import clsx from 'clsx'
-
-type Mode = 'cats' | 'list' | 'favs' | 'situations'
-
-function parseMode(raw: string | null): Mode {
-  if (raw === 'list' || raw === 'favs' || raw === 'situations') return raw
-  return 'cats'
-}
-
-export function CatalogPage() {
-  const [params, setParams] = useSearchParams()
-  const mode = parseMode(params.get('view'))
-  const categoryId = params.get('cat') ?? ''
-  const query = params.get('q') ?? ''
-
-  const [draftQuery, setDraftQuery] = useState(query)
-  const { favs, toggle, has } = useFavorites()
-
-  const activeCategory = categories.find((c) => c.id === categoryId)
-
-  // Фильтрация услуг
-  const filteredServices = useMemo(() => {
-    let list = searchServices(query).map((h) => h.service)
-    if (categoryId) list = list.filter((s) => s.category === categoryId)
-    return list
-  }, [query, categoryId])
-
-  // Фильтрация ситуаций
-  const filteredSituations = useMemo(() => {
-    if (!query) return lifeSituations
-    const q = query.toLowerCase()
-    return lifeSituations.filter(
-      (s) =>
-        s.title.toLowerCase().includes(q) ||
-        s.painPoint.toLowerCase().includes(q) ||
-        s.outcome.toLowerCase().includes(q),
-    )
-  }, [query])
-
-  const favList = useMemo(
-    () => filteredServices.filter((s) => favs.has(s.id)),
-    [filteredServices, favs],
-  )
-
-  const patchParams = (patch: Record<string, string | null>) => {
-    const next = new URLSearchParams(params)
-    Object.entries(patch).forEach(([k, v]) => {
-      if (v === null || v === '') next.delete(k)
-      else next.set(k, v)
-    })
-    setParams(next)
-  }
-
-  const setMode = (m: Mode) => patchParams({ view: m, cat: null, q: null })
-  const submitQuery = () => patchParams({ q: draftQuery.trim() || null })
-  const resetFilters = () => {
-    setDraftQuery('')
-    setParams(new URLSearchParams())
-  }
-
-  return (
-    <div className="max-w-6xl mx-auto pb-12">
-      <header className="mb-6">
-        <h1 className="text-3xl font-bold text-navy-deep mb-2">
-          {mode === 'situations'
-            ? 'Жизненные ситуации'
-            : mode === 'favs'
-              ? 'Избранные услуги'
-              : activeCategory
-                ? activeCategory.title
-                : mode === 'list'
-                  ? 'Все услуги'
-                  : 'Услуги по категориям'}
-        </h1>
-        <p className="text-muted max-w-2xl">
-          {mode === 'situations'
-            ? 'Пошаговые маршруты для типовых задач: от рождения ребёнка до покупки автомобиля.'
-            : mode === 'favs'
-              ? 'Услуги, отмеченные звёздочкой. В общем списке они тоже стоят первыми.'
-              : activeCategory
-                ? activeCategory.desc
-                : 'Выберите тему — или найдите услугу своими словами.'}
-        </p>
-      </header>
-
-      {/* ГЛОБАЛЬНЫЙ ПОИСК */}
-      <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-end mb-6">
-        <div className="flex-1">
-          <label htmlFor="catalog-q" className="block text-xs text-muted mb-1">
-            Что вы хотите сделать?
-          </label>
-          <Input
-            id="catalog-q"
-            type="search"
-            value={draftQuery}
-            onChange={(e) => setDraftQuery(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && submitQuery()}
-            placeholder="Например: справка о доходах, регистрация авто, пособие..."
-            className="h-11"
-          />
-        </div>
-        <div className="flex gap-2">
-          <Button onClick={submitQuery} className="h-11">
-            Найти
-          </Button>
-          {query && (
-            <Button variant="ghost" onClick={resetFilters} className="h-11">
-              Сбросить
-            </Button>
-          )}
-        </div>
-      </div>
-
-      {/* Переключатель режимов */}
-      <div className="inline-flex flex-wrap gap-1 mb-5 bg-soft p-1 rounded-full">
-        {(
-          [
-            ['situations', 'Жизненные ситуации'],
-            ['cats', 'По категориям'],
-            ['list', 'Все услуги'],
-            ['favs', 'Избранное'],
-          ] as const
-        ).map(([value, label]) => (
-          <button
-            key={value}
-            type="button"
-            onClick={() => setMode(value)}
-            className={clsx(
-              'px-4 py-2 rounded-full text-sm font-semibold transition-colors',
-              mode === value ? 'bg-white text-navy shadow-sm' : 'text-muted hover:text-navy',
-            )}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
-
-      {/* Жизненные ситуации */}
-      {mode === 'situations' && (
-        <>
-          {filteredSituations.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 animate-in fade-in duration-300">
-              {filteredSituations.map((sit) => (
-                <Link key={sit.id} to={`/situation/${sit.id}`} className="block group h-full">
-                  <Card variant="interactive" className="h-full flex flex-col p-5">
-                    <h3 className="text-lg font-bold text-navy mb-2 group-hover:text-navy-deep transition-colors">
-                      {sit.title}
-                    </h3>
-                    <p className="text-sm text-muted mb-4 flex-1 line-clamp-3">{sit.painPoint}</p>
-                    <div className="mt-auto pt-4 border-t border-line flex justify-between items-center text-sm font-semibold text-navy">
-                      <span className="bg-[#e8eeff] text-navy px-2 py-1 rounded text-xs">
-                        {sit.steps.length} шагов
-                      </span>
-                      <span className="group-hover:translate-x-1 transition-transform">Начать →</span>
-                    </div>
-                  </Card>
-                </Link>
-              ))}
-            </div>
-          ) : (
-            <EmptyState
-              title="Ничего не найдено"
-              description="По вашему запросу нет подходящих ситуаций. Попробуйте изменить запрос."
-            />
-          )}
-        </>
-      )}
-
-      {/* Категории */}
-      {mode === 'cats' && !activeCategory && <CategoryGrid categories={categories} />}
-
-      {/* Список услуг и Избранное */}
-      {(mode === 'list' || mode === 'favs' || (mode === 'cats' && activeCategory)) && (
-        <>
-          {mode === 'list' && (
-            <div className="text-sm text-muted mb-3">
-              {filteredServices.length > 0 ? (
-                <>Найдено: <b className="text-ink">{filteredServices.length}</b></>
-              ) : (
-                'Ничего не найдено'
-              )}
-            </div>
-          )}
-
-          {(mode === 'list' || mode === 'cats' ? filteredServices : favList).length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {(mode === 'list' || mode === 'cats' ? filteredServices : favList).map((s) => (
-                <CatalogCard
-                  key={s.id}
-                  service={s}
-                  isFavorite={has(s.id)}
-                  onToggleFavorite={() => toggle(s.id)}
-                />
-              ))}
-            </div>
-          ) : mode === 'favs' ? (
-            <EmptyState
-              title="Пока пусто"
-              description="Откройте каталог и нажмите звёздочку на карточке — услуга появится здесь."
-              action={
-                <button
-                  type="button"
-                  onClick={() => setMode('list')}
-                  className="inline-flex items-center justify-center rounded-control px-4 py-2.5 text-[15px] font-semibold bg-navy text-white hover:bg-navy-deep"
-                >
-                  Открыть все услуги
-                </button>
-              }
-            />
-          ) : (
-            <EmptyState
-              title="Ничего не найдено"
-              description="Попробуйте изменить запрос или сбросить фильтры."
-              action={
-                <button
-                  type="button"
-                  onClick={resetFilters}
-                  className="inline-flex items-center justify-center rounded-control px-4 py-2.5 text-[15px] font-semibold border border-navy text-navy hover:bg-soft"
-                >
-                  Сбросить
-                </button>
-              }
-            />
-          )}
-        </>
-      )}
-    </div>
-  )
-}
 </file>
 
 <file path="src/features/home/HomePage.tsx">
@@ -18416,6 +18695,52 @@ export function ProfilePage() {
 }
 </file>
 
+<file path="src/app/router.tsx">
+import { createHashRouter } from 'react-router-dom'
+import { Layout } from './Layout'
+import { useAuth } from '../contexts/AuthContext'
+
+// Страницы
+import { HomePage } from '../features/home/HomePage'
+import { GuestHomePage } from '../features/guest-home/GuestHomePage'
+import { CatalogPage } from '../features/catalog/CatalogPage'
+import { ServicePage } from '../features/service/ServicePage'
+import { LoginPage } from '../features/auth/LoginPage'
+import { StatusPage } from '../features/status/StatusPage'
+import { SupportPage } from '../features/support/SupportPage'
+import { AboutPage } from '../features/about/AboutPage'
+import { ProfilePage } from '../features/profile/ProfilePage'
+import { MyServicesPage } from '../features/my-services/MyServicesPage'
+import { NotificationsPage } from '../features/notifications/NotificationsPage'
+import { SituationPage } from '../features/situations/SituationPage'
+
+// Компонент-переключатель для главной страницы
+function HomeSwitcher() {
+  const { isAuthenticated } = useAuth()
+  return isAuthenticated ? <HomePage /> : <GuestHomePage />
+}
+
+export const router = createHashRouter([
+  {
+    path: '/',
+    element: <Layout />,
+    children: [
+      { index: true, element: <HomeSwitcher /> },
+      { path: 'catalog', element: <CatalogPage /> },
+      { path: 'situation/:id', element: <SituationPage /> },
+      { path: 'service/:id', element: <ServicePage /> },
+      { path: 'login', element: <LoginPage /> },
+      { path: 'status/:id?', element: <StatusPage /> },
+      { path: 'support', element: <SupportPage /> },
+      { path: 'about', element: <AboutPage /> },
+      { path: 'profile', element: <ProfilePage /> },
+      { path: 'apps', element: <MyServicesPage /> },
+      { path: 'notifications', element: <NotificationsPage /> },
+    ],
+  },
+])
+</file>
+
 <file path="src/main.tsx">
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
@@ -18432,9 +18757,292 @@ createRoot(document.getElementById('root')!).render(
 )
 </file>
 
+<file path="src/features/catalog/CatalogPage.tsx">
+import { useMemo, useState } from 'react'
+import { useSearchParams, Link } from 'react-router-dom'
+import { categories } from '../../data/categories'
+import { lifeSituations } from '../../data/situations'
+import { searchServices } from '../../lib/search'
+import { useFavorites } from '../../lib/favorites'
+import { getSituationIcon } from '../../lib/situationIcons'
+import { useAllSituationProgress } from '../../lib/situationProgress'
+import { CatalogCard } from './CatalogCard'
+import { CategoryGrid } from './CategoryGrid'
+import { EmptyState, Card, Input, Button } from '../../design-system'
+import clsx from 'clsx'
+
+type Mode = 'cats' | 'list' | 'favs' | 'situations'
+
+function parseMode(raw: string | null): Mode {
+  if (raw === 'list' || raw === 'favs' || raw === 'situations') return raw
+  return 'cats'
+}
+
+export function CatalogPage() {
+  const [params, setParams] = useSearchParams()
+  const mode = parseMode(params.get('view'))
+  const categoryId = params.get('cat') ?? ''
+  const query = params.get('q') ?? ''
+
+  const [draftQuery, setDraftQuery] = useState(query)
+  const { favs, toggle, has } = useFavorites()
+  const situationProgress = useAllSituationProgress()
+
+  const activeCategory = categories.find((c) => c.id === categoryId)
+
+  const filteredServices = useMemo(() => {
+    let list = searchServices(query).map((h) => h.service)
+    if (categoryId) list = list.filter((s) => s.category === categoryId)
+    return list
+  }, [query, categoryId])
+
+  const filteredSituations = useMemo(() => {
+    if (!query) return lifeSituations
+    const q = query.toLowerCase()
+    return lifeSituations.filter(
+      (s) =>
+        s.title.toLowerCase().includes(q) ||
+        s.painPoint.toLowerCase().includes(q) ||
+        s.outcome.toLowerCase().includes(q),
+    )
+  }, [query])
+
+  const favList = useMemo(
+    () => filteredServices.filter((s) => favs.has(s.id)),
+    [filteredServices, favs],
+  )
+
+  const patchParams = (patch: Record<string, string | null>) => {
+    const next = new URLSearchParams(params)
+    Object.entries(patch).forEach(([k, v]) => {
+      if (v === null || v === '') next.delete(k)
+      else next.set(k, v)
+    })
+    setParams(next)
+  }
+
+  const setMode = (m: Mode) => patchParams({ view: m, cat: null, q: null })
+  const submitQuery = () => patchParams({ q: draftQuery.trim() || null })
+  const resetFilters = () => {
+    setDraftQuery('')
+    setParams(new URLSearchParams())
+  }
+
+  return (
+    <div className="max-w-6xl mx-auto pb-12">
+      <header className="mb-6">
+        <h1 className="text-3xl font-bold text-navy-deep mb-2">
+          {mode === 'situations'
+            ? 'Жизненные ситуации'
+            : mode === 'favs'
+              ? 'Избранные услуги'
+              : activeCategory
+                ? activeCategory.title
+                : mode === 'list'
+                  ? 'Все услуги'
+                  : 'Услуги по категориям'}
+        </h1>
+        <p className="text-muted max-w-2xl">
+          {mode === 'situations'
+            ? 'Пошаговые маршруты для типовых задач: от рождения ребёнка до покупки автомобиля.'
+            : mode === 'favs'
+              ? 'Услуги, отмеченные звёздочкой. В общем списке они тоже стоят первыми.'
+              : activeCategory
+                ? activeCategory.desc
+                : 'Выберите тему — или найдите услугу своими словами.'}
+        </p>
+      </header>
+
+      {/* ГЛОБАЛЬНЫЙ ПОИСК */}
+      <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-end mb-6">
+        <div className="flex-1">
+          <label htmlFor="catalog-q" className="block text-xs text-muted mb-1">
+            Что вы хотите сделать?
+          </label>
+          <Input
+            id="catalog-q"
+            type="search"
+            value={draftQuery}
+            onChange={(e) => setDraftQuery(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && submitQuery()}
+            placeholder="Например: справка о доходах, регистрация авто, пособие..."
+            className="h-11"
+          />
+        </div>
+        <div className="flex gap-2">
+          <Button onClick={submitQuery} className="h-11">
+            Найти
+          </Button>
+          {query && (
+            <Button variant="ghost" onClick={resetFilters} className="h-11">
+              Сбросить
+            </Button>
+          )}
+        </div>
+      </div>
+
+      {/* Переключатель режимов */}
+      <div className="inline-flex flex-wrap gap-1 mb-5 bg-soft p-1 rounded-full">
+        {(
+          [
+            ['situations', 'Жизненные ситуации'],
+            ['cats', 'По категориям'],
+            ['list', 'Все услуги'],
+            ['favs', 'Избранное'],
+          ] as const
+        ).map(([value, label]) => (
+          <button
+            key={value}
+            type="button"
+            onClick={() => setMode(value)}
+            className={clsx(
+              'px-4 py-2 rounded-full text-sm font-semibold transition-colors',
+              mode === value ? 'bg-white text-navy shadow-sm' : 'text-muted hover:text-navy',
+            )}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {/* Жизненные ситуации */}
+      {mode === 'situations' && (
+        <>
+          {filteredSituations.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 animate-in fade-in duration-300">
+              {filteredSituations.map((sit) => {
+                const doneCount = situationProgress[sit.id] ?? 0
+                const totalCount = sit.steps.length
+                const inProgress = doneCount > 0 && doneCount < totalCount
+                const isComplete = totalCount > 0 && doneCount >= totalCount
+
+                return (
+                  <Link
+                    key={sit.id}
+                    to={`/situation/${sit.id}`}
+                    className="block group h-full"
+                  >
+                    <Card variant="interactive" className="h-full flex flex-col p-5">
+                      <div className="flex items-start gap-3 mb-3">
+                        <span className="text-3xl shrink-0" aria-hidden="true">
+                          {getSituationIcon(sit.id)}
+                        </span>
+                        <h3 className="text-lg font-bold text-navy group-hover:text-navy-deep transition-colors leading-tight">
+                          {sit.title}
+                        </h3>
+                      </div>
+                      <p className="text-sm text-muted mb-4 flex-1 line-clamp-3">
+                        {sit.painPoint}
+                      </p>
+                      <div className="mt-auto pt-4 border-t border-line flex justify-between items-center text-sm font-semibold text-navy gap-2">
+                        <div className="flex items-center gap-2">
+                          <span className="bg-[#e8eeff] text-navy px-2 py-1 rounded text-xs">
+                            {totalCount} {pluralizeSteps(totalCount)}
+                          </span>
+                          {inProgress && (
+                            <span className="bg-[#fff4e5] text-accent-warm px-2 py-1 rounded text-xs">
+                              {doneCount}/{totalCount}
+                            </span>
+                          )}
+                          {isComplete && (
+                            <span className="bg-[#e6f6ec] text-ok px-2 py-1 rounded text-xs">
+                              Готово
+                            </span>
+                          )}
+                        </div>
+                        <span className="group-hover:translate-x-1 transition-transform whitespace-nowrap">
+                          {isComplete ? 'Открыть →' : inProgress ? 'Продолжить →' : 'Начать →'}
+                        </span>
+                      </div>
+                    </Card>
+                  </Link>
+                )
+              })}
+            </div>
+          ) : (
+            <EmptyState
+              title="Ничего не найдено"
+              description="По вашему запросу нет подходящих ситуаций. Попробуйте изменить запрос."
+            />
+          )}
+        </>
+      )}
+
+      {/* Категории */}
+      {mode === 'cats' && !activeCategory && <CategoryGrid categories={categories} />}
+
+      {/* Список услуг и Избранное */}
+      {(mode === 'list' || mode === 'favs' || (mode === 'cats' && activeCategory)) && (
+        <>
+          {mode === 'list' && (
+            <div className="text-sm text-muted mb-3">
+              {filteredServices.length > 0 ? (
+                <>Найдено: <b className="text-ink">{filteredServices.length}</b></>
+              ) : (
+                'Ничего не найдено'
+              )}
+            </div>
+          )}
+
+          {(mode === 'list' || mode === 'cats' ? filteredServices : favList).length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {(mode === 'list' || mode === 'cats' ? filteredServices : favList).map((s) => (
+                <CatalogCard
+                  key={s.id}
+                  service={s}
+                  isFavorite={has(s.id)}
+                  onToggleFavorite={() => toggle(s.id)}
+                />
+              ))}
+            </div>
+          ) : mode === 'favs' ? (
+            <EmptyState
+              title="Пока пусто"
+              description="Откройте каталог и нажмите звёздочку на карточке — услуга появится здесь."
+              action={
+                <button
+                  type="button"
+                  onClick={() => setMode('list')}
+                  className="inline-flex items-center justify-center rounded-control px-4 py-2.5 text-[15px] font-semibold bg-navy text-white hover:bg-navy-deep"
+                >
+                  Открыть все услуги
+                </button>
+              }
+            />
+          ) : (
+            <EmptyState
+              title="Ничего не найдено"
+              description="Попробуйте изменить запрос или сбросить фильтры."
+              action={
+                <button
+                  type="button"
+                  onClick={resetFilters}
+                  className="inline-flex items-center justify-center rounded-control px-4 py-2.5 text-[15px] font-semibold border border-navy text-navy hover:bg-soft"
+                >
+                  Сбросить
+                </button>
+              }
+            />
+          )}
+        </>
+      )}
+    </div>
+  )
+}
+
+/** Склонение слова «шаг» для бейджа. */
+function pluralizeSteps(n: number): string {
+  const mod10 = n % 10
+  const mod100 = n % 100
+  if (mod10 === 1 && mod100 !== 11) return 'шаг'
+  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20)) return 'шага'
+  return 'шагов'
+}
+</file>
+
 <file path="src/features/service/ServicePage.tsx">
 import { useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useSearchParams } from 'react-router-dom'
 import { services } from '../../data/services'
 import { Button, Badge, Card, Accordion, Tooltip } from '../../design-system'
 import { ru } from '../../content/ru'
@@ -18452,6 +19060,10 @@ const AUTH_HINT: Record<string, React.ReactNode> = {
 
 export function ServicePage() {
   const { id } = useParams()
+  const [params] = useSearchParams()
+  const situationId = params.get('situation') ?? undefined
+  const situationStepId = params.get('step') ?? undefined
+
   const service = services.find((s) => s.id === id)
   const [isFormOpen, setIsFormOpen] = useState(false)
 
@@ -18459,17 +19071,21 @@ export function ServicePage() {
     return (
       <div className="max-w-3xl mx-auto py-12 text-center">
         <h1 className="text-2xl font-bold text-navy-deep mb-4">Услуга не найдена</h1>
-        <Link to="/catalog" className="text-navy hover:underline">
-          Вернуться в каталог
-        </Link>
+        <Link to="/catalog" className="text-navy hover:underline">Вернуться в каталог</Link>
       </div>
     )
   }
 
   if (isFormOpen) {
-    return <ApplicationForm service={service} onBack={() => setIsFormOpen(false)} />
+    return (
+      <ApplicationForm
+        service={service}
+        onBack={() => setIsFormOpen(false)}
+        situationId={situationId}
+        situationStepId={situationStepId}
+      />
+    )
   }
-
   return (
     <div className="max-w-4xl mx-auto pb-12">
       {/* Шапка с заголовком */}
@@ -18618,15 +19234,16 @@ export function Layout() {
   }
 
   return (
-    <div className="min-h-screen flex bg-bg relative">
+    // h-screen + overflow-hidden — фиксируем общий каркас приложения на высоту окна
+    <div className="h-screen flex bg-bg relative overflow-hidden">
       
       {/* --- САЙДБАР (только для авторизованных) --- */}
       {isAuthenticated && (
-        <aside className="hidden md:flex flex-col w-64 bg-navy text-white shrink-0">
-          <Link to="/" className="p-5 font-bold text-xl hover:opacity-90 transition-opacity">
+        <aside className="hidden md:flex flex-col w-64 bg-navy text-white shrink-0 h-full">
+          <Link to="/" className="p-5 font-bold text-xl hover:opacity-90 transition-opacity shrink-0">
             Е-Паслуга
           </Link>
-          <nav className="flex flex-col">
+          <nav className="flex flex-col overflow-y-auto pb-4">
             {navItems.map((item) => (
               <NavLink
                 key={item.to}
@@ -18660,10 +19277,10 @@ export function Layout() {
       )}
 
       {/* --- ОСНОВНОЙ КОНТЕНТ --- */}
-      <div className="flex-1 flex flex-col min-w-0 pb-16 md:pb-0">
+      <div className="flex-1 flex flex-col min-w-0 h-full">
         
         {/* Шапка */}
-        <header className="h-16 bg-white border-b border-line flex items-center justify-between px-4 md:px-7 sticky top-0 z-30">
+        <header className="h-16 bg-white border-b border-line flex items-center justify-between px-4 md:px-7 sticky top-0 z-30 shrink-0">
           <div className="flex items-center gap-3">
             <Link to="/" className="font-bold text-navy text-lg md:text-xl">
               Е-Паслуга
@@ -18721,8 +19338,8 @@ export function Layout() {
           </div>
         </header>
         
-        {/* Контент страницы */}
-        <main className="flex-1 p-4 md:p-7">
+        {/* Контент страницы — скроллится только эта часть */}
+        <main className="flex-1 p-4 md:p-7 pb-20 md:pb-7 overflow-y-auto">
           <Breadcrumbs />
           <Outlet />
         </main>

@@ -1,15 +1,40 @@
 import { useState } from 'react'
-import { EmptyState } from '../../design-system'
+import { EmptyState, ErrorState, SkeletonList } from '../../design-system'
 import { useNotifications } from '../../lib/notifications'
 import { NotificationCard } from './NotificationCard'
 
 type Box = 'in' | 'arch'
+type ViewState = 'idle' | 'loading' | 'error'
 
 export function NotificationsPage() {
   const [box, setBox] = useState<Box>('in')
+  const [viewState, setViewState] = useState<ViewState>('idle')
   const { items, archive, unarchive, remove } = useNotifications()
 
   const rows = items.filter((n) => (box === 'arch' ? n.archived : !n.archived))
+
+  const reload = () => {
+    setViewState('loading')
+    window.setTimeout(() => setViewState('idle'), 500)
+  }
+
+  if (viewState === 'loading') {
+    return (
+      <div className="max-w-3xl mx-auto pb-12">
+        <h1 className="text-3xl font-bold text-navy-deep mb-6">Мои уведомления</h1>
+        <SkeletonList rows={4} />
+      </div>
+    )
+  }
+
+  if (viewState === 'error') {
+    return (
+      <div className="max-w-3xl mx-auto pb-12">
+        <h1 className="text-3xl font-bold text-navy-deep mb-6">Мои уведомления</h1>
+        <ErrorState onRetry={() => setViewState('idle')} />
+      </div>
+    )
+  }
 
   return (
     <div className="max-w-3xl mx-auto pb-12">
@@ -20,7 +45,7 @@ export function NotificationsPage() {
         </p>
       </header>
 
-      <div className="flex gap-2 mb-5">
+      <div className="flex items-center gap-2 mb-5">
         <button
           type="button"
           onClick={() => setBox('in')}
@@ -38,6 +63,13 @@ export function NotificationsPage() {
           }`}
         >
           Архив
+        </button>
+        <button
+          type="button"
+          onClick={reload}
+          className="ml-auto text-xs text-muted underline hover:text-navy"
+        >
+          Обновить
         </button>
       </div>
 
@@ -57,7 +89,11 @@ export function NotificationsPage() {
       ) : (
         <EmptyState
           title={box === 'arch' ? 'Архив пуст' : 'Нет входящих'}
-          description={box === 'arch' ? 'Здесь будут уведомления, которые вы убрали с глаз.' : 'Мы пришлём уведомление, когда по заявлению что-то изменится.'}
+          description={
+            box === 'arch'
+              ? 'Здесь будут уведомления, которые вы убрали с глаз.'
+              : 'Мы пришлём уведомление, когда по заявлению что-то изменится.'
+          }
         />
       )}
     </div>
