@@ -8,7 +8,6 @@ const DEMO_CODE = '1234'
 const MAX_ATTEMPTS = 3
 const RESEND_SECONDS = 60
 
-/** Маска +375 (XX) XXX-XX-XX по мере ввода. */
 function formatPhone(raw: string): string {
   const digits = raw.replace(/\D/g, '').replace(/^375/, '').slice(0, 9)
   if (digits.length === 0) return '+375 '
@@ -25,6 +24,31 @@ function formatPhone(raw: string): string {
   return out
 }
 
+/** Иконка отпечатка пальца. */
+function FingerprintIcon({ className = 'w-5 h-5' }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.6}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M12 4c-3.9 0-7 3.1-7 7v2" />
+      <path d="M19 13v-2c0-3.9-3.1-7-7-7" />
+      <path d="M9 14v-3a3 3 0 1 1 6 0v4" />
+      <path d="M12 14v3" />
+      <path d="M9 18v2" />
+      <path d="M15 18v2" />
+      <path d="M5 17v2" />
+      <path d="M19 17v2" />
+    </svg>
+  )
+}
+
 export function LoginPage() {
   const [step, setStep] = useState<1 | 2>(1)
   const [phone, setPhone] = useState('')
@@ -34,13 +58,14 @@ export function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [attemptsLeft, setAttemptsLeft] = useState(MAX_ATTEMPTS)
   const [resendIn, setResendIn] = useState(0)
+  const [bioLoading, setBioLoading] = useState(false)
+  const [bioError, setBioError] = useState<string | null>(null)
 
   const navigate = useNavigate()
   const { login } = useAuth()
 
   const canSendCode = PHONE_RE.test(phone.trim())
 
-  // Таймер повторной отправки
   useEffect(() => {
     if (resendIn <= 0) return
     const t = window.setInterval(() => setResendIn((s) => Math.max(0, s - 1)), 1000)
@@ -106,6 +131,28 @@ export function LoginPage() {
     navigate('/')
   }
 
+  /**
+   * Демо-биометрия.
+   * В реальном приложении здесь был бы вызов WebAuthn
+   * (navigator.credentials.get) с проверкой подписи сервером.
+   * Сейчас — имитация: задержка и успешный вход.
+   */
+  const handleBiometricLogin = () => {
+    setBioError(null)
+    setBioLoading(true)
+    window.setTimeout(() => {
+      // Проверяем, что браузер вообще поддерживает WebAuthn.
+      // В демо это не обязательно, но показывает, где будет реальная логика.
+      if (typeof window !== 'undefined' && 'PublicKeyCredential' in window) {
+        login()
+        navigate('/')
+      } else {
+        setBioLoading(false)
+        setBioError('Биометрия недоступна на этом устройстве')
+      }
+    }, 700)
+  }
+
   return (
     <div className="max-w-md mx-auto py-12">
       <div className="text-center mb-8">
@@ -149,6 +196,7 @@ export function LoginPage() {
               {isLoading ? 'Отправка…' : 'Получить код'}
             </Button>
 
+            {/* --- Биометрический вход --- */}
             <div className="relative text-center">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-line" />
@@ -157,10 +205,39 @@ export function LoginPage() {
             </div>
 
             <div className="space-y-2">
-              <Button type="button" variant="ghost" className="w-full h-11" onClick={handleAltLogin}>
+              <Button
+                type="button"
+                variant="ghost"
+                className="w-full h-11 flex items-center justify-center gap-2"
+                onClick={handleBiometricLogin}
+                disabled={bioLoading}
+              >
+                <FingerprintIcon />
+                {bioLoading ? 'Проверка биометрии…' : 'Войти по биометрии'}
+              </Button>
+              <p className="text-xs text-muted text-center">
+                Face ID или отпечаток пальца — если настроено на устройстве
+              </p>
+              {bioError && (
+                <p className="text-danger text-xs text-center">{bioError}</p>
+              )}
+            </div>
+
+            <div className="space-y-2 pt-2 border-t border-line">
+              <Button
+                type="button"
+                variant="ghost"
+                className="w-full h-11"
+                onClick={handleAltLogin}
+              >
                 Войти через ЭЦП
               </Button>
-              <Button type="button" variant="ghost" className="w-full h-11" onClick={handleAltLogin}>
+              <Button
+                type="button"
+                variant="ghost"
+                className="w-full h-11"
+                onClick={handleAltLogin}
+              >
                 Войти через Google / Apple
               </Button>
             </div>
