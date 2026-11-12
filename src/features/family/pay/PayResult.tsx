@@ -20,8 +20,10 @@ export function PaySuccess({ items }: { items: PaymentRecord[] }) {
         Оплачено {formatBYN(total)}
       </h1>
       <p className="text-muted mt-2 max-w-md mx-auto">
-        Деньги ушли получателям через ЕРИП. Ведомства увидят оплату в течение рабочего дня —
-        начисления уже убраны из панели.
+        {items[0]?.method === 'card'
+          ? 'Банк провёл оплату картой, получатели увидят её через ЕРИП.'
+          : 'Деньги ушли получателям через ЕРИП.'}{' '}
+        Ведомства увидят оплату в течение рабочего дня — начисления уже убраны из панели.
       </p>
       <ul className="mt-6 divide-y divide-line border-y border-line text-left">
         {items.map((h) => (

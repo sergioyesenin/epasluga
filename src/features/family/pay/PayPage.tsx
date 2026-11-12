@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { EmptyState, Icon } from '../../../design-system'
 import { useDalon } from '../../../hooks/useDalon'
@@ -32,6 +32,13 @@ export function PayPage() {
   const list = charges.filter((c) => ids.includes(c.id))
   const total = sumDue(list, now)
   const busy = payment.stage === 'processing'
+
+  // Результат оплаты показываем с начала экрана, а не там, где была кнопка
+  useEffect(() => {
+    if (payment.stage === 'ok' || payment.stage === 'fail') {
+      window.scrollTo({ top: 0 })
+    }
+  }, [payment.stage])
 
   if (payment.stage === 'ok') {
     return (

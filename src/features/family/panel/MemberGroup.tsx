@@ -34,10 +34,7 @@ export function MemberGroup({
       <header className="flex items-center gap-3 px-4 py-3 border-b border-line">
         <MemberAvatar kind={member.kind} initials={member.initials} size="md" />
         <div className="flex-1 min-w-0">
-          <h3
-            id={`member-${member.id}-title`}
-            className="font-semibold text-ink leading-snug truncate"
-          >
+          <h3 id={`member-${member.id}-title`} className="font-semibold text-ink leading-snug">
             {member.full}
           </h3>
           <p className="text-sm text-muted">{member.role}</p>

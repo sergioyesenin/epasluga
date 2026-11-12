@@ -19,7 +19,7 @@ export function registerServiceWorker() {
       showToast({
         id: 'sw-update',
         title: 'Доступна новая версия',
-        message: 'Обновление займёт пару секунд, введённые данные сохранятся.',
+        message: 'Займёт пару секунд, данные сохранятся.',
         action: {
           label: 'Обновить',
           onClick: () => {
