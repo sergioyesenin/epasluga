@@ -35,7 +35,9 @@ function HistoryRow({ h }: { h: PaymentRecord }) {
           {memberById(h.memberId)?.name}, {METHOD_LABEL[h.method]}, квитанция {h.receipt}
         </span>
       </span>
-      <span className="tabular font-semibold text-ink whitespace-nowrap">{formatBYN(h.amount)}</span>
+      <span className="tabular font-semibold text-ink whitespace-nowrap">
+        {formatBYN(h.amount)}
+      </span>
       <button
         type="button"
         className={textButton}

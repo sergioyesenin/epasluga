@@ -94,7 +94,9 @@ export function LoginPage() {
                   <Icon name="fingerprint" className="w-6 h-6" />
                   {bioLoading ? 'Ждём подтверждение…' : 'Войти по отпечатку или Face ID'}
                 </Button>
-                <p className="text-xs text-muted text-center">Быстрый вход включён на этом устройстве</p>
+                <p className="text-xs text-muted text-center">
+                  Быстрый вход включён на этом устройстве
+                </p>
                 <Button
                   type="button"
                   variant="ghost"
@@ -126,7 +128,8 @@ export function LoginPage() {
                   bio.available !== false && (
                     <p className="mt-3 flex gap-2 text-xs text-muted">
                       <Icon name="fingerprint" className="w-4 h-4 shrink-0" />
-                      Вход по отпечатку или Face ID можно включить после первого входа — на этом устройстве.
+                      Вход по отпечатку или Face ID можно включить после первого входа — на этом
+                      устройстве.
                     </p>
                   )
                 )}
@@ -139,10 +142,20 @@ export function LoginPage() {
               <>
                 <Divider />
                 <div className="space-y-2">
-                  <Button type="button" variant="ghost" className="w-full h-11" onClick={handleAltLogin}>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    className="w-full h-11"
+                    onClick={handleAltLogin}
+                  >
                     Войти через ЭЦП или ID-карту
                   </Button>
-                  <Button type="button" variant="ghost" className="w-full h-11" onClick={handleAltLogin}>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    className="w-full h-11"
+                    onClick={handleAltLogin}
+                  >
                     Войти через Google или Apple
                   </Button>
                 </div>

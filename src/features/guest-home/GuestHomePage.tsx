@@ -3,59 +3,41 @@ import { Button, Card } from '../../design-system'
 import { QuickSearch } from '../home/QuickSearch'
 import { LifeSituations } from '../home/LifeSituations'
 import { services } from '../../data/services'
+import { InstallBanner } from '../pwa/InstallBanner'
+import { HeroPreview } from './HeroPreview'
 import {
   ShieldCheckIcon,
   IdCardIcon,
   ClockIcon,
 } from '../../lib/situationIcons'
 
-function StatePortalIcon({ className = 'w-24 h-24' }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 96 96"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M48 12 20 24v24c0 18 13 33 28 36 15-3 28-18 28-36V24L48 12Z" />
-      <path d="m34 48 10 10 18-20" />
-    </svg>
-  )
-}
-
 export function GuestHomePage() {
   return (
     <div className="max-w-5xl mx-auto space-y-12 pb-16 pt-4">
-      <section className="text-center md:text-left md:flex md:items-center md:justify-between gap-8 bg-linear-to-r from-[#f8f9ff] to-white p-8 md:p-12 rounded-card border border-line shadow-sm">
-        <div className="md:w-3/5 mb-6 md:mb-0">
-          <h1 className="text-3xl md:text-4xl font-bold text-ink mb-4 leading-tight">
-            Госуслуги <span className="text-navy">онлайн</span> — без очередей и бумаг
+      <section className="grid md:grid-cols-[minmax(0,1fr)_minmax(0,22rem)] gap-8 md:gap-12 items-center">
+        <div>
+          <h1 className="text-[32px] md:text-[44px] font-bold text-ink leading-[1.08] tracking-tight mb-4">
+            Госуслуги без очередей и бумаг
           </h1>
-          <p className="text-lg text-muted mb-8">
-            Единый портал для решения любых жизненных ситуаций. От рождения ребёнка до покупки автомобиля.
+          <p className="text-lg text-muted mb-7 max-w-[34rem]">
+            Справки, заявления и документы — онлайн. А семейные платежи и их сроки — в одной ладони,
+            в разделе «Далонь».
           </p>
           <div className="flex flex-col sm:flex-row gap-3">
             <Link to="/login" className="w-full sm:w-auto">
-              <Button className="w-full text-lg px-8">Войти</Button>
+              <Button className="w-full h-12 text-base px-8">Войти</Button>
             </Link>
             <Link to="/catalog?view=situations" className="w-full sm:w-auto">
-              <Button variant="ghost" className="w-full text-lg px-8">
-                Смотреть ситуации
+              <Button variant="ghost" className="w-full h-12 text-base px-8">
+                Жизненные ситуации
               </Button>
             </Link>
           </div>
         </div>
-
-        <div className="hidden md:flex md:w-2/5 justify-center">
-          <div className="w-48 h-48 bg-navy rounded-full flex items-center justify-center text-white shadow-xl">
-            <StatePortalIcon className="w-24 h-24" />
-          </div>
-        </div>
+        <HeroPreview />
       </section>
+
+      <InstallBanner />
 
       <section>
         <div className="max-w-3xl mx-auto text-center mb-6">

@@ -39,7 +39,9 @@ export function DeadlineList({ items, now }: { items: DeadlineItem[]; now: Date 
             <span
               className={clsx(
                 'w-14 shrink-0 rounded-xl flex flex-col items-center justify-center py-2',
-                tone === 'urgent' || tone === 'overdue' ? 'bg-bad-tint text-bad' : 'bg-soft text-ink',
+                tone === 'urgent' || tone === 'overdue'
+                  ? 'bg-bad-tint text-bad'
+                  : 'bg-soft text-ink',
               )}
             >
               <span className="text-xl font-bold leading-none tabular">{parts.day}</span>
@@ -49,7 +51,9 @@ export function DeadlineList({ items, now }: { items: DeadlineItem[]; now: Date 
               <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
                 <TypeLabel type={x.type} />
                 <span className="text-muted">{memberById(x.memberId)?.name}</span>
-                <span className={clsx('font-semibold', toneText[tone])}>{untilText(x.date, now)}</span>
+                <span className={clsx('font-semibold', toneText[tone])}>
+                  {untilText(x.date, now)}
+                </span>
               </p>
               <h3 className="mt-1 font-semibold text-ink leading-snug">{x.title}</h3>
               <p className="text-sm text-muted">{x.text}</p>

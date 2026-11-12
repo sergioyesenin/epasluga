@@ -54,8 +54,15 @@ function FingerButton({ member, charges, hidden, now, onPick }: FingerProps) {
           member.finger === 'thumb' && 'rotate-[14deg]',
         )}
       >
-        <MemberAvatar kind={member.kind} initials={member.initials} size="md" className="ring-2 ring-white/70" />
-        <span className="text-[13px] sm:text-[15px] font-semibold text-ink leading-tight">{member.name}</span>
+        <MemberAvatar
+          kind={member.kind}
+          initials={member.initials}
+          size="md"
+          className="ring-2 ring-white/70"
+        />
+        <span className="text-[13px] sm:text-[15px] font-semibold text-ink leading-tight">
+          {member.name}
+        </span>
         <span
           className={clsx(
             'text-[12px] sm:text-sm leading-tight tabular text-center',

@@ -44,7 +44,10 @@ export function DueCalendar({ items, now }: { items: TimelineItem[]; now: Date }
         >
           {day}
           {titles && (
-            <span className="absolute bottom-1 w-1 h-1 rounded-full bg-family-wine" aria-hidden="true" />
+            <span
+              className="absolute bottom-1 w-1 h-1 rounded-full bg-family-wine"
+              aria-hidden="true"
+            />
           )}
         </span>
       )

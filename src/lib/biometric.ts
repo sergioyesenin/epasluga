@@ -21,7 +21,11 @@ export type BiometricEnrollment = {
 
 /** Есть ли на устройстве встроенный сканер (отпечаток, Face ID, Windows Hello). */
 export async function isBiometricAvailable(): Promise<boolean> {
-  if (typeof window === 'undefined' || !window.isSecureContext || !('PublicKeyCredential' in window)) {
+  if (
+    typeof window === 'undefined' ||
+    !window.isSecureContext ||
+    !('PublicKeyCredential' in window)
+  ) {
     return false
   }
   try {

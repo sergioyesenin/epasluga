@@ -12,7 +12,11 @@ function IosSteps() {
         </span>
         <span>
           Нажмите «Поделиться»{' '}
-          <Icon name="share" className="inline w-4.5 h-4.5 -mt-1 text-navy" title="значок «Поделиться»" />{' '}
+          <Icon
+            name="share"
+            className="inline w-4.5 h-4.5 -mt-1 text-navy"
+            title="значок «Поделиться»"
+          />{' '}
           в панели Safari
         </span>
       </li>
@@ -22,7 +26,11 @@ function IosSteps() {
         </span>
         <span>
           Выберите «На экран „Домой“»{' '}
-          <Icon name="addSquare" className="inline w-4.5 h-4.5 -mt-1 text-navy" title="значок «На экран Домой»" />
+          <Icon
+            name="addSquare"
+            className="inline w-4.5 h-4.5 -mt-1 text-navy"
+            title="значок «На экран Домой»"
+          />
         </span>
       </li>
       <li className="flex items-center gap-2.5">
@@ -68,7 +76,9 @@ export function InstallBanner({ className }: InstallBannerProps) {
       <AppMark className="w-12 h-12 shrink-0 rounded-xl shadow-sm" />
       <div className="min-w-0 flex-1">
         <h2 id="install-title" className="font-semibold text-ink leading-snug">
-          {mode === 'ios' ? 'Е-Паслуга на iPhone — без App Store' : 'Установите Е-Паслугу на устройство'}
+          {mode === 'ios'
+            ? 'Е-Паслуга на iPhone — без App Store'
+            : 'Установите Е-Паслугу на устройство'}
         </h2>
         <p className="text-sm text-muted mt-0.5">
           Открывается с экрана «Домой», работает без сети и напоминает о сроках платежей.

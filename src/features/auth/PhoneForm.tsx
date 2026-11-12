@@ -31,7 +31,11 @@ export function PhoneForm({ sms, autoFocus }: Props) {
           <p className="text-xs text-muted mt-2">Демо-режим: любой номер белорусского оператора</p>
         )}
       </div>
-      <Button type="submit" className="w-full h-12 text-base" disabled={sms.isLoading || !sms.canSendCode}>
+      <Button
+        type="submit"
+        className="w-full h-12 text-base"
+        disabled={sms.isLoading || !sms.canSendCode}
+      >
         {sms.isLoading ? 'Отправляем код…' : 'Получить код'}
       </Button>
     </form>

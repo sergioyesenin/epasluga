@@ -15,8 +15,8 @@ export function BiometricOffer({ onEnable, onSkip }: Props) {
       <div>
         <h2 className="text-xl font-bold text-ink">Входить по отпечатку или Face ID?</h2>
         <p className="text-sm text-muted mt-2">
-          В следующий раз на этом устройстве не понадобится SMS. Отпечаток и лицо не покидают телефон —
-          Е-Паслуга получает только подтверждение, что это вы.
+          В следующий раз на этом устройстве не понадобится SMS. Отпечаток и лицо не покидают
+          телефон — Е-Паслуга получает только подтверждение, что это вы.
         </p>
       </div>
       <div className="space-y-2">
@@ -28,7 +28,9 @@ export function BiometricOffer({ onEnable, onSkip }: Props) {
           Не сейчас
         </Button>
       </div>
-      <p className="text-xs text-muted">Отключить можно в кабинете: «Данные» → «Вход на этом устройстве».</p>
+      <p className="text-xs text-muted">
+        Отключить можно в кабинете: «Данные» → «Вход на этом устройстве».
+      </p>
     </div>
   )
 }

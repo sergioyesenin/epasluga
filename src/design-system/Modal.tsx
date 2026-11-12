@@ -33,7 +33,8 @@ export function Modal({ open, title, onClose, children }: ModalProps) {
     window.addEventListener('keydown', onKey)
     const box = boxRef.current
     const first =
-      box?.querySelector<HTMLElement>('input, select, textarea') ?? box?.querySelector<HTMLElement>('button')
+      box?.querySelector<HTMLElement>('input, select, textarea') ??
+      box?.querySelector<HTMLElement>('button')
     first?.focus()
     const prevOverflow = document.body.style.overflow
     document.body.style.overflow = 'hidden'

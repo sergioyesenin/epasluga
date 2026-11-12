@@ -58,7 +58,9 @@ export function ChargeRow({ charge, checked, now, onToggle }: ChargeRowProps) {
         </span>
         <span className="text-right shrink-0 tabular">
           {discount && (
-            <span className="block text-xs text-muted line-through">{formatMoney(charge.amount)}</span>
+            <span className="block text-xs text-muted line-through">
+              {formatMoney(charge.amount)}
+            </span>
           )}
           <span className="block font-bold text-ink">{formatMoney(amountDue(charge, now))}</span>
           <span className="block text-xs text-muted">BYN</span>

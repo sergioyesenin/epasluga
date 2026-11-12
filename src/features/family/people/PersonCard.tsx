@@ -50,7 +50,9 @@ export function PersonCard({ person, onRevoke }: PersonCardProps) {
   const off = person.consent === 'revoked'
 
   return (
-    <article className={clsx('bg-card border border-line rounded-card p-4 md:p-5', off && 'bg-soft/50')}>
+    <article
+      className={clsx('bg-card border border-line rounded-card p-4 md:p-5', off && 'bg-soft/50')}
+    >
       <header className="flex flex-wrap items-start gap-3">
         <MemberAvatar kind="adult" initials={initialsOf(person.full)} size="md" />
         <div className="flex-1 min-w-0">
@@ -69,7 +71,11 @@ export function PersonCard({ person, onRevoke }: PersonCardProps) {
           hint="начисления и сроки семьи"
           onChange={(v) => {
             setRole(person.id, 'sees', v)
-            showToast({ id: 'role', tone: 'ok', message: `${person.name}: «видит» — ${v ? 'включено' : 'выключено'}` })
+            showToast({
+              id: 'role',
+              tone: 'ok',
+              message: `${person.name}: «видит» — ${v ? 'включено' : 'выключено'}`,
+            })
           }}
         />
         <Switch
@@ -80,7 +86,11 @@ export function PersonCard({ person, onRevoke }: PersonCardProps) {
           hint="может оплачивать за семью"
           onChange={(v) => {
             setRole(person.id, 'pays', v)
-            showToast({ id: 'role', tone: 'ok', message: `${person.name}: «платит» — ${v ? 'включено' : 'выключено'}` })
+            showToast({
+              id: 'role',
+              tone: 'ok',
+              message: `${person.name}: «платит» — ${v ? 'включено' : 'выключено'}`,
+            })
           }}
         />
       </div>
@@ -92,13 +102,16 @@ export function PersonCard({ person, onRevoke }: PersonCardProps) {
       )}
       {off && (
         <p className="mt-2 text-sm text-muted">
-          Доступа нет. Начисления этого человека в «Далони» не показываются, история платежей сохранена.
+          Доступа нет. Начисления этого человека в «Далони» не показываются, история платежей
+          сохранена.
         </p>
       )}
 
       <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2">
         {person.consent === 'given' && (
-          <button type="button" className={dangerTextButton}
+          <button
+            type="button"
+            className={dangerTextButton}
             onClick={() => {
               onRevoke(person)
             }}

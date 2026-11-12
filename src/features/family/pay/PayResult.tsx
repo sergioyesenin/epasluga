@@ -9,7 +9,10 @@ import { actionButton, quietButton, textButton } from '../components/styles'
 export function PaySuccess({ items }: { items: PaymentRecord[] }) {
   const total = items.reduce((acc, h) => acc + h.amount, 0)
   return (
-    <section aria-labelledby="pay-ok-title" className="bg-card border border-line rounded-card p-6 md:p-8 text-center animate-rise">
+    <section
+      aria-labelledby="pay-ok-title"
+      className="bg-card border border-line rounded-card p-6 md:p-8 text-center animate-rise"
+    >
       <span className="mx-auto mb-4 w-16 h-16 rounded-full bg-ok-tint text-ok inline-flex items-center justify-center">
         <Icon name="check" className="w-8 h-8" strokeWidth={2.4} />
       </span>
@@ -17,8 +20,8 @@ export function PaySuccess({ items }: { items: PaymentRecord[] }) {
         Оплачено {formatBYN(total)}
       </h1>
       <p className="text-muted mt-2 max-w-md mx-auto">
-        Деньги ушли получателям через ЕРИП. Ведомства увидят оплату в течение рабочего дня — начисления
-        уже убраны из панели.
+        Деньги ушли получателям через ЕРИП. Ведомства увидят оплату в течение рабочего дня —
+        начисления уже убраны из панели.
       </p>
       <ul className="mt-6 divide-y divide-line border-y border-line text-left">
         {items.map((h) => (
@@ -27,7 +30,9 @@ export function PaySuccess({ items }: { items: PaymentRecord[] }) {
               <span className="block font-semibold text-ink leading-snug">{h.title}</span>
               <span className="block text-xs text-muted">Квитанция {h.receipt}</span>
             </span>
-            <span className="tabular font-semibold text-ink whitespace-nowrap">{formatBYN(h.amount)}</span>
+            <span className="tabular font-semibold text-ink whitespace-nowrap">
+              {formatBYN(h.amount)}
+            </span>
           </li>
         ))}
       </ul>
@@ -40,7 +45,10 @@ export function PaySuccess({ items }: { items: PaymentRecord[] }) {
           className={quietButton}
           onClick={() => {
             downloadReceipts(items)
-            showToast({ tone: 'ok', message: items.length > 1 ? 'Квитанции скачаны' : 'Квитанция скачана' })
+            showToast({
+              tone: 'ok',
+              message: items.length > 1 ? 'Квитанции скачаны' : 'Квитанция скачана',
+            })
           }}
         >
           <Icon name="download" className="w-5 h-5" />

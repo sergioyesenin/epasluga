@@ -34,7 +34,9 @@ export function PayMethods({ value, onChange, disabled }: PayMethodsProps) {
             key={m.id}
             className={clsx(
               'flex items-start gap-3 rounded-xl border px-4 py-3.5 cursor-pointer transition-colors',
-              on ? 'border-family-wine bg-family-wine-tint/40' : 'border-line bg-card hover:border-line-2',
+              on
+                ? 'border-family-wine bg-family-wine-tint/40'
+                : 'border-line bg-card hover:border-line-2',
             )}
           >
             <input
@@ -47,7 +49,10 @@ export function PayMethods({ value, onChange, disabled }: PayMethodsProps) {
               }}
               className="mt-1 w-5 h-5 accent-family-wine shrink-0"
             />
-            <Icon name={m.icon} className={clsx('w-6 h-6 shrink-0', on ? 'text-family-wine' : 'text-muted')} />
+            <Icon
+              name={m.icon}
+              className={clsx('w-6 h-6 shrink-0', on ? 'text-family-wine' : 'text-muted')}
+            />
             <span>
               <span className="block font-semibold text-ink">{m.title}</span>
               <span className="block text-sm text-muted">{m.text}</span>

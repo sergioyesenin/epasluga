@@ -24,7 +24,10 @@ export function TopBar() {
   return (
     <header className="sticky top-0 z-30 bg-card/95 backdrop-blur border-b border-line pt-safe">
       <div className="h-14 md:h-16 flex items-center justify-between gap-3 pl-[max(1rem,env(safe-area-inset-left))] pr-[max(0.5rem,env(safe-area-inset-right))] md:px-8">
-        <Link to="/" className={clsx('flex items-center gap-2.5 min-h-11', isAuthenticated && 'md:hidden')}>
+        <Link
+          to="/"
+          className={clsx('flex items-center gap-2.5 min-h-11', isAuthenticated && 'md:hidden')}
+        >
           <AppMark className="w-7 h-7" />
           <span className="font-bold text-ink text-[17px] tracking-tight">Е-Паслуга</span>
         </Link>

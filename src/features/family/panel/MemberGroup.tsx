@@ -16,7 +16,14 @@ type MemberGroupProps = {
 }
 
 /** Начисления одного члена семьи. id нужен, чтобы палец ладони прокручивал сюда. */
-export function MemberGroup({ member, charges, hidden, selected, now, onToggle }: MemberGroupProps) {
+export function MemberGroup({
+  member,
+  charges,
+  hidden,
+  selected,
+  now,
+  onToggle,
+}: MemberGroupProps) {
   return (
     <section
       id={`member-${member.id}`}
@@ -27,7 +34,10 @@ export function MemberGroup({ member, charges, hidden, selected, now, onToggle }
       <header className="flex items-center gap-3 px-4 py-3 border-b border-line">
         <MemberAvatar kind={member.kind} initials={member.initials} size="md" />
         <div className="flex-1 min-w-0">
-          <h3 id={`member-${member.id}-title`} className="font-semibold text-ink leading-snug truncate">
+          <h3
+            id={`member-${member.id}-title`}
+            className="font-semibold text-ink leading-snug truncate"
+          >
             {member.full}
           </h3>
           <p className="text-sm text-muted">{member.role}</p>
@@ -44,7 +54,10 @@ export function MemberGroup({ member, charges, hidden, selected, now, onToggle }
           <Icon name="lock" className="w-5 h-5 shrink-0" />
           <span>
             Начисления скрыты: согласия на доступ нет или оно отозвано.{' '}
-            <Link to="/family/people" className="font-semibold text-family-wine underline underline-offset-2">
+            <Link
+              to="/family/people"
+              className="font-semibold text-family-wine underline underline-offset-2"
+            >
               Семья и права
             </Link>
           </span>

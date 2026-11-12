@@ -18,7 +18,11 @@ export function OfflineBanner() {
     wasOnline.current = online
     if (online) {
       dismissToast('net-off')
-      showToast({ id: 'net-on', tone: 'ok', message: 'Сеть снова есть. Можно отправлять заявления и платить.' })
+      showToast({
+        id: 'net-on',
+        tone: 'ok',
+        message: 'Сеть снова есть. Можно отправлять заявления и платить.',
+      })
     }
   }, [online])
 
@@ -34,8 +38,9 @@ export function OfflineBanner() {
       <div className="px-4 md:px-8 py-2.5 flex items-start gap-2.5 text-sm max-w-6xl">
         <Icon name="offline" className="w-5 h-5 shrink-0 mt-px" />
         <p>
-          <span className="font-semibold">Нет сети.</span> Каталог, жизненные ситуации, документы и «Далонь»
-          открываются из памяти телефона. Отправка заявлений и оплата заработают, когда появится интернет.
+          <span className="font-semibold">Нет сети.</span> Каталог, жизненные ситуации, документы и
+          «Далонь» открываются из памяти телефона. Отправка заявлений и оплата заработают, когда
+          появится интернет.
         </p>
       </div>
     </div>

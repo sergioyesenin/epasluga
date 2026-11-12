@@ -14,7 +14,10 @@ function ToastCard({ item }: { item: ToastItem }) {
       role="status"
       className="pointer-events-auto w-full sm:w-auto sm:min-w-80 max-w-md bg-ink text-white rounded-2xl shadow-lift pl-4 pr-2 py-2.5 flex items-center gap-3 animate-rise"
     >
-      <span className={clsx('w-2 h-2 rounded-full shrink-0', toneDot[item.tone])} aria-hidden="true" />
+      <span
+        className={clsx('w-2 h-2 rounded-full shrink-0', toneDot[item.tone])}
+        aria-hidden="true"
+      />
       <div className="flex-1 min-w-0 py-1">
         {item.title && <p className="text-sm font-semibold leading-snug">{item.title}</p>}
         <p className="text-sm leading-snug text-white/85">{item.message}</p>
@@ -39,7 +42,13 @@ function ToastCard({ item }: { item: ToastItem }) {
         className="shrink-0 w-11 h-11 inline-flex items-center justify-center rounded-xl text-white/70 hover:text-white hover:bg-white/10"
         aria-label="Закрыть сообщение"
       >
-        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <svg
+          className="w-4 h-4"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2}
+        >
           <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
         </svg>
       </button>

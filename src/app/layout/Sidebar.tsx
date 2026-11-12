@@ -59,9 +59,16 @@ export function Sidebar() {
         </span>
       </Link>
 
-      <nav aria-label="Основные разделы" className="flex-1 overflow-y-auto px-3 pt-4 pb-4 flex flex-col gap-1">
+      <nav
+        aria-label="Основные разделы"
+        className="flex-1 overflow-y-auto px-3 pt-4 pb-4 flex flex-col gap-1"
+      >
         {memberNav.map((item) => (
-          <SideLink key={item.to} item={item} badge={item.to === '/family' ? dalonBadge : undefined} />
+          <SideLink
+            key={item.to}
+            item={item}
+            badge={item.to === '/family' ? dalonBadge : undefined}
+          />
         ))}
         <div className="my-3 border-t border-line" />
         {memberNavExtra.map((item) => (

@@ -57,13 +57,23 @@ export function RemindSettingsPanel({ remind }: { remind: RemindSettings }) {
   )
 
   return (
-    <aside aria-labelledby="remind-settings-title" className="bg-card border border-line rounded-card p-5 lg:sticky lg:top-24">
+    <aside
+      aria-labelledby="remind-settings-title"
+      className="bg-card border border-line rounded-card p-5 lg:sticky lg:top-24"
+    >
       <h2 id="remind-settings-title" className="text-lg font-bold text-ink mb-3">
         Как напоминать
       </h2>
       <Group title="Когда">{WHEN.map(renderSwitch)}</Group>
       <Group title="Куда">
-        <Switch tone="family" checked disabled label="В кабинет Е-Паслуги" hint="Всегда включено" onChange={() => undefined} />
+        <Switch
+          tone="family"
+          checked
+          disabled
+          label="В кабинет Е-Паслуги"
+          hint="Всегда включено"
+          onChange={() => undefined}
+        />
         <Switch
           tone="family"
           checked={push.enabled}

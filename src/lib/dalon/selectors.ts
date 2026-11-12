@@ -1,13 +1,11 @@
-import type {
-  DalonCharge,
-  DalonMemberId,
-  DalonPerson,
-  DalonState,
-} from '../../types/dalon'
+import type { DalonCharge, DalonMemberId, DalonPerson, DalonState } from '../../types/dalon'
 import { daysUntil } from '../dates'
 
 /** Человек из «Семьи и прав», к которому привязаны начисления члена семьи. */
-export function personForMember(state: DalonState, memberId: DalonMemberId): DalonPerson | undefined {
+export function personForMember(
+  state: DalonState,
+  memberId: DalonMemberId,
+): DalonPerson | undefined {
   return state.people.find((p) => p.memberId === memberId)
 }
 

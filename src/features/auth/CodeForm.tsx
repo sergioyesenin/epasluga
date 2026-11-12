@@ -37,7 +37,9 @@ export function CodeForm({ sms }: Props) {
         {sms.codeError ? (
           <p className="text-danger text-xs mt-1">{sms.codeError}</p>
         ) : (
-          <p className="text-xs text-muted mt-2">Демо-код: {DEMO_CODE}. Никому не сообщайте код из SMS.</p>
+          <p className="text-xs text-muted mt-2">
+            Демо-код: {DEMO_CODE}. Никому не сообщайте код из SMS.
+          </p>
         )}
       </div>
 
@@ -49,7 +51,9 @@ export function CodeForm({ sms }: Props) {
           onClick={sms.resend}
           className="min-h-11 text-navy hover:underline disabled:text-muted disabled:no-underline text-right"
         >
-          {sms.resendIn > 0 ? `Отправить повторно через ${sms.resendIn} с` : 'Отправить код повторно'}
+          {sms.resendIn > 0
+            ? `Отправить повторно через ${sms.resendIn} с`
+            : 'Отправить код повторно'}
         </button>
       </div>
 

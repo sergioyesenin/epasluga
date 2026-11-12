@@ -12,13 +12,18 @@ const schema = z.object({
   full: z
     .string()
     .trim()
-    .regex(/^[А-ЯЁЎІа-яёўі-]{2,}\s+[А-ЯЁЎІа-яёўі-]{2,}/, 'Укажите хотя бы фамилию и имя кириллицей'),
+    .regex(
+      /^[А-ЯЁЎІа-яёўі-]{2,}\s+[А-ЯЁЎІа-яёўі-]{2,}/,
+      'Укажите хотя бы фамилию и имя кириллицей',
+    ),
   relation: z.string(),
   idn: z
     .string()
     .trim()
     .transform((v) => v.toUpperCase())
-    .pipe(z.string().regex(/^[0-9A-Z]{14}$/, 'Личный номер — 14 цифр и латинских букв, как в паспорте')),
+    .pipe(
+      z.string().regex(/^[0-9A-Z]{14}$/, 'Личный номер — 14 цифр и латинских букв, как в паспорте'),
+    ),
 })
 
 type FormInput = z.input<typeof schema>
@@ -48,7 +53,10 @@ export function AddPersonDialog({ open, onClose }: AddPersonDialogProps) {
 
   const onSubmit = (data: FormOutput) => {
     const person = addPerson({ full: data.full, relation: data.relation })
-    showToast({ tone: 'ok', message: `Запрос отправлен: ${person.name}. Доступ появится после согласия.` })
+    showToast({
+      tone: 'ok',
+      message: `Запрос отправлен: ${person.name}. Доступ появится после согласия.`,
+    })
     close()
   }
 

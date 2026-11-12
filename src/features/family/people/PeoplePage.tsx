@@ -84,7 +84,10 @@ export function PeoplePage() {
           </h2>
           <div className="grid sm:grid-cols-2 gap-3">
             {kids.map((k) => (
-              <article key={k.id} className="bg-card border border-line rounded-card p-4 flex gap-3">
+              <article
+                key={k.id}
+                className="bg-card border border-line rounded-card p-4 flex gap-3"
+              >
                 <MemberAvatar kind="child" initials={k.initials} size="md" />
                 <div className="min-w-0">
                   <h3 className="font-semibold text-ink leading-snug">{k.full}</h3>
@@ -121,7 +124,10 @@ export function PeoplePage() {
       </div>
 
       <aside className="space-y-4 lg:sticky lg:top-24">
-        <section aria-labelledby="rules-title" className="bg-card border border-line rounded-card p-5">
+        <section
+          aria-labelledby="rules-title"
+          className="bg-card border border-line rounded-card p-5"
+        >
           <h2 id="rules-title" className="text-lg font-bold text-ink mb-3">
             Как устроен доступ
           </h2>
@@ -133,14 +139,19 @@ export function PeoplePage() {
             ))}
           </ul>
         </section>
-        <section aria-labelledby="log-title" className="bg-card border border-line rounded-card p-5">
+        <section
+          aria-labelledby="log-title"
+          className="bg-card border border-line rounded-card p-5"
+        >
           <h2 id="log-title" className="text-lg font-bold text-ink mb-3">
             Журнал действий
           </h2>
           <ol className="space-y-2.5 text-sm">
             {state.log.slice(0, 6).map((l) => (
               <li key={l.id} className="flex gap-3">
-                <span className="text-muted tabular whitespace-nowrap w-20 shrink-0">{formatDay(l.at)}</span>
+                <span className="text-muted tabular whitespace-nowrap w-20 shrink-0">
+                  {formatDay(l.at)}
+                </span>
                 <span className="text-ink">{l.text}</span>
               </li>
             ))}

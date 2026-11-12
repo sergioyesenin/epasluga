@@ -16,8 +16,7 @@ import { PayFail, PaySuccess } from './PayResult'
 function BackLink() {
   return (
     <Link to="/family" className={`${textButton} mb-4`}>
-      <Icon name="chevronLeft" className="w-5 h-5" />
-      К панели Далони
+      <Icon name="chevronLeft" className="w-5 h-5" />К панели Далони
     </Link>
   )
 }
@@ -88,9 +87,13 @@ export function PayPage() {
                 </span>
                 <span className="text-right tabular whitespace-nowrap">
                   {isDiscountActive(c, now) && (
-                    <span className="block text-xs text-muted line-through">{formatMoney(c.amount)}</span>
+                    <span className="block text-xs text-muted line-through">
+                      {formatMoney(c.amount)}
+                    </span>
                   )}
-                  <span className="font-semibold text-ink">{formatMoney(amountDue(c, now))} BYN</span>
+                  <span className="font-semibold text-ink">
+                    {formatMoney(amountDue(c, now))} BYN
+                  </span>
                 </span>
               </li>
             )
@@ -98,7 +101,9 @@ export function PayPage() {
         </ul>
         <p className="flex justify-between items-baseline px-4 py-4 border-t-2 border-line">
           <span className="font-semibold text-ink">Итого</span>
-          <span className="tabular text-2xl font-bold text-family-wine">{formatMoney(total)} BYN</span>
+          <span className="tabular text-2xl font-bold text-family-wine">
+            {formatMoney(total)} BYN
+          </span>
         </p>
       </section>
 
@@ -121,7 +126,10 @@ export function PayPage() {
         </label>
 
         {!online && (
-          <p role="status" className="flex gap-3 rounded-xl bg-warn-tint border border-warn-line px-4 py-3 text-sm text-warn">
+          <p
+            role="status"
+            className="flex gap-3 rounded-xl bg-warn-tint border border-warn-line px-4 py-3 text-sm text-warn"
+          >
             <Icon name="offline" className="w-5 h-5 shrink-0" />
             Нет сети. Оплата пройдёт, когда появится интернет, — начисления никуда не денутся.
           </p>

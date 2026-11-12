@@ -128,14 +128,16 @@ export function ServicePage() {
 
         <div className="lg:col-span-1">
           <div className="lg:sticky lg:top-24 space-y-4">
-            <Card className="bg-navy text-white border-0 shadow-lg">
-              <h3 className="text-lg font-bold mb-2 text-white">Оформление</h3>
-              <p className="text-white/80 text-sm mb-5 leading-relaxed">
+            <Card className="border-navy/25">
+              <h3 className="text-lg font-bold mb-2 text-ink">Оформление</h3>
+              <p className="text-muted text-sm mb-5 leading-relaxed">
                 {AUTH_HINT[service.authLevel]}
               </p>
               <Button
-                onClick={() => setIsFormOpen(true)}
-                className="w-full bg-white! text-navy! hover:bg-soft! border-0 font-bold"
+                onClick={() => {
+                  setIsFormOpen(true)
+                }}
+                className="w-full h-12 text-base"
               >
                 {ru.service.orderButton}
               </Button>

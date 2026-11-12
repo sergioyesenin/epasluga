@@ -19,7 +19,9 @@ export function DalonLayout() {
       <header className="flex items-center gap-3 mb-5">
         <DalonMark className="w-11 h-11 text-family-wine shrink-0" />
         <div>
-          <h1 className="text-[28px] leading-none font-bold tracking-tight text-family-wine">Далонь</h1>
+          <h1 className="text-[28px] leading-none font-bold tracking-tight text-family-wine">
+            Далонь
+          </h1>
           <p className="text-sm text-muted mt-1">Всё о семье — в одной ладони</p>
         </div>
       </header>

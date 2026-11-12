@@ -49,7 +49,9 @@ export function payCharges(ids: string[], method: PayMethod): PaymentRecord[] {
   const paidAt = now.toISOString()
   const records: PaymentRecord[] = list.map((c) => ({
     id: `h-${Date.now()}-${c.id}`,
-    title: isDiscountActive(c, now) ? `Штраф ГАИ: ${c.title.toLowerCase()} (скидка ${c.discount?.percent} %)` : c.title,
+    title: isDiscountActive(c, now)
+      ? `Штраф ГАИ: ${c.title.toLowerCase()} (скидка ${c.discount?.percent} %)`
+      : c.title,
     memberId: c.memberId,
     type: c.type,
     payee: c.payee,
@@ -64,7 +66,10 @@ export function payCharges(ids: string[], method: PayMethod): PaymentRecord[] {
     ...prev,
     charges: prev.charges.filter((c) => !ids.includes(c.id)),
     history: [...records, ...prev.history],
-    log: withLog(prev, `Вы оплатили ${countText(records.length, 'начисление', 'начисления', 'начислений')} на ${formatMoney(total)} BYN`),
+    log: withLog(
+      prev,
+      `Вы оплатили ${countText(records.length, 'начисление', 'начисления', 'начислений')} на ${formatMoney(total)} BYN`,
+    ),
   }))
 
   addNotification(
@@ -99,7 +104,11 @@ export function setConsent(id: string, consent: ConsentStatus) {
   }
   patchPerson(id, { consent, consentAt: new Date().toISOString() }, texts[consent])
   if (consent === 'given') {
-    addNotification('info', `Далонь: ${person.name} — согласие получено`, `${person.full} теперь в вашем семейном пространстве.`)
+    addNotification(
+      'info',
+      `Далонь: ${person.name} — согласие получено`,
+      `${person.full} теперь в вашем семейном пространстве.`,
+    )
   }
 }
 
@@ -122,7 +131,11 @@ export function setRole(id: string, role: 'sees' | 'pays', value: boolean) {
     return
   }
   const roleText = role === 'sees' ? 'видит' : 'платит'
-  patchPerson(id, { [role]: value }, `${person.name}: «${roleText}» — ${value ? 'включено' : 'выключено'}`)
+  patchPerson(
+    id,
+    { [role]: value },
+    `${person.name}: «${roleText}» — ${value ? 'включено' : 'выключено'}`,
+  )
 }
 
 export function addPerson(input: { full: string; relation: string }) {

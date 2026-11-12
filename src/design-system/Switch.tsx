@@ -35,7 +35,9 @@ export function Switch({ checked, onChange, label, hint, disabled, tone = 'navy'
         className={clsx(
           'relative mt-0.5 w-10 h-6 shrink-0 rounded-full transition-colors',
           'peer-focus-visible:outline-3 peer-focus-visible:outline-offset-2',
-          tone === 'family' ? 'peer-focus-visible:outline-family-wine' : 'peer-focus-visible:outline-navy',
+          tone === 'family'
+            ? 'peer-focus-visible:outline-family-wine'
+            : 'peer-focus-visible:outline-navy',
           checked ? (tone === 'family' ? 'bg-family-wine' : 'bg-navy') : 'bg-line-2',
         )}
       >

@@ -27,8 +27,9 @@ export function FineFeature({ fine, now }: { fine: DalonCharge; now: Date }) {
       </h2>
       <p className="mt-2 text-ink/80">
         {fine.title}: {fine.detail.charAt(0).toLowerCase() + fine.detail.slice(1)}. Если оплатить до{' '}
-        {formatDay(until)}, заплатите <span className="font-semibold">{formatMoney(amountDue(fine, now))} BYN</span>{' '}
-        вместо {formatMoney(fine.amount)} BYN.
+        {formatDay(until)}, заплатите{' '}
+        <span className="font-semibold">{formatMoney(amountDue(fine, now))} BYN</span> вместо{' '}
+        {formatMoney(fine.amount)} BYN.
       </p>
       <div className="mt-4 flex flex-wrap items-center gap-4">
         <Link to={`/family/pay?ids=${fine.id}`} className={actionButton}>

@@ -19,7 +19,9 @@ export function DeviceSettingsCard() {
 
   return (
     <Card>
-      <h3 className="text-lg font-bold text-ink mb-2 border-b border-line pb-2">Вход на этом устройстве</h3>
+      <h3 className="text-lg font-bold text-ink mb-2 border-b border-line pb-2">
+        Вход на этом устройстве
+      </h3>
       <Switch
         checked={bio.enrolled}
         disabled={bio.available === false && !bio.enrolled}
