@@ -1,4 +1,4 @@
-import { createHashRouter } from 'react-router-dom'
+﻿import { createHashRouter } from 'react-router-dom'
 import { Layout } from './Layout'
 import { useAuth } from '../contexts/AuthContext'
 
@@ -14,6 +14,7 @@ import { AboutPage } from '../features/about/AboutPage'
 import { ProfilePage } from '../features/profile/ProfilePage'
 import { NotificationsPage } from '../features/notifications/NotificationsPage'
 import { SituationPage } from '../features/situations/SituationPage'
+import { FamilyPage } from '../features/family/FamilyPage'
 
 // Компонент-переключатель для главной страницы
 function HomeSwitcher() {
@@ -29,6 +30,7 @@ export const router = createHashRouter([
       { index: true, element: <HomeSwitcher /> },
       { path: 'catalog', element: <CatalogPage /> },
       { path: 'situation/:id', element: <SituationPage /> },
+      { path: 'family', element: <FamilyPage /> },
       { path: 'service/:id', element: <ServicePage /> },
       { path: 'login', element: <LoginPage /> },
       { path: 'status/:id?', element: <StatusPage /> },

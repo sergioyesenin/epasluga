@@ -1,4 +1,4 @@
-import { NavLink, Outlet, Link, useNavigate } from 'react-router-dom'
+﻿import { NavLink, Outlet, Link, useNavigate } from 'react-router-dom'
 import { AiAssistant } from '../features/support/AiAssistant'
 import { Breadcrumbs } from './Breadcrumbs'
 import { useNotifications } from '../lib/notifications'
@@ -7,6 +7,7 @@ import clsx from 'clsx'
 
 const navItems = [
   { to: '/', label: 'Главная', end: true, icon: 'home' },
+  { to: '/family', label: 'Далонь', icon: 'flower' },
   { to: '/catalog', label: 'Каталог', icon: 'grid' },
   { to: '/profile', label: 'Профиль', icon: 'user' },
 ]
@@ -26,6 +27,13 @@ const MobileIcon = ({ name }: { name: string }) => {
         <rect x="14" y="5" width="6" height="6" rx="1" />
         <rect x="4" y="14" width="6" height="6" rx="1" />
         <rect x="14" y="14" width="6" height="6" rx="1" />
+      </svg>
+    )
+  if (name === 'flower')
+    return (
+      <svg className={cls} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+        <circle cx="12" cy="12" r="2.5" />
+        <path d="M12 9.5V4M12 14.5V20M9.5 12H4M14.5 12H20M10.2 10.2 6.5 6.5M13.8 13.8l3.7 3.7M10.2 13.8 6.5 17.5M13.8 10.2l3.7-3.7" />
       </svg>
     )
   if (name === 'file')
@@ -246,3 +254,4 @@ export function Layout() {
     </div>
   )
 }
+

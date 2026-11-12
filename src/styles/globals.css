@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+﻿@import 'tailwindcss';
 
 @theme {
   /* --- Бренд --- */
@@ -43,6 +43,30 @@
   --radius-control: 10px;
 
   --shadow-card: 0 10px 30px rgba(30, 42, 120, 0.07);
+  /* --- Семейный раздел «Далонь» --- */
+  --color-family-wine: #7a3a49;
+  --color-family-wine-ink: #5f2b38;
+  --color-family-wine-deep: #42202a;
+  --color-family-wine-tint: #f4ebed;
+  --color-family-orange: #e2a06f;
+  --color-family-orange-hover: #d8915d;
+  --color-family-peach: #f8e7d9;
+  --color-family-peach-ink: #7a4724;
+  --color-family-rose: #f4e2e6;
+  --color-family-rose-ink: #74384a;
+  --color-family-sand: #eeebe5;
+  --color-family-sand-ink: #504d47;
+
+  /* Статусы: пара «фон / текст» + линия */
+  --color-ok-line: #cfdfd3;
+  --color-warn-line: #e6d8bb;
+  --color-bad-line: #e8cbc6;
+  --color-warn: #85601f;
+  --color-warn-tint: #f6efe0;
+  --color-bad: #9a3d36;
+  --color-bad-tint: #f7e9e7;
+  --color-ok-tint: #e7efe9;
+  --color-ok: #3b6a4b;
 }
 
 html,
@@ -94,3 +118,65 @@ body {
     padding: 0.25rem 1rem !important;
   }
 }
+
+/* Утилиты для семейного раздела */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Лепестки/листья-кнопки: фокус и hover */
+.family-pin:focus-visible {
+  outline: 3px solid var(--color-family-wine);
+  outline-offset: 3px;
+  border-radius: 999px;
+}
+input[type="checkbox"] {
+  cursor: pointer;
+}
+input[type="checkbox"]:focus-visible {
+  outline: 3px solid var(--color-family-wine);
+  outline-offset: 2px;
+}
+.family-pin {
+  outline: none;
+}
+.family-pin:focus-visible {
+  outline: 3px solid var(--color-family-wine);
+  outline-offset: 3px;
+  border-radius: 999px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .family-pin:focus-visible {
+  outline: 3px solid var(--color-family-wine);
+  outline-offset: 3px;
+  border-radius: 999px;
+}
+input[type="checkbox"] {
+  cursor: pointer;
+}
+input[type="checkbox"]:focus-visible {
+  outline: 3px solid var(--color-family-wine);
+  outline-offset: 2px;
+}
+.family-pin {
+    transition: transform 200ms ease, filter 200ms ease;
+  }
+  .family-pin:hover:not(:focus-visible) {
+    transform: translateY(-3px);
+  }
+  .family-flower[data-dim="true"] .family-pin:not(:hover):not(:focus-visible) {
+    filter: saturate(0.35) opacity(0.75);
+  }
+  /* Стебель «растёт» при первом рендере */
+  .family-stem-path {
+    stroke-dasharray: 400;
+    stroke-dashoffset: 400;
+    animation: stem-grow 600ms ease-out forwards;
+  }
+  @keyframes stem-grow {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+}
+
