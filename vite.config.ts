@@ -21,7 +21,7 @@ export default defineConfig({
       registerType: 'prompt',
       // Регистрируем сами в src/lib/pwa/registerServiceWorker.ts
       injectRegister: false,
-      includeAssets: ['favicon.svg', 'favicon.ico', 'apple-touch-icon.png'],
+      // favicon, apple-touch-icon и иконки манифеста попадают в precache через globPatterns ниже
       manifest: {
         name: 'Е-Паслуга',
         short_name: 'Е-Паслуга',
