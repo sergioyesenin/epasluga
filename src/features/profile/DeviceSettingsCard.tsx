@@ -11,10 +11,10 @@ export function DeviceSettingsCard() {
   const standalone = useStandalone()
 
   let hint = 'Без SMS: телефон сам проверит отпечаток или лицо'
-  if (bio.available === false) {
-    hint = 'На этом устройстве нет сканера отпечатка или Face ID (или страница открыта не по HTTPS)'
-  } else if (bio.enrollment) {
+  if (bio.enrollment) {
     hint = `Включено ${formatDay(bio.enrollment.enabledAt)}. Отпечаток и лицо не покидают устройство`
+  } else if (bio.available === false) {
+    hint = 'На этом устройстве нет сканера отпечатка или Face ID (или страница открыта не по HTTPS)'
   }
 
   return (
