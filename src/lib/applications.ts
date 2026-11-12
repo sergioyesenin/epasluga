@@ -3,15 +3,82 @@ import type { Application } from '../types/service'
 
 const APPS_KEY = 'epasluga-apps'
 
+const daysAgo = (n: number) => new Date(Date.now() - n * 86400000).toISOString()
+
+// Демо-заявления. Были случайно вырезаны в коммите 4fa83dd — восстановлены из истории.
 const SEED: Application[] = [
-  // ... существующие 6 записей без изменений
+  {
+    id: 'a1',
+    num: '453346557107272',
+    title: 'Справка о доходах',
+    serviceId: '3-05-03',
+    initiator: 'Министерство по налогам и сборам',
+    status: 'Выполнено',
+    at: new Date().toISOString(),
+    comment: '',
+  },
+  {
+    id: 'a2',
+    num: '289953663290680',
+    title: 'Справка о доходах',
+    serviceId: '3-05-03',
+    initiator: 'Министерство по налогам и сборам',
+    status: 'Ожидает оплаты',
+    at: new Date().toISOString(),
+    comment: '',
+  },
+  {
+    id: 'a3',
+    num: '100294837561002',
+    title: 'Паспорт гражданина РБ',
+    serviceId: '200-12-1',
+    initiator: 'Министерство внутренних дел',
+    status: 'На проверке',
+    at: daysAgo(1),
+    comment: '',
+  },
+  {
+    id: 'a4',
+    num: '100294837561088',
+    title: 'Регистрация автомобиля',
+    serviceId: '200-15-11',
+    initiator: 'Министерство внутренних дел',
+    status: 'Черновик',
+    at: daysAgo(2),
+    comment: '',
+  },
+  {
+    id: 'a5',
+    num: '100294837561201',
+    title: 'Справка призывнику',
+    serviceId: '200-20-5',
+    initiator: 'Министерство обороны',
+    status: 'Отозвано',
+    at: daysAgo(4),
+    comment: '',
+  },
+  {
+    id: 'a6',
+    num: '100294837561333',
+    title: 'Лицензия адвоката',
+    serviceId: '200-17-1-1',
+    initiator: 'Министерство юстиции',
+    status: 'Отказано',
+    at: daysAgo(8),
+    comment: 'Неполный комплект документов',
+  },
 ]
 
 function read(): Application[] {
   try {
     const raw = JSON.parse(localStorage.getItem(APPS_KEY) || 'null')
-    if (Array.isArray(raw)) return raw
-  } catch { /* ignore */ }
+    // Пустой массив мог остаться от версии без демо-данных — засеваем заново
+    if (Array.isArray(raw) && raw.length > 0) {
+      return raw
+    }
+  } catch {
+    // повреждённые данные — засеваем заново
+  }
   localStorage.setItem(APPS_KEY, JSON.stringify(SEED))
   return SEED
 }
@@ -24,7 +91,11 @@ export function useApplications() {
   const [apps, setApps] = useState<Application[]>(() => read())
 
   useEffect(() => {
-    const onStorage = (e: StorageEvent) => { if (e.key === APPS_KEY) setApps(read()) }
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === APPS_KEY) {
+        setApps(read())
+      }
+    }
     window.addEventListener('storage', onStorage)
     return () => window.removeEventListener('storage', onStorage)
   }, [])
