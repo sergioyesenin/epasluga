@@ -56,14 +56,17 @@ function ToastCard({ item }: { item: ToastItem }) {
   )
 }
 
-/** Область всплывающих сообщений. Монтируется один раз в Layout. */
+/**
+ * Область всплывающих сообщений. Монтируется один раз в Layout.
+ * Сверху под шапкой: внизу экрана живут вкладки, панель оплаты «Далони» и кнопка помощника.
+ */
 export function Toaster() {
   const items = useToasts()
 
   return (
     <div
       aria-live="polite"
-      className="fixed inset-x-0 z-[60] px-4 flex flex-col items-center gap-2 pointer-events-none bottom-[calc(4.75rem+env(safe-area-inset-bottom))] md:bottom-6"
+      className="fixed inset-x-0 z-[60] px-4 flex flex-col items-center gap-2 pointer-events-none top-[calc(4.25rem+env(safe-area-inset-top))] md:top-20 md:left-auto md:right-6 md:px-0 md:items-end"
     >
       {items.map((item) => (
         <ToastCard key={item.id} item={item} />

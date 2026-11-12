@@ -9,7 +9,7 @@ import { MemberAvatar } from '../components/MemberAvatar'
 /** Высота пальца — как у настоящей ладони: средний длиннее всех, мизинец короче. */
 const FINGER_CLASS: Record<Finger, string> = {
   // На телефоне без наклона: повёрнутый палец уезжал за край экрана и под ладонь
-  thumb: 'h-[74%] sm:h-[66%] sm:-rotate-[14deg] origin-bottom-right sm:mr-3',
+  thumb: 'h-[74%] sm:h-[78%] sm:-rotate-[12deg] origin-bottom-right sm:mr-3',
   index: 'h-[88%]',
   middle: 'h-full',
   ring: 'h-[92%]',
@@ -51,8 +51,8 @@ function FingerButton({ member, charges, hidden, now, onPick }: FingerProps) {
     >
       <span
         className={clsx(
-          'flex flex-col items-center gap-1 pt-2.5 sm:pt-4 px-0.5',
-          member.finger === 'thumb' && 'sm:rotate-[14deg]',
+          'flex flex-col items-center gap-1 pt-2.5 px-0.5',
+          member.finger === 'thumb' ? 'sm:rotate-[12deg]' : 'sm:pt-4',
         )}
       >
         <MemberAvatar

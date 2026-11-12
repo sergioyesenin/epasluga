@@ -57,7 +57,7 @@ export function HomePage() {
               <Link key={a.id} to="/profile?tab=apps" className="block h-full">
                 <Card variant="interactive" className="h-full">
                   <h3 className="font-semibold text-ink mb-2 leading-tight">{a.title}</h3>
-                  <Badge className={statusClass(a.status)}>{a.status}</Badge>
+                  <Badge className={`${statusClass(a.status)} self-start`}>{a.status}</Badge>
                 </Card>
               </Link>
             ))}
