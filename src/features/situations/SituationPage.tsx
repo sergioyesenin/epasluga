@@ -177,7 +177,7 @@ export function SituationPage() {
                     aria-pressed={isDone}
                     aria-label={isDone ? 'Отметить шаг как невыполненный' : 'Отметить шаг как выполненный'}
                     className={clsx(
-                      'shrink-0 w-8 h-8 rounded-full border-2 flex items-center justify-center mt-1 transition-colors',
+                      'shrink-0 w-11 h-11 rounded-full border-2 flex items-center justify-center transition-colors',
                       isDone
                         ? 'bg-ok border-ok text-white'
                         : isInProgress
@@ -246,7 +246,7 @@ export function SituationPage() {
                         <button
                           type="button"
                           onClick={() => handleSkip(step.id)}
-                          className="text-sm text-muted underline hover:text-navy px-1"
+                          className="min-h-11 text-sm text-muted underline hover:text-navy px-1"
                         >
                           Пропустить
                         </button>
@@ -256,7 +256,7 @@ export function SituationPage() {
                         <button
                           type="button"
                           onClick={() => handleBack(index)}
-                          className="text-sm text-muted underline hover:text-navy px-1"
+                          className="min-h-11 text-sm text-muted underline hover:text-navy px-1"
                         >
                           Назад
                         </button>

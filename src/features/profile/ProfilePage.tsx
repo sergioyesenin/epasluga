@@ -58,7 +58,7 @@ export function ProfilePage() {
             aria-selected={tab === t.id}
             onClick={() => setTab(t.id)}
             className={clsx(
-              'shrink-0 px-4 py-2 rounded-full text-sm font-semibold transition-colors',
+              'shrink-0 px-4 py-2 min-h-11 rounded-full text-sm font-semibold transition-colors',
               tab === t.id
                 ? 'bg-white text-navy shadow-sm'
                 : 'text-muted hover:text-navy',

@@ -141,7 +141,7 @@ export function MailTab() {
                     <button
                       type="button"
                       onClick={() => alert('В демо скачивание недоступно')}
-                      className="shrink-0 inline-flex items-center justify-center rounded-control min-h-9 px-3 text-sm font-semibold bg-navy text-white hover:bg-navy-deep"
+                      className="shrink-0 inline-flex items-center justify-center rounded-control min-h-11 px-3 text-sm font-semibold bg-navy text-white hover:bg-navy-deep"
                     >
                       Скачать
                     </button>
@@ -233,7 +233,7 @@ export function MailTab() {
                 setFilter('all')
               }}
               className={clsx(
-                'px-4 py-2 rounded-full text-sm font-semibold transition-colors',
+                'px-4 py-2 min-h-11 rounded-full text-sm font-semibold transition-colors',
                 box === value
                   ? 'bg-white text-navy shadow-sm'
                   : 'text-muted hover:text-navy',

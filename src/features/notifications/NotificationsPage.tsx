@@ -49,7 +49,7 @@ export function NotificationsPage() {
         <button
           type="button"
           onClick={() => setBox('in')}
-          className={`px-5 py-2 rounded-full text-sm font-semibold transition-colors ${
+          className={`px-5 py-2 min-h-11 rounded-full text-sm font-semibold transition-colors ${
             box === 'in' ? 'bg-navy text-white' : 'bg-white text-navy border border-line hover:border-navy'
           }`}
         >
@@ -58,7 +58,7 @@ export function NotificationsPage() {
         <button
           type="button"
           onClick={() => setBox('arch')}
-          className={`px-5 py-2 rounded-full text-sm font-semibold transition-colors ${
+          className={`px-5 py-2 min-h-11 rounded-full text-sm font-semibold transition-colors ${
             box === 'arch' ? 'bg-navy text-white' : 'bg-white text-navy border border-line hover:border-navy'
           }`}
         >
@@ -67,7 +67,7 @@ export function NotificationsPage() {
         <button
           type="button"
           onClick={reload}
-          className="ml-auto text-xs text-muted underline hover:text-navy"
+          className="ml-auto min-h-11 px-2 text-xs text-muted underline hover:text-navy"
         >
           Обновить
         </button>

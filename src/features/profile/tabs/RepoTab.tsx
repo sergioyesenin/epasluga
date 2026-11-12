@@ -102,14 +102,14 @@ export function RepoTab() {
                 <button
                   type="button"
                   onClick={() => alert('В демо скачивание недоступно')}
-                  className="flex-1 inline-flex items-center justify-center rounded-control min-h-9 text-sm font-semibold border border-navy text-navy hover:bg-soft"
+                  className="flex-1 inline-flex items-center justify-center rounded-control min-h-11 text-sm font-semibold border border-navy text-navy hover:bg-soft"
                 >
                   Скачать
                 </button>
                 <button
                   type="button"
                   onClick={() => handleDelete(f.id)}
-                  className="inline-flex items-center justify-center rounded-control min-h-9 px-3 text-sm font-semibold text-danger border border-danger/40 hover:bg-[#fff6f6]"
+                  className="inline-flex items-center justify-center rounded-control min-h-11 px-3 text-sm font-semibold text-danger border border-danger/40 hover:bg-[#fff6f6]"
                 >
                   Удалить
                 </button>

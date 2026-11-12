@@ -96,7 +96,7 @@ export function QuickSearch() {
                 setQuery(hint)
                 inputRef.current?.focus()
               }}
-              className="text-navy hover:underline"
+              className="min-h-11 text-navy hover:underline"
             >
               «{hint}»
             </button>

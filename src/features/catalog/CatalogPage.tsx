@@ -171,7 +171,7 @@ export function CatalogPage() {
             type="button"
             onClick={() => setMode(value)}
             className={clsx(
-              'px-4 py-2 rounded-full text-sm font-semibold transition-colors',
+              'px-4 py-2 min-h-11 rounded-full text-sm font-semibold transition-colors',
               mode === value ? 'bg-white text-navy shadow-sm' : 'text-muted hover:text-navy',
             )}
           >
