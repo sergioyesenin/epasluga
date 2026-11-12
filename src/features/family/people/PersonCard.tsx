@@ -51,15 +51,15 @@ export function PersonCard({ person, onRevoke }: PersonCardProps) {
 
   return (
     <article
-      className={clsx('bg-card border border-line rounded-card p-4 md:p-5', off && 'bg-soft/50')}
+      className={clsx('border border-line rounded-card p-4 md:p-5', off ? 'bg-soft/50' : 'bg-card')}
     >
-      <header className="flex flex-wrap items-start gap-3">
+      <header className="flex items-start gap-3">
         <MemberAvatar kind="adult" initials={initialsOf(person.full)} size="md" />
         <div className="flex-1 min-w-0">
           <h3 className="font-semibold text-ink leading-snug">{person.full}</h3>
-          <p className="text-sm text-muted">{person.relation}</p>
+          <p className="text-sm text-muted mb-2">{person.relation}</p>
+          <ConsentPill person={person} />
         </div>
-        <ConsentPill person={person} />
       </header>
 
       <div className="mt-3 grid sm:grid-cols-2 gap-x-6">

@@ -91,10 +91,10 @@ export function InstallBanner({ className }: InstallBannerProps) {
             onClick={() => {
               void handleInstall()
             }}
-            className="mt-3 inline-flex items-center gap-2 min-h-11 px-4 rounded-control bg-navy text-white text-sm font-semibold hover:bg-navy-deep transition-colors"
+            className="mt-3 inline-flex items-center gap-2 min-h-11 px-4 whitespace-nowrap rounded-control bg-navy text-white text-sm font-semibold hover:bg-navy-deep transition-colors"
           >
             <Icon name="download" className="w-4.5 h-4.5" />
-            Установить приложение
+            Установить
           </button>
         )}
       </div>

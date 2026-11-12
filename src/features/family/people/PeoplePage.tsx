@@ -61,15 +61,15 @@ export function PeoplePage() {
           </div>
 
           {me && (
-            <article className="bg-card border border-line rounded-card p-4 md:p-5 flex flex-wrap items-center gap-3">
+            <article className="bg-card border border-line rounded-card p-4 md:p-5 flex items-start gap-3">
               <MemberAvatar kind="adult" initials={me.initials} size="md" />
               <div className="flex-1 min-w-0">
                 <h3 className="font-semibold text-ink leading-snug">{me.full}</h3>
-                <p className="text-sm text-muted">Вы — владелец семейного пространства</p>
+                <p className="text-sm text-muted mb-2">Вы — владелец семейного пространства</p>
+                <span className="inline-flex rounded-full bg-family-wine-tint text-family-wine-ink px-2.5 py-1 text-xs font-semibold">
+                  Видит и платит
+                </span>
               </div>
-              <span className="rounded-full bg-family-wine-tint text-family-wine-ink px-2.5 py-1 text-xs font-semibold">
-                Видит и платит
-              </span>
             </article>
           )}
 

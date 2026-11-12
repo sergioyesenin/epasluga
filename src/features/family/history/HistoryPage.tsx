@@ -27,29 +27,33 @@ function groupByMonth(list: PaymentRecord[]) {
 
 function HistoryRow({ h }: { h: PaymentRecord }) {
   return (
-    <li className="flex flex-wrap sm:flex-nowrap items-center gap-x-4 gap-y-1 px-4 py-3">
-      <span className="w-24 shrink-0 text-sm text-muted tabular">{formatDay(h.paidAt)}</span>
-      <span className="flex-1 min-w-[12rem]">
+    <li className="flex flex-col sm:flex-row sm:items-center gap-x-4 gap-y-1 px-4 py-3">
+      <span className="sm:w-24 shrink-0 text-xs sm:text-sm text-muted tabular">
+        {formatDay(h.paidAt)}
+      </span>
+      <span className="flex-1 min-w-0">
         <span className="block font-semibold text-ink leading-snug">{h.title}</span>
         <span className="block text-xs text-muted">
           {memberById(h.memberId)?.name}, {METHOD_LABEL[h.method]}, квитанция {h.receipt}
         </span>
       </span>
-      <span className="tabular font-semibold text-ink whitespace-nowrap">
-        {formatBYN(h.amount)}
+      <span className="flex items-center justify-between gap-4">
+        <span className="tabular font-semibold text-ink whitespace-nowrap">
+          {formatBYN(h.amount)}
+        </span>
+        <button
+          type="button"
+          className={textButton}
+          aria-label={`Скачать квитанцию: ${h.title}`}
+          onClick={() => {
+            downloadReceipts([h])
+            showToast({ tone: 'ok', message: 'Квитанция скачана' })
+          }}
+        >
+          <Icon name="download" className="w-4.5 h-4.5" />
+          Квитанция
+        </button>
       </span>
-      <button
-        type="button"
-        className={textButton}
-        aria-label={`Скачать квитанцию: ${h.title}`}
-        onClick={() => {
-          downloadReceipts([h])
-          showToast({ tone: 'ok', message: 'Квитанция скачана' })
-        }}
-      >
-        <Icon name="download" className="w-4.5 h-4.5" />
-        Квитанция
-      </button>
     </li>
   )
 }

@@ -8,7 +8,8 @@ import { MemberAvatar } from '../components/MemberAvatar'
 
 /** Высота пальца — как у настоящей ладони: средний длиннее всех, мизинец короче. */
 const FINGER_CLASS: Record<Finger, string> = {
-  thumb: 'h-[66%] -rotate-[14deg] origin-bottom-right mr-1 sm:mr-3',
+  // На телефоне без наклона: повёрнутый палец уезжал за край экрана и под ладонь
+  thumb: 'h-[74%] sm:h-[66%] sm:-rotate-[14deg] origin-bottom-right sm:mr-3',
   index: 'h-[88%]',
   middle: 'h-full',
   ring: 'h-[92%]',
@@ -51,7 +52,7 @@ function FingerButton({ member, charges, hidden, now, onPick }: FingerProps) {
       <span
         className={clsx(
           'flex flex-col items-center gap-1 pt-2.5 sm:pt-4 px-0.5',
-          member.finger === 'thumb' && 'rotate-[14deg]',
+          member.finger === 'thumb' && 'sm:rotate-[14deg]',
         )}
       >
         <MemberAvatar
@@ -106,7 +107,7 @@ export function HandSummary({ charges, total, now, isHidden, onPick }: HandSumma
           />
         ))}
       </div>
-      <div className="relative z-10 -mt-7 rounded-t-[28px] rounded-b-[56px] bg-family-hand px-6 sm:px-8 pt-6 pb-8">
+      <div className="relative z-10 -mt-5 sm:-mt-7 rounded-t-[28px] rounded-b-[56px] bg-family-hand px-6 sm:px-8 pt-6 pb-8">
         <p className="text-[15px] text-muted">К оплате у семьи</p>
         <p className="mt-1 leading-none">
           <span className="tabular text-[40px] sm:text-[48px] font-bold tracking-tight text-family-wine">
