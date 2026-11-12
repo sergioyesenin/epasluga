@@ -30,7 +30,7 @@ export function RemindersPage() {
         id: d.id,
         date: d.dueAt,
         memberId: d.memberId,
-        type: d.type === 'car' ? ('car' as const) : ('tax' as const),
+        type: d.type,
         title: d.title,
         text: d.detail,
         href: d.href,

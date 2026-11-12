@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { Switch } from '../../../design-system'
 import type { RemindKey, RemindSettings } from '../../../types/dalon'
 import { setRemind } from '../../../lib/dalon/actions'
@@ -21,7 +22,7 @@ const WHAT: Option[] = [
   { key: 'doc', label: 'Сроки документов' },
 ]
 
-function Group({ title, children }: { title: string; children: React.ReactNode }) {
+function Group({ title, children }: { title: string; children: ReactNode }) {
   return (
     <fieldset className="py-3 border-t border-line first-of-type:border-t-0 first-of-type:pt-0">
       <legend className="sr-only">{title}</legend>

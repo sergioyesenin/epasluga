@@ -69,7 +69,10 @@ export function memberById(id: string): DalonMember | undefined {
 }
 
 /** Метка типа начисления: дети — персиковая, авто и штрафы — розоватая, остальное — песочная. */
-export const CHARGE_LABELS: Record<ChargeType, { text: string; tone: 'peach' | 'rose' | 'sand' }> = {
+export type LabelType = ChargeType | 'doc'
+
+export const CHARGE_LABELS: Record<LabelType, { text: string; tone: 'peach' | 'rose' | 'sand' }> = {
+  doc: { text: 'Документ', tone: 'sand' },
   kids: { text: 'Дети', tone: 'peach' },
   fine: { text: 'Штраф ГАИ', tone: 'rose' },
   car: { text: 'Авто', tone: 'rose' },

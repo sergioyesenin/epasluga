@@ -1,8 +1,7 @@
 import { Link } from 'react-router-dom'
 import clsx from 'clsx'
 import { EmptyState, Icon } from '../../../design-system'
-import type { ChargeType } from '../../../types/dalon'
-import { memberById } from '../../../data/dalon'
+import { memberById, type LabelType } from '../../../data/dalon'
 import { formatDayParts, toneFor, toneText, untilText } from '../../../lib/dates'
 import { TypeLabel } from '../components/TypeLabel'
 import { quietButton } from '../components/styles'
@@ -11,7 +10,7 @@ export type DeadlineItem = {
   id: string
   date: string
   memberId: string
-  type: ChargeType
+  type: LabelType
   title: string
   text: string
   href: string

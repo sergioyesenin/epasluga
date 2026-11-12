@@ -1,6 +1,5 @@
 import clsx from 'clsx'
-import { CHARGE_LABELS } from '../../../data/dalon'
-import type { ChargeType } from '../../../types/dalon'
+import { CHARGE_LABELS, type LabelType } from '../../../data/dalon'
 
 const TONE_CLASS = {
   peach: 'bg-family-peach text-family-peach-ink',
@@ -9,7 +8,7 @@ const TONE_CLASS = {
 }
 
 /** Цветная метка типа: дети — персик, авто и штрафы — роза, налоги и ЖКХ — песок. */
-export function TypeLabel({ type, className }: { type: ChargeType; className?: string }) {
+export function TypeLabel({ type, className }: { type: LabelType; className?: string }) {
   const label = CHARGE_LABELS[type]
   return (
     <span

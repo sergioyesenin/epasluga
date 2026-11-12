@@ -9,3 +9,7 @@ export const quietButton =
 /** Текстовая кнопка-ссылка. */
 export const textButton =
   'inline-flex items-center gap-1.5 min-h-11 px-2 -mx-2 rounded-lg text-sm font-semibold text-family-wine hover:bg-family-wine-tint transition-colors focus-visible:outline-3 focus-visible:outline-family-wine'
+
+/** Текстовая кнопка опасного действия (отозвать доступ). */
+export const dangerTextButton =
+  'inline-flex items-center gap-1.5 min-h-11 px-2 -mx-2 rounded-lg text-sm font-semibold text-bad hover:bg-bad-tint transition-colors focus-visible:outline-3 focus-visible:outline-bad'
