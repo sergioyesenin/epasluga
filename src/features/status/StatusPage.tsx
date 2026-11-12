@@ -12,7 +12,7 @@ export function StatusPage() {
   if (!id) {
     return (
       <div className="max-w-3xl mx-auto py-12 text-center">
-        <h1 className="text-2xl font-bold text-navy-deep mb-4">Выберите заявление</h1>
+        <h1 className="text-2xl font-bold text-ink mb-4">Выберите заявление</h1>
         <p className="text-muted mb-6">Чтобы увидеть статус, перейдите в «Мои услуги» и выберите заявку.</p>
         <Link to="/profile?tab=apps" className="inline-flex items-center justify-center rounded-control px-4 py-2.5 text-[15px] font-semibold bg-navy text-white hover:bg-navy-deep">
           Перейти в Мои услуги
@@ -27,7 +27,7 @@ export function StatusPage() {
   if (!app) {
     return (
       <div className="max-w-3xl mx-auto py-12 text-center">
-        <h1 className="text-2xl font-bold text-navy-deep mb-4">Заявление не найдено</h1>
+        <h1 className="text-2xl font-bold text-ink mb-4">Заявление не найдено</h1>
         <Link to="/profile?tab=apps" className="text-navy hover:underline">Вернуться к списку</Link>
       </div>
     )
@@ -43,12 +43,12 @@ export function StatusPage() {
     <div className="max-w-3xl mx-auto pb-12">
       <div className="mb-8">
         <div className="text-sm text-muted mb-2">Заявление № {app.num} от {formatWhen(app.at)}</div>
-        <h1 className="text-3xl font-bold text-navy-deep mb-2">{app.title}</h1>
+        <h1 className="text-3xl font-bold text-ink mb-2">{app.title}</h1>
         <p className="text-muted">Инициатор: {app.initiator}</p>
       </div>
 
       <Card className="mb-6">
-        <h2 className="text-lg font-bold text-navy-deep mb-6">Текущий статус</h2>
+        <h2 className="text-lg font-bold text-ink mb-6">Текущий статус</h2>
         
         {/* Трекер шагов */}
         <div className="mb-8 pl-2">
@@ -60,7 +60,7 @@ export function StatusPage() {
             <Badge className={statusClass(app.status)}>{app.status}</Badge>
           </div>
           <div>
-            <p className="text-sm font-semibold text-navy-deep mb-1">
+            <p className="text-sm font-semibold text-ink mb-1">
               {app.status === 'На проверке' && 'Ведомство рассматривает ваше заявление.'}
               {app.status === 'Выполнено' && 'Услуга оказана. Документ готов.'}
               {app.status === 'Ожидает оплаты' && 'Заявление одобрено, но требует оплаты.'}
@@ -77,7 +77,7 @@ export function StatusPage() {
 
       {service && (
         <Card>
-          <h2 className="text-lg font-bold text-navy-deep mb-4">Об услуге</h2>
+          <h2 className="text-lg font-bold text-ink mb-4">Об услуге</h2>
           <p className="text-sm text-muted mb-4">{service.plainDescription}</p>
           <div className="grid grid-cols-2 gap-4 text-sm mb-4">
             <div>

@@ -15,7 +15,7 @@ export function Accordion({ title, children, defaultOpen = false }: AccordionPro
     <div className="border border-line rounded-control bg-white mb-2 overflow-hidden">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between p-4 bg-transparent hover:bg-soft/50 transition-colors text-left font-semibold text-navy-deep focus:outline-none"
+        className="w-full flex items-center justify-between p-4 bg-transparent hover:bg-soft/50 transition-colors text-left font-semibold text-ink focus:outline-none"
       >
         <span>{title}</span>
         <svg

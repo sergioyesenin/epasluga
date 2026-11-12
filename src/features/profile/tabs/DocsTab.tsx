@@ -84,7 +84,7 @@ function DocumentCard({ doc }: { doc: Document }) {
           <FileIcon className="w-5 h-5" />
         </span>
         <div className="min-w-0">
-          <h3 className="font-semibold text-navy-deep leading-snug">{doc.title}</h3>
+          <h3 className="font-semibold text-ink leading-snug">{doc.title}</h3>
           <div className="text-xs text-muted mt-0.5">{doc.issuer}</div>
         </div>
       </div>
@@ -118,14 +118,14 @@ function DocumentCard({ doc }: { doc: Document }) {
           <button
             type="button"
             onClick={() => alert('В демо скачивание недоступно')}
-            className="flex-1 inline-flex items-center justify-center rounded-control min-h-9 text-sm font-semibold bg-navy text-white hover:bg-navy-deep"
+            className="flex-1 inline-flex items-center justify-center rounded-control min-h-11 text-sm font-semibold bg-navy text-white hover:bg-navy-deep"
           >
             Скачать
           </button>
           <button
             type="button"
             onClick={() => setShowQr(true)}
-            className="flex-1 inline-flex items-center justify-center rounded-control min-h-9 text-sm font-semibold border border-navy text-navy hover:bg-soft"
+            className="flex-1 inline-flex items-center justify-center rounded-control min-h-11 text-sm font-semibold border border-navy text-navy hover:bg-soft"
           >
             QR-код
           </button>

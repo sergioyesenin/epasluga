@@ -49,7 +49,7 @@ export function SituationPage() {
   if (!situation) {
     return (
       <div className="text-center py-12">
-        <h1 className="text-2xl font-bold text-navy-deep mb-4">Ситуация не найдена</h1>
+        <h1 className="text-2xl font-bold text-ink mb-4">Ситуация не найдена</h1>
         <Link to="/catalog?view=situations" className="text-navy hover:underline">
           Вернуться к списку ситуаций
         </Link>
@@ -84,7 +84,7 @@ export function SituationPage() {
           </Link>{' '}
           / <span>{situation.title}</span>
         </div>
-        <h1 className="text-3xl font-bold text-navy-deep mb-3">{situation.title}</h1>
+        <h1 className="text-3xl font-bold text-ink mb-3">{situation.title}</h1>
         <p className="text-lg text-ink mb-4">{situation.painPoint}</p>
 
         <Card className="bg-[#f8f9ff] border-line flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -144,7 +144,7 @@ export function SituationPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-4">
-          <h2 className="text-lg font-bold text-navy-deep mb-2">
+          <h2 className="text-lg font-bold text-ink mb-2">
             Ваши шаги
             {isComplete && (
               <span className="ml-2 inline-flex items-center gap-1 text-xs font-semibold text-ok bg-[#e6f6ec] px-2 py-1 rounded">
@@ -177,7 +177,7 @@ export function SituationPage() {
                     aria-pressed={isDone}
                     aria-label={isDone ? 'Отметить шаг как невыполненный' : 'Отметить шаг как выполненный'}
                     className={clsx(
-                      'shrink-0 w-8 h-8 rounded-full border-2 flex items-center justify-center mt-1 transition-colors',
+                      'shrink-0 w-11 h-11 rounded-full border-2 flex items-center justify-center transition-colors',
                       isDone
                         ? 'bg-ok border-ok text-white'
                         : isInProgress
@@ -192,7 +192,7 @@ export function SituationPage() {
                     <div className="flex justify-between items-start mb-1 gap-2 flex-wrap">
                       <h3
                         className={clsx(
-                          'font-semibold text-navy-deep text-lg',
+                          'font-semibold text-ink text-lg',
                           isDone && 'line-through',
                         )}
                       >
@@ -246,7 +246,7 @@ export function SituationPage() {
                         <button
                           type="button"
                           onClick={() => handleSkip(step.id)}
-                          className="text-sm text-muted underline hover:text-navy px-1"
+                          className="min-h-11 text-sm text-muted underline hover:text-navy px-1"
                         >
                           Пропустить
                         </button>
@@ -256,7 +256,7 @@ export function SituationPage() {
                         <button
                           type="button"
                           onClick={() => handleBack(index)}
-                          className="text-sm text-muted underline hover:text-navy px-1"
+                          className="min-h-11 text-sm text-muted underline hover:text-navy px-1"
                         >
                           Назад
                         </button>
@@ -278,7 +278,7 @@ export function SituationPage() {
 
         <div className="space-y-6">
           <Card>
-            <h3 className="font-bold text-navy-deep mb-3">Полезно знать</h3>
+            <h3 className="font-bold text-ink mb-3">Полезно знать</h3>
             <ul className="space-y-3 text-sm text-muted">
               <li>• Шаги можно выполнять в любом порядке, если не указано иначе.</li>
               <li>• Для онлайн-услуг понадобится ID-карта или ЭЦП.</li>
@@ -296,7 +296,7 @@ export function SituationPage() {
 
           {situation.faq && situation.faq.length > 0 && (
             <Card className="bg-soft border-line">
-              <h3 className="font-bold text-navy-deep mb-3">Частые вопросы</h3>
+              <h3 className="font-bold text-ink mb-3">Частые вопросы</h3>
               {situation.faq.map((item, i) => (
                 <div key={i} className="mb-3 last:mb-0">
                   <p className="font-semibold text-ink text-sm mb-1">{item.question}</p>

@@ -18,7 +18,7 @@ export function StarButton({ active, onClick, label }: StarButtonProps) {
       aria-pressed={active}
       aria-label={label ?? (active ? 'Убрать из избранного' : 'Добавить в избранное')}
       className={clsx(
-        'shrink-0 w-9 h-9 flex items-center justify-center rounded-full transition-all',
+        'shrink-0 w-11 h-11 flex items-center justify-center rounded-full transition-all',
         'focus:outline-none focus:ring-2 focus:ring-navy/40',
         active ? 'text-navy bg-soft' : 'text-muted hover:text-navy hover:bg-soft',
       )}

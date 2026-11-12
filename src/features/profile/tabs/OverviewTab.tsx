@@ -28,7 +28,7 @@ export function OverviewTab({ onNavigate }: Props) {
       {/* Активные заявления */}
       <Card className="lg:col-span-1">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-lg font-bold text-navy-deep">Активные заявления</h2>
+          <h2 className="text-lg font-bold text-ink">Активные заявления</h2>
           <button
             type="button"
             onClick={() => onNavigate('apps')}
@@ -45,7 +45,7 @@ export function OverviewTab({ onNavigate }: Props) {
               <li key={a.id} className="py-2 px-2">
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
-                    <div className="font-semibold text-navy-deep truncate">{a.title}</div>
+                    <div className="font-semibold text-ink truncate">{a.title}</div>
                     <div className="text-xs text-muted">
                       № {a.num} · {formatWhen(a.at)}
                     </div>
@@ -61,7 +61,7 @@ export function OverviewTab({ onNavigate }: Props) {
       {/* Документы */}
       <Card className="lg:col-span-1">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-lg font-bold text-navy-deep">Последние документы</h2>
+          <h2 className="text-lg font-bold text-ink">Последние документы</h2>
           <button
             type="button"
             onClick={() => onNavigate('docs')}
@@ -80,7 +80,7 @@ export function OverviewTab({ onNavigate }: Props) {
                   <FileIcon className="w-4 h-4" />
                 </span>
                 <div className="min-w-0">
-                  <div className="font-semibold text-navy-deep truncate">{d.title}</div>
+                  <div className="font-semibold text-ink truncate">{d.title}</div>
                   <div className="text-xs text-muted">
                     {d.issuer} · {formatWhen(d.issuedAt)}
                   </div>
@@ -94,7 +94,7 @@ export function OverviewTab({ onNavigate }: Props) {
       {/* Почта */}
       <Card>
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-lg font-bold text-navy-deep">Непрочитанная почта</h2>
+          <h2 className="text-lg font-bold text-ink">Непрочитанная почта</h2>
           <button
             type="button"
             onClick={() => onNavigate('mail')}
@@ -113,7 +113,7 @@ export function OverviewTab({ onNavigate }: Props) {
                   <InfoIcon className="w-4 h-4" />
                 </span>
                 <div className="min-w-0">
-                  <div className="font-semibold text-navy-deep truncate">{m.subject}</div>
+                  <div className="font-semibold text-ink truncate">{m.subject}</div>
                     <div className="text-xs text-muted">
                     {m.agency} · {formatWhen(m.at)}
                     </div>
@@ -127,7 +127,7 @@ export function OverviewTab({ onNavigate }: Props) {
       {/* Уведомления */}
       <Card>
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-lg font-bold text-navy-deep">Уведомления</h2>
+          <h2 className="text-lg font-bold text-ink">Уведомления</h2>
           <Link
             to="/notifications"
             className="text-sm font-semibold text-navy hover:underline"
@@ -148,7 +148,7 @@ export function OverviewTab({ onNavigate }: Props) {
                   <ClockIcon className="w-4 h-4" />
                 </span>
                 <div className="min-w-0">
-                  <div className="font-semibold text-navy-deep truncate">{n.title}</div>
+                  <div className="font-semibold text-ink truncate">{n.title}</div>
                   <div className="text-xs text-muted">{formatWhen(n.at)}</div>
                 </div>
               </li>

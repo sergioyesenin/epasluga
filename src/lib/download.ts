@@ -26,13 +26,20 @@ startxref
 510
 %%EOF`
 
-  const blob = new Blob([pdf], { type: 'application/pdf' })
+  downloadBlob(new Blob([pdf], { type: 'application/pdf' }), `dokument-${app.num}.pdf`)
+}
+
+/** Скачать файл, собранный в браузере (работает и без сети). */
+export function downloadBlob(blob: Blob, filename: string) {
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
   a.href = url
-  a.download = `dokument-${app.num}.pdf`
+  a.download = filename
   document.body.appendChild(a)
   a.click()
   document.body.removeChild(a)
-  URL.revokeObjectURL(url)
+  // Safari успевает начать загрузку только если ссылка живёт чуть дольше
+  window.setTimeout(() => {
+    URL.revokeObjectURL(url)
+  }, 1000)
 }

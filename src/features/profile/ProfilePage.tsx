@@ -39,7 +39,7 @@ export function ProfilePage() {
   return (
     <div className="max-w-5xl mx-auto pb-12">
       <header className="mb-6">
-        <h1 className="text-3xl font-bold text-navy-deep mb-2">Личный кабинет</h1>
+        <h1 className="text-3xl font-bold text-ink mb-2">Личный кабинет</h1>
         <p className="text-muted max-w-2xl">
           Заявления, документы, почта и данные из регистра — всё в одном месте.
         </p>
@@ -58,7 +58,7 @@ export function ProfilePage() {
             aria-selected={tab === t.id}
             onClick={() => setTab(t.id)}
             className={clsx(
-              'shrink-0 px-4 py-2 rounded-full text-sm font-semibold transition-colors',
+              'shrink-0 px-4 py-2 min-h-11 rounded-full text-sm font-semibold transition-colors',
               tab === t.id
                 ? 'bg-white text-navy shadow-sm'
                 : 'text-muted hover:text-navy',

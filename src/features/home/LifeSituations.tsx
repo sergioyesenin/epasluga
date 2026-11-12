@@ -10,7 +10,7 @@ export function LifeSituations() {
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-bold text-navy-deep">Жизненные ситуации</h2>
+        <h2 className="text-lg font-bold text-ink">Жизненные ситуации</h2>
         <Link
           to="/catalog?view=situations"
           className="text-sm text-navy hover:underline"
@@ -32,7 +32,7 @@ export function LifeSituations() {
               <span className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-[#e8eeff] text-navy">
                 <SituationIcon id={sit.id} className="w-6 h-6" />
               </span>
-              <span className="font-semibold text-navy-deep text-sm">
+              <span className="font-semibold text-ink text-sm">
                 {sit.title}
               </span>
             </Card>

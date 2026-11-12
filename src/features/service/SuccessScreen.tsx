@@ -21,7 +21,7 @@ export function SuccessScreen({ service, applicationNum, situationId }: SuccessS
         </svg>
       </div>
 
-      <h1 className="text-3xl font-bold text-navy-deep mb-4">Заявление принято!</h1>
+      <h1 className="text-3xl font-bold text-ink mb-4">Заявление принято!</h1>
       <p className="text-lg text-ink mb-2">Услуга: {service.shortTitle}</p>
       {applicationNum && (
         <p className="text-sm text-muted mb-2">Номер заявления: <span className="font-mono">{applicationNum}</span></p>
@@ -49,7 +49,7 @@ export function SuccessScreen({ service, applicationNum, situationId }: SuccessS
       </div>
 
       <Card className="bg-soft border-line text-left">
-        <h3 className="font-bold text-navy-deep mb-2 text-center">Насколько легко было получить услугу?</h3>
+        <h3 className="font-bold text-ink mb-2 text-center">Насколько легко было получить услугу?</h3>
         {isRated ? (
           <p className="text-center text-ok font-semibold">Спасибо за ваш отзыв! Это помогает нам становиться лучше.</p>
         ) : (

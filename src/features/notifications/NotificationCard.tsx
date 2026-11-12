@@ -30,21 +30,21 @@ export function NotificationCard({ n, box, onArchive, onUnarchive, onDelete }: N
           </Badge>
           <span className="text-xs text-muted">{formatWhen(n.at)}</span>
         </div>
-        <h3 className="font-semibold text-navy-deep mb-1">{n.title}</h3>
+        <h3 className="font-semibold text-ink mb-1">{n.title}</h3>
         <p className="text-sm text-muted mb-3">{n.body}</p>
 
         <div className="flex gap-2 flex-wrap">
           {box === 'in' ? (
-            <button type="button" onClick={onArchive} className="text-xs font-semibold px-3 py-1.5 rounded-lg border border-line text-navy hover:bg-soft">
+            <button type="button" onClick={onArchive} className="text-xs font-semibold px-3 min-h-11 rounded-lg border border-line text-navy hover:bg-soft">
               В архив
             </button>
           ) : (
-            <button type="button" onClick={onUnarchive} className="text-xs font-semibold px-3 py-1.5 rounded-lg border border-line text-navy hover:bg-soft">
+            <button type="button" onClick={onUnarchive} className="text-xs font-semibold px-3 min-h-11 rounded-lg border border-line text-navy hover:bg-soft">
               Вернуть во входящие
             </button>
           )}
           {n.kind === 'info' && box === 'in' && (
-            <button type="button" onClick={onDelete} className="text-xs font-semibold px-3 py-1.5 rounded-lg border border-line text-danger hover:bg-[#fff6f6]">
+            <button type="button" onClick={onDelete} className="text-xs font-semibold px-3 min-h-11 rounded-lg border border-line text-danger hover:bg-[#fff6f6]">
               Удалить
             </button>
           )}

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Card, Button, ConfirmDialog, EmptyState } from '../../../design-system'
+import { DeviceSettingsCard } from '../DeviceSettingsCard'
 
 const PERSONA = {
   fullName: 'Иванов Алексей Сергеевич',
@@ -18,16 +19,16 @@ export function DataTab() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       <Card className="md:col-span-1 flex flex-col items-center text-center p-6 h-fit">
-        <div className="w-24 h-24 bg-navy text-white rounded-full flex items-center justify-center text-3xl font-bold mb-4">
+        <div className="w-24 h-24 bg-soft text-ink rounded-full flex items-center justify-center text-3xl font-bold mb-4">
           {PERSONA.initials}
         </div>
-        <h2 className="text-xl font-bold text-navy-deep mb-1">{PERSONA.fullName}</h2>
+        <h2 className="text-xl font-bold text-ink mb-1">{PERSONA.fullName}</h2>
         <p className="text-sm text-muted mb-6">Гражданин РБ</p>
       </Card>
 
       <div className="md:col-span-2 space-y-6">
         <Card>
-          <h3 className="text-lg font-bold text-navy-deep mb-6 border-b border-line pb-2">
+          <h3 className="text-lg font-bold text-ink mb-6 border-b border-line pb-2">
             Персональные данные
           </h3>
           <dl className="space-y-4 text-[15px]">
@@ -51,7 +52,7 @@ export function DataTab() {
         </Card>
 
         <Card>
-          <h3 className="text-lg font-bold text-navy-deep mb-6 border-b border-line pb-2">
+          <h3 className="text-lg font-bold text-ink mb-6 border-b border-line pb-2">
             Контакты
           </h3>
           <dl className="space-y-4 text-[15px]">
@@ -67,17 +68,19 @@ export function DataTab() {
         </Card>
 
         <Card>
-          <h3 className="text-lg font-bold text-navy-deep mb-4">Сертификаты</h3>
+          <h3 className="text-lg font-bold text-ink mb-4">Сертификаты</h3>
           <EmptyState
             title="У вас пока нет сертификатов"
             description="Здесь будут отображаться ваши электронные подписи и ключи доступа."
           />
         </Card>
 
+        <DeviceSettingsCard />
+
         <Card className="border-danger/30 bg-[#fffbfa]">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
-              <h3 className="font-bold text-navy-deep mb-1">
+              <h3 className="font-bold text-ink mb-1">
                 Блокировка уникального идентификатора (УИ)
               </h3>
               <p className="text-sm text-muted">

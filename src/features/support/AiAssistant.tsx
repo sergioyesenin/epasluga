@@ -4,7 +4,12 @@ import { clsx } from 'clsx'
 
 type Message = { role: 'user' | 'ai'; text: string }
 
-export function AiAssistant() {
+type AiAssistantProps = {
+  /** Спрятать круглую кнопку на телефоне (когда снизу своя панель действий). */
+  hideFabOnMobile?: boolean
+}
+
+export function AiAssistant({ hideFabOnMobile = false }: AiAssistantProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [messages, setMessages] = useState<Message[]>([
     { role: 'ai', text: 'Здравствуйте! Я — цифровой помощник. Чем я могу вам помочь?' },
@@ -29,7 +34,9 @@ export function AiAssistant() {
   }, [messages, isTyping])
 
   const handleSend = (text: string) => {
-    if (!text.trim()) return
+    if (!text.trim()) {
+      return
+    }
 
     // Навигационные опции — не уходят в чат
     if (text === 'Частые вопросы') {
@@ -66,8 +73,9 @@ export function AiAssistant() {
       <button
         onClick={() => setIsOpen(true)}
         className={clsx(
-          'fixed bottom-28 md:bottom-6 right-4 md:right-6 w-14 h-14 bg-navy text-white rounded-full shadow-lg flex items-center justify-center hover:bg-navy-deep transition-transform hover:scale-105 z-40',
+          'fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] md:bottom-6 right-[max(1rem,env(safe-area-inset-right))] md:right-6 w-14 h-14 bg-card text-navy border border-line rounded-full shadow-lift flex items-center justify-center hover:border-navy transition-colors z-40',
           isOpen && 'hidden',
+          !isOpen && hideFabOnMobile && 'hidden md:flex',
         )}
         aria-label="Открыть ИИ-помощника"
       >
@@ -86,18 +94,17 @@ export function AiAssistant() {
         <div
           role="dialog"
           aria-label="ИИ-Помощник"
-          className="fixed bottom-6 right-6 w-[calc(100vw-3rem)] md:w-96 bg-white rounded-card shadow-2xl border border-line flex flex-col z-50 overflow-hidden"
-          style={{ height: '550px', maxHeight: 'calc(100vh - 6rem)' }}
+          className="fixed z-50 flex flex-col overflow-hidden bg-white border-line inset-0 pt-safe pb-safe md:inset-auto md:pt-0 md:pb-0 md:bottom-6 md:right-6 md:w-96 md:h-[550px] md:max-h-[calc(100dvh-6rem)] md:rounded-card md:border md:shadow-2xl"
         >
           {/* Шапка */}
-          <div className="bg-navy text-white p-4 flex justify-between items-center shrink-0">
+          <div className="bg-card border-b border-line pl-4 pr-1 h-14 flex justify-between items-center shrink-0">
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-[#4ade80] rounded-full animate-pulse" />
-              <span className="font-semibold text-sm">ИИ-Помощник</span>
+              <div className="w-2 h-2 bg-ok rounded-full" />
+              <span className="font-semibold text-sm text-ink">ИИ-помощник</span>
             </div>
             <button
               onClick={() => setIsOpen(false)}
-              className="text-white/80 hover:text-white p-1"
+              className="w-11 h-11 inline-flex items-center justify-center rounded-xl text-muted hover:text-ink hover:bg-soft"
               aria-label="Закрыть чат"
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -148,7 +155,7 @@ export function AiAssistant() {
                 <button
                   key={q}
                   onClick={() => handleSend(q)}
-                  className="text-xs bg-soft text-navy px-3 py-1.5 rounded-full hover:bg-navy hover:text-white transition-colors border border-navy/20 text-left"
+                  className="text-sm bg-card text-navy px-3 min-h-11 rounded-full hover:border-navy transition-colors border border-line text-left"
                 >
                   {q}
                 </button>

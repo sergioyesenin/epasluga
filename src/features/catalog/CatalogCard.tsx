@@ -55,7 +55,7 @@ export function CatalogCard({ service, isFavorite, onToggleFavorite }: CatalogCa
         </div>
 
         <div className="mt-auto px-4 py-3 border-t border-line flex items-center justify-between gap-3 text-xs">
-          <span className="font-semibold text-navy-deep truncate" title={service.categoryTitle}>
+          <span className="font-semibold text-ink truncate" title={service.categoryTitle}>
             {service.categoryTitle}
           </span>
           <span className="text-muted whitespace-nowrap shrink-0 flex items-center gap-1">

@@ -18,7 +18,7 @@ export function ErrorState({
           />
         </svg>
       </div>
-      <h3 className="text-lg font-bold text-navy-deep mb-2">{title}</h3>
+      <h3 className="text-lg font-bold text-ink mb-2">{title}</h3>
       {description && <p className="text-sm text-muted max-w-md mb-6">{description}</p>}
       <Button onClick={onRetry}>Повторить</Button>
     </div>

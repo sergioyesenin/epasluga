@@ -1,73 +1,125 @@
-# React + TypeScript + Vite
+# Е-Паслуга — личный кабинет (PWA)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Учебный прототип личного кабинета белорусского портала электронных услуг «Е-Паслуга».
+Работает как обычный сайт и как устанавливаемое приложение (PWA): открывается с экрана
+«Домой», работает без сети, присылает напоминания о сроках платежей.
 
-Currently, two official plugins are available:
+Внутри — каталог услуг с поиском своими словами, жизненные ситуации с пошаговыми маршрутами,
+заявления и их статусы, документы, «Почта гражданина» и семейный раздел **«Далонь»**
+(«всё о семье — в одной ладони»): начисления всей семьи, напоминания, роли и согласия,
+оплата одной кнопкой и квитанции.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+> Все данные условные и хранятся только в браузере (localStorage). Оплата, SMS, ЭЦП и биометрия —
+> демонстрационные: деньги никуда не уходят, сервера нет.
 
-## React Compiler
+## Запуск
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Нужен Node.js 20+ (проверено на 22).
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm ci            # установить зависимости
+npm run dev       # режим разработки: http://localhost:5173
+npm run build     # проверка типов + сборка в dist/
+npm run preview   # раздать сборку: http://localhost:4173
+npm run lint      # ESLint
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+Service worker (офлайн, обновления, уведомления) включается **только в сборке** —
+проверяйте PWA через `npm run build` + `npm run preview`, а не через `npm run dev`.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Демо-вход: любой номер белорусского оператора, код из SMS — `1234`.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Как установить на телефон
+
+Приложению нужен HTTPS (или `localhost`). Удобнее всего выложить `dist/` на GitHub Pages
+или любой статический хостинг — сборка работает из подпапки (`base: './'` + hash-роутер).
+
+**Android (Chrome, Edge, Samsung Internet).** Откройте сайт — на главной появится карточка
+«Установите Е-Паслугу на устройство» → «Установить». Либо меню браузера → «Установить приложение».
+Долгое нажатие на значок покажет ярлыки: «Далонь», «Мои услуги», «Поиск услуг».
+
+**iPhone и iPad (Safari).** Кнопка «Поделиться» → «На экран „Домой“» → «Добавить».
+Карточка с этой инструкцией появляется на главной сама. Уведомления на iPhone работают
+только у приложения, добавленного на экран «Домой» (iOS 16.4+).
+
+**Компьютер (Chrome, Edge).** Значок установки в адресной строке или пункт
+«Установить приложение» внизу бокового меню.
+
+## Что делает PWA
+
+- **Манифест** (`vite.config.ts`): название, `lang: ru`, `display: standalone`, цвета, иконки
+  192/512 (обычные и maskable), ярлыки. `start_url` и `scope` — относительные (`./`).
+- **Service worker** (Workbox через `vite-plugin-pwa`): вся оболочка в precache, шрифты Google Fonts —
+  в runtime-кэше, любой переход внутри приложения без сети отдаёт закэшированный `index.html`.
+- **Обновления**: новая версия не подменяет старую молча — появляется тост
+  «Доступна новая версия — Обновить». Раз в час приложение само проверяет обновления.
+- **Без сети**: полоса «Нет сети» под шапкой. Каталог, ситуации, документы и «Далонь» открываются
+  из памяти устройства; отправка заявлений и оплата ждут интернет (кнопки неактивны и объясняют почему).
+- **Установка**: своя карточка вместо мини-панели браузера (`beforeinstallprompt`), на iOS —
+  инструкция. В установленном приложении карточка не показывается; её можно закрыть на 14 дней.
+- **Напоминания** («Далонь» → «Напоминания»): разрешение спрашивается только по кнопке,
+  уведомление показывает service worker (`registration.showNotification`), клик открывает «Далонь».
+  Это локальное демо: настоящий push требует сервера (Web Push + VAPID).
+- **Мобильный режим**: нижние вкладки, `viewport-fit=cover` и отступы `env(safe-area-inset-*)`,
+  зоны нажатия от 44 px, без горизонтальной прокрутки.
+- **Вход по биометрии**: как в банковских приложениях — включается после первого входа по SMS
+  на конкретном устройстве и дальше заменяет SMS. Места для вызовов WebAuthn
+  (`navigator.credentials.create/get`) отмечены в `src/lib/biometric.ts`.
+
+Иконки рисует `scripts/make_icons.py` (нужен только Pillow): `python scripts/make_icons.py`.
+
+## «Далонь»
+
+Семейная панель, а не кошелёк: деньги не хранятся в Е-Паслуге, платёж проводит банк через ЕРИП.
+
+| Экран | Маршрут | Что там |
+| --- | --- | --- |
+| Панель | `#/family` | Ладонь: пять пальцев — Алексей, Анна, Маша, Миша и VW Polo; на ладони — итог. Начисления по членам семьи, выбор, «Оплатить выбранные», календарь сроков |
+| Напоминания | `#/family/reminders` | Скидка 50 % на штраф ГАИ, ближайшие сроки, push-демо, каналы (кабинет, push, SMS, почта) и темы |
+| Семья и права | `#/family/people` | Роли «видит» / «платит», согласия (ожидает / дано / отозвать), законные представители детей, добавление взрослого, журнал действий |
+| История | `#/family/history` | Оплаченное за год, фильтр по члену семьи, скачивание квитанций |
+| Оплата | `#/family/pay?ids=…` | ЕРИП или карта, демо-успех и демо-сбой «Платёж не прошёл. Деньги не списаны» с «Повторить» |
+
+Демо-данные «Далони» можно вернуть к началу внизу экрана «История».
+
+## Маршруты
+
+Роутер — `createHashRouter`, поэтому адреса вида `…/#/catalog`.
+
+| Маршрут | Экран |
+| --- | --- |
+| `#/` | Главная (гость — о портале; после входа — сводка, «Далонь», заявления) |
+| `#/login` | Вход: SMS, биометрия, ЭЦП |
+| `#/catalog` | Каталог: `?view=situations\|list\|favs`, `?cat=…`, `?q=…` |
+| `#/situation/:id` | Жизненная ситуация с пошаговым маршрутом |
+| `#/service/:id` | Карточка услуги и форма заявления |
+| `#/status/:id` | Статус заявления |
+| `#/profile` | Кабинет: `?tab=apps\|docs\|mail\|repo\|data` |
+| `#/notifications` | Уведомления |
+| `#/family/*` | «Далонь» (только после входа) |
+| `#/support`, `#/about` | Поддержка, о портале |
+
+## Структура
+
 ```
+src/
+  app/            Layout, роутер, вкладки/сайдбар/шапка (layout/), RequireAuth, хлебные крошки
+  design-system/  Button, Card, Badge, Icon, Switch, Modal, Toast, EmptyState, …
+  features/       экраны: auth, home, guest-home, catalog, situations, service, profile,
+                  notifications, status, support, family («Далонь»), pwa (баннеры установки и офлайна)
+  data/           услуги, ситуации, синонимы, почта, документы, демо-семья (dalon.ts)
+  hooks/          useDalon, usePayment, useChargeSelection, useInstallPrompt, useOnlineStatus, …
+  lib/            dalon/ (хранилище, расчёты, оплата, квитанции), pwa/ (SW, установка, уведомления),
+                  dates, money, toast, biometric, …
+  styles/         globals.css — токены Tailwind v4 (@theme)
+public/           иконки, favicon, sw-notifications.js (клик по уведомлению)
+scripts/          make_icons.py — генерация иконок
+legacy/           старый прототип на чистом JS
+```
+
+Стек: React 19, TypeScript, Vite 8, Tailwind CSS v4, react-router-dom 7, react-hook-form + zod,
+vite-plugin-pwa (Workbox). Шрифт — Onest (Google Fonts, с кириллицей).
+
+`msw` установлен, но не запускается: в `src/lib/api/mocks` есть только `/api/health`, а все данные
+лежат в `src/data`. Его `public/mockServiceWorker.js` исключён из precache, чтобы не конфликтовать
+с основным service worker.

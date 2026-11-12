@@ -45,7 +45,7 @@ export function AppsTab() {
             type="button"
             onClick={() => setStatusFilter(f.id)}
             className={clsx(
-              'px-4 py-2 rounded-full text-sm font-semibold transition-colors min-h-9',
+              'px-4 py-2 rounded-full text-sm font-semibold transition-colors min-h-11',
               statusFilter === f.id
                 ? 'bg-navy text-white'
                 : 'bg-white text-navy border border-line hover:border-navy',
@@ -57,7 +57,7 @@ export function AppsTab() {
         <button
           type="button"
           onClick={reload}
-          className="ml-auto text-xs text-muted underline hover:text-navy"
+          className="ml-auto min-h-11 px-2 text-xs text-muted underline hover:text-navy"
         >
           Обновить
         </button>
@@ -79,7 +79,7 @@ export function AppsTab() {
       ) : (
         <div className="bg-white border border-line rounded-card overflow-x-auto">
           <table className="w-full text-left text-sm responsive-table">
-            <thead className="bg-soft text-muted text-xs uppercase tracking-wider">
+            <thead className="bg-soft text-muted text-xs font-semibold">
               <tr>
                 <th className="px-4 py-3 font-semibold">Услуга</th>
                 <th className="px-4 py-3 font-semibold">Дата</th>

@@ -21,7 +21,7 @@ export function NotificationsPage() {
   if (viewState === 'loading') {
     return (
       <div className="max-w-3xl mx-auto pb-12">
-        <h1 className="text-3xl font-bold text-navy-deep mb-6">Мои уведомления</h1>
+        <h1 className="text-3xl font-bold text-ink mb-6">Мои уведомления</h1>
         <SkeletonList rows={4} />
       </div>
     )
@@ -30,7 +30,7 @@ export function NotificationsPage() {
   if (viewState === 'error') {
     return (
       <div className="max-w-3xl mx-auto pb-12">
-        <h1 className="text-3xl font-bold text-navy-deep mb-6">Мои уведомления</h1>
+        <h1 className="text-3xl font-bold text-ink mb-6">Мои уведомления</h1>
         <ErrorState onRetry={() => setViewState('idle')} />
       </div>
     )
@@ -39,7 +39,7 @@ export function NotificationsPage() {
   return (
     <div className="max-w-3xl mx-auto pb-12">
       <header className="mb-6">
-        <h1 className="text-3xl font-bold text-navy-deep mb-2">Мои уведомления</h1>
+        <h1 className="text-3xl font-bold text-ink mb-2">Мои уведомления</h1>
         <p className="text-muted max-w-2xl">
           Юридически значимые уведомления нельзя удалить — только в архив.
         </p>
@@ -49,7 +49,7 @@ export function NotificationsPage() {
         <button
           type="button"
           onClick={() => setBox('in')}
-          className={`px-5 py-2 rounded-full text-sm font-semibold transition-colors ${
+          className={`px-5 py-2 min-h-11 rounded-full text-sm font-semibold transition-colors ${
             box === 'in' ? 'bg-navy text-white' : 'bg-white text-navy border border-line hover:border-navy'
           }`}
         >
@@ -58,7 +58,7 @@ export function NotificationsPage() {
         <button
           type="button"
           onClick={() => setBox('arch')}
-          className={`px-5 py-2 rounded-full text-sm font-semibold transition-colors ${
+          className={`px-5 py-2 min-h-11 rounded-full text-sm font-semibold transition-colors ${
             box === 'arch' ? 'bg-navy text-white' : 'bg-white text-navy border border-line hover:border-navy'
           }`}
         >
@@ -67,7 +67,7 @@ export function NotificationsPage() {
         <button
           type="button"
           onClick={reload}
-          className="ml-auto text-xs text-muted underline hover:text-navy"
+          className="ml-auto min-h-11 px-2 text-xs text-muted underline hover:text-navy"
         >
           Обновить
         </button>

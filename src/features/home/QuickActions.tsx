@@ -12,7 +12,7 @@ export function QuickActions() {
 
   return (
     <div>
-      <h2 className="text-lg font-bold text-navy-deep mb-4">Быстрые действия для вас</h2>
+      <h2 className="text-lg font-bold text-ink mb-4">Быстрые действия для вас</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {quickServices.map((service) => (
           <Link key={service.id} to={`/service/${service.id}`} className="block h-full">
