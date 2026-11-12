@@ -32,7 +32,7 @@ export function GuestHomePage() {
     <div className="max-w-5xl mx-auto space-y-12 pb-16 pt-4">
       <section className="text-center md:text-left md:flex md:items-center md:justify-between gap-8 bg-linear-to-r from-[#f8f9ff] to-white p-8 md:p-12 rounded-card border border-line shadow-sm">
         <div className="md:w-3/5 mb-6 md:mb-0">
-          <h1 className="text-3xl md:text-4xl font-bold text-navy-deep mb-4 leading-tight">
+          <h1 className="text-3xl md:text-4xl font-bold text-ink mb-4 leading-tight">
             Госуслуги <span className="text-navy">онлайн</span> — без очередей и бумаг
           </h1>
           <p className="text-lg text-muted mb-8">
@@ -59,7 +59,7 @@ export function GuestHomePage() {
 
       <section>
         <div className="max-w-3xl mx-auto text-center mb-6">
-          <h2 className="text-2xl font-bold text-navy-deep mb-2">Что вы хотите сделать?</h2>
+          <h2 className="text-2xl font-bold text-ink mb-2">Что вы хотите сделать?</h2>
           <p className="text-muted">Начните с поиска или выберите из популярных категорий ниже.</p>
         </div>
         <div className="flex justify-center">
@@ -74,7 +74,7 @@ export function GuestHomePage() {
       <section>
         <div className="flex justify-between items-end mb-4">
           <div>
-            <h2 className="text-lg font-bold text-navy-deep">Часто запрашивают</h2>
+            <h2 className="text-lg font-bold text-ink">Часто запрашивают</h2>
             <p className="text-sm text-muted">Самые популярные услуги на портале</p>
           </div>
           <Link to="/catalog?view=list" className="text-sm font-semibold text-navy hover:underline">
@@ -85,7 +85,7 @@ export function GuestHomePage() {
           {services.slice(0, 3).map((service) => (
             <Link key={service.id} to={`/service/${service.id}`} className="block h-full group">
               <Card variant="interactive" className="h-full flex flex-col p-5">
-                <h3 className="font-semibold text-navy mb-2 group-hover:text-navy-deep transition-colors">
+                <h3 className="font-semibold text-navy mb-2 group-hover:text-ink transition-colors">
                   {service.shortTitle}
                 </h3>
                 <p className="text-sm text-muted mb-4 line-clamp-2 flex-1">
@@ -102,7 +102,7 @@ export function GuestHomePage() {
       </section>
 
       <section className="bg-soft rounded-card p-6 md:p-8 text-center">
-        <h2 className="text-xl font-bold text-navy-deep mb-6">Почему это безопасно</h2>
+        <h2 className="text-xl font-bold text-ink mb-6">Почему это безопасно</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="flex flex-col items-center">
             <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-navy shadow-sm mb-3">

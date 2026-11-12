@@ -84,7 +84,7 @@ export function MailTab() {
               )}
               <span className="text-xs text-muted ml-auto">{formatWhen(selected.at)}</span>
             </div>
-            <h2 className="text-xl font-bold text-navy-deep mb-1">{selected.subject}</h2>
+            <h2 className="text-xl font-bold text-ink mb-1">{selected.subject}</h2>
             <div className="text-sm text-muted">
               {selected.direction === 'in' ? 'От: ' : 'Кому: '}
               <b className="text-ink">{selected.agency}</b>
@@ -109,7 +109,7 @@ export function MailTab() {
           {/* Вложения */}
           {selected.attachments.length > 0 && (
             <div className="p-5 border-b border-line">
-              <h3 className="text-sm font-bold text-navy-deep mb-3">
+              <h3 className="text-sm font-bold text-ink mb-3">
                 Документы в сообщении
               </h3>
               <ul className="space-y-2">
@@ -122,7 +122,7 @@ export function MailTab() {
                       <FileIcon className="w-5 h-5" />
                     </span>
                     <div className="min-w-0 flex-1">
-                      <div className="font-semibold text-navy-deep truncate">
+                      <div className="font-semibold text-ink truncate">
                         {att.name}
                       </div>
                       <div className="text-xs text-muted flex items-center gap-2 flex-wrap">
@@ -322,7 +322,7 @@ export function MailTab() {
                   <div className="flex items-center gap-2 flex-wrap mb-0.5">
                     <span
                       className={clsx(
-                        'font-semibold text-navy-deep truncate',
+                        'font-semibold text-ink truncate',
                         !read[m.id] && 'font-bold',
                       )}
                     >
@@ -335,7 +335,7 @@ export function MailTab() {
                       />
                     )}
                     {act && (
-                      <span className="text-[10px] uppercase tracking-wider font-bold text-accent-warm bg-[#fff4e5] px-1.5 py-0.5 rounded">
+                      <span className="text-[11px] font-semibold text-accent-warm bg-[#fff4e5] px-1.5 py-0.5 rounded">
                         {act}
                       </span>
                     )}

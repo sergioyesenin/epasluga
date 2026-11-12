@@ -21,7 +21,7 @@ export function NotificationsPage() {
   if (viewState === 'loading') {
     return (
       <div className="max-w-3xl mx-auto pb-12">
-        <h1 className="text-3xl font-bold text-navy-deep mb-6">Мои уведомления</h1>
+        <h1 className="text-3xl font-bold text-ink mb-6">Мои уведомления</h1>
         <SkeletonList rows={4} />
       </div>
     )
@@ -30,7 +30,7 @@ export function NotificationsPage() {
   if (viewState === 'error') {
     return (
       <div className="max-w-3xl mx-auto pb-12">
-        <h1 className="text-3xl font-bold text-navy-deep mb-6">Мои уведомления</h1>
+        <h1 className="text-3xl font-bold text-ink mb-6">Мои уведомления</h1>
         <ErrorState onRetry={() => setViewState('idle')} />
       </div>
     )
@@ -39,7 +39,7 @@ export function NotificationsPage() {
   return (
     <div className="max-w-3xl mx-auto pb-12">
       <header className="mb-6">
-        <h1 className="text-3xl font-bold text-navy-deep mb-2">Мои уведомления</h1>
+        <h1 className="text-3xl font-bold text-ink mb-2">Мои уведомления</h1>
         <p className="text-muted max-w-2xl">
           Юридически значимые уведомления нельзя удалить — только в архив.
         </p>

@@ -47,7 +47,7 @@ export function ConfirmDialog({
         className="bg-white rounded-card p-6 max-w-md w-full shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <h3 id="confirm-title" className="text-lg font-bold text-navy-deep mb-2">
+        <h3 id="confirm-title" className="text-lg font-bold text-ink mb-2">
           {title}
         </h3>
         <p className="text-sm text-muted mb-6">{description}</p>

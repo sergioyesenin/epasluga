@@ -29,7 +29,7 @@ export function ServicePage() {
   if (!service) {
     return (
       <div className="max-w-3xl mx-auto py-12 text-center">
-        <h1 className="text-2xl font-bold text-navy-deep mb-4">Услуга не найдена</h1>
+        <h1 className="text-2xl font-bold text-ink mb-4">Услуга не найдена</h1>
         <Link to="/catalog" className="text-navy hover:underline">
           Вернуться в каталог
         </Link>
@@ -51,7 +51,7 @@ export function ServicePage() {
   return (
     <div className="max-w-4xl mx-auto pb-12">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-navy-deep mb-3">{service.shortTitle}</h1>
+        <h1 className="text-3xl font-bold text-ink mb-3">{service.shortTitle}</h1>
         <div className="flex flex-wrap gap-2 items-center">
           {service.authLevel === 'id' && <Badge variant="need-id">Нужна ID-карта</Badge>}
           {service.authLevel === 'ecp' && <Badge variant="ecp">Нужна ЭЦП</Badge>}
@@ -64,12 +64,12 @@ export function ServicePage() {
       <div className="flex flex-col lg:grid lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-8">
           <section>
-            <h2 className="text-lg font-bold text-navy-deep mb-3">Что это</h2>
+            <h2 className="text-lg font-bold text-ink mb-3">Что это</h2>
             <p className="text-ink leading-relaxed text-[16px]">{service.plainDescription}</p>
           </section>
 
           <section className="bg-[#f8f9ff] border border-line rounded-card p-6">
-            <h2 className="text-lg font-bold text-navy-deep mb-5">{ru.service.resultTitle}</h2>
+            <h2 className="text-lg font-bold text-ink mb-5">{ru.service.resultTitle}</h2>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
               <div className="flex flex-col gap-1">
                 <span className="text-sm font-semibold text-navy flex items-center gap-1.5">
@@ -98,7 +98,7 @@ export function ServicePage() {
           </section>
 
           <section>
-            <h2 className="text-lg font-bold text-navy-deep mb-3">Как это работает</h2>
+            <h2 className="text-lg font-bold text-ink mb-3">Как это работает</h2>
             <ol className="bg-white border border-line rounded-card divide-y divide-line">
               {service.steps.map((step, i) => (
                 <li key={i} className="flex gap-3 p-4">
@@ -142,10 +142,10 @@ export function ServicePage() {
             </Card>
 
             <Card>
-              <h3 className="text-sm font-bold text-muted uppercase tracking-wider mb-3">
+              <h3 className="text-sm font-bold text-muted mb-3">
                 Кто оказывает услугу
               </h3>
-              <div className="font-semibold text-navy-deep mb-1">{service.orgName}</div>
+              <div className="font-semibold text-ink mb-1">{service.orgName}</div>
               <div className="text-sm text-muted">УНП: {service.orgUnp}</div>
             </Card>
           </div>

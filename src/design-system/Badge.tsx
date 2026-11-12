@@ -10,13 +10,14 @@ export function Badge({ variant = 'default', className, children, ...props }: Ba
     <span
       className={clsx(
         // inline-flex, items-center, whitespace-nowrap — чтобы длинные подписи
-        // («НУЖНА ID-КАРТА») не рвались на две строки внутри бейджа.
+        // («Нужна ID-карта») не рвались на две строки внутри бейджа.
+        // Регистр обычный: капслок в мелких метках читается хуже.
         'inline-flex items-center whitespace-nowrap rounded-full px-2.5 py-1',
-        'text-[11px] font-bold tracking-wider uppercase leading-none',
-        variant === 'default' && 'bg-soft text-navy',
+        'text-xs font-semibold leading-none',
+        variant === 'default' && 'bg-soft text-muted',
         variant === 'need-id' && 'bg-[#fdecea] text-danger',
         variant === 'ecp' && 'bg-[#fff4e5] text-accent-warm',
-        variant === 'code' && 'bg-soft text-muted font-semibold normal-case tracking-normal',
+        variant === 'code' && 'bg-soft text-muted tabular',
         variant === 'accent' && 'bg-[#e7f6f2] text-accent',
         className,
       )}

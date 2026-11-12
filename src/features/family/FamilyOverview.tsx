@@ -39,7 +39,7 @@ function MemberPin({ member, x, y, selected, onSelect }: MemberPinProps) {
       >
         {member.initials}
       </span>
-      <span className="text-[12px] font-semibold text-navy-deep leading-tight">
+      <span className="text-[12px] font-semibold text-ink leading-tight">
         {member.name.split(' ')[0]}
       </span>
       <span

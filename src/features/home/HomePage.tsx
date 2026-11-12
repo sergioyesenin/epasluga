@@ -18,7 +18,7 @@ export function HomePage() {
   return (
     <div className="max-w-5xl mx-auto space-y-10 pb-12">
       <section className="pt-4">
-        <h1 className="text-3xl font-bold text-navy-deep mb-4">
+        <h1 className="text-3xl font-bold text-ink mb-4">
           Добрый день{firstName ? `, ${firstName}` : ''}!
         </h1>
         <QuickSearch />
@@ -31,7 +31,7 @@ export function HomePage() {
       {active.length > 0 && (
         <section>
           <div className="flex justify-between items-end mb-4">
-            <h2 className="text-lg font-bold text-navy-deep">Статус последних заявлений</h2>
+            <h2 className="text-lg font-bold text-ink">Статус последних заявлений</h2>
             <Link to="/profile?tab=apps" className="text-sm text-navy hover:underline">
               Все услуги
             </Link>

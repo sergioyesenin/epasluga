@@ -7,7 +7,7 @@ export function SupportPage() {
   return (
     <div className="max-w-4xl mx-auto pb-12">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-navy-deep mb-2">Поддержка</h1>
+        <h1 className="text-3xl font-bold text-ink mb-2">Поддержка</h1>
         <p className="text-muted">Мы поможем, даже если вы не можете войти в кабинет.</p>
       </div>
 
@@ -15,7 +15,7 @@ export function SupportPage() {
         {/* Форма обратной связи (эвристика #9) */}
         <div>
           <Card>
-            <h2 className="text-lg font-bold text-navy-deep mb-2">Задать вопрос</h2>
+            <h2 className="text-lg font-bold text-ink mb-2">Задать вопрос</h2>
             <p className="text-sm text-muted mb-4">Работает без авторизации. Ответим на email в течение дня.</p>
             
             {sent ? (
@@ -45,14 +45,14 @@ export function SupportPage() {
         {/* Контакты (крупнее) */}
         <div className="space-y-4">
           <Card className="bg-soft border-line">
-            <h3 className="text-sm font-bold text-muted uppercase tracking-wider mb-2">Горячая линия</h3>
-            <p className="text-2xl font-bold text-navy-deep mb-1">8 (017) 123-45-67</p>
+            <h3 className="text-sm font-semibold text-muted mb-2">Горячая линия</h3>
+            <p className="text-2xl font-bold text-ink mb-1">8 (017) 123-45-67</p>
             <p className="text-sm text-muted">Ежедневно с 8:00 до 20:00</p>
           </Card>
           
           <Card className="bg-soft border-line">
-            <h3 className="text-sm font-bold text-muted uppercase tracking-wider mb-2">Email поддержки</h3>
-            <p className="text-xl font-bold text-navy-deep mb-1">help@epasluga.by</p>
+            <h3 className="text-sm font-semibold text-muted mb-2">Email поддержки</h3>
+            <p className="text-xl font-bold text-ink mb-1">help@epasluga.by</p>
             <p className="text-sm text-muted">Круглосуточно</p>
           </Card>
         </div>

@@ -21,7 +21,7 @@ export function MyServicesRow({ app, href, onPay, onDownload, help }: MyServices
   return (
     <tr>
       <td className="px-4 py-3 align-top">
-        <div className="font-semibold text-navy-deep">{app.title}</div>
+        <div className="font-semibold text-ink">{app.title}</div>
         <div className="text-xs text-muted mt-0.5">№ {app.num}</div>
         {situation && (
           <div className="text-xs mt-1.5">

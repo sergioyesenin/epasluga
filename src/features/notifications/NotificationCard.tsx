@@ -30,7 +30,7 @@ export function NotificationCard({ n, box, onArchive, onUnarchive, onDelete }: N
           </Badge>
           <span className="text-xs text-muted">{formatWhen(n.at)}</span>
         </div>
-        <h3 className="font-semibold text-navy-deep mb-1">{n.title}</h3>
+        <h3 className="font-semibold text-ink mb-1">{n.title}</h3>
         <p className="text-sm text-muted mb-3">{n.body}</p>
 
         <div className="flex gap-2 flex-wrap">

@@ -84,7 +84,7 @@ export function RepoTab() {
                   <FileIcon className="w-5 h-5" />
                 </span>
                 <div className="min-w-0 flex-1">
-                  <div className="font-semibold text-navy-deep truncate" title={f.name}>
+                  <div className="font-semibold text-ink truncate" title={f.name}>
                     {f.name}
                   </div>
                   <div className="text-xs text-muted">

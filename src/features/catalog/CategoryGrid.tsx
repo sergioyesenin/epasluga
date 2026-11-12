@@ -83,7 +83,7 @@ export function CategoryGrid({ categories }: { categories: Category[] }) {
           className="bg-white border border-line rounded-card p-4 flex flex-col shadow-card transition-all hover:border-navy hover:-translate-y-px"
         >
           <CategoryIcon name={c.icon} />
-          <strong className="text-navy-deep text-[15px] mb-1">{c.title}</strong>
+          <strong className="text-ink text-[15px] mb-1">{c.title}</strong>
           <p className="text-sm text-muted m-0">{c.desc}</p>
         </Link>
       ))}

@@ -141,7 +141,7 @@ export function ApplicationForm({
       </div>
 
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-navy-deep mb-2">Заполнение заявления</h1>
+        <h1 className="text-2xl font-bold text-ink mb-2">Заполнение заявления</h1>
         <p className="text-muted">{service.shortTitle}</p>
       </div>
 

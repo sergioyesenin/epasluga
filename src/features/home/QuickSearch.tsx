@@ -126,7 +126,7 @@ export function QuickSearch() {
                     i === activeIndex ? 'bg-soft' : 'hover:bg-soft'
                   }`}
                 >
-                  <span className="block font-semibold text-navy-deep">{s.shortTitle}</span>
+                  <span className="block font-semibold text-ink">{s.shortTitle}</span>
                   <span className="text-xs text-muted mt-0.5 block">{s.categoryTitle}</span>
                 </button>
               ))}

@@ -1,48 +1,64 @@
-import { useState, useEffect } from 'react'
 import clsx from 'clsx'
+import { useToasts } from '../hooks/useToasts'
+import { dismissToast, type ToastItem } from '../lib/toast'
 
-type ToastProps = {
-  message: string
-  onClose: () => void
+const toneDot: Record<ToastItem['tone'], string> = {
+  info: 'bg-navy',
+  ok: 'bg-ok',
+  warn: 'bg-family-orange',
 }
 
-export function Toast({ message, onClose }: ToastProps) {
-  const [isVisible, setIsVisible] = useState(false)
+function ToastCard({ item }: { item: ToastItem }) {
+  return (
+    <div
+      role="status"
+      className="pointer-events-auto w-full sm:w-auto sm:min-w-80 max-w-md bg-ink text-white rounded-2xl shadow-lift pl-4 pr-2 py-2.5 flex items-center gap-3 animate-rise"
+    >
+      <span className={clsx('w-2 h-2 rounded-full shrink-0', toneDot[item.tone])} aria-hidden="true" />
+      <div className="flex-1 min-w-0 py-1">
+        {item.title && <p className="text-sm font-semibold leading-snug">{item.title}</p>}
+        <p className="text-sm leading-snug text-white/85">{item.message}</p>
+      </div>
+      {item.action && (
+        <button
+          type="button"
+          onClick={() => {
+            item.action?.onClick()
+            dismissToast(item.id)
+          }}
+          className="shrink-0 min-h-11 px-3 rounded-xl text-sm font-semibold text-white bg-white/12 hover:bg-white/20 transition-colors"
+        >
+          {item.action.label}
+        </button>
+      )}
+      <button
+        type="button"
+        onClick={() => {
+          dismissToast(item.id)
+        }}
+        className="shrink-0 w-11 h-11 inline-flex items-center justify-center rounded-xl text-white/70 hover:text-white hover:bg-white/10"
+        aria-label="Закрыть сообщение"
+      >
+        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+  )
+}
 
-  useEffect(() => {
-    // Анимация появления
-    setIsVisible(true)
-    
-    // Автоматическое скрытие через 5 секунд
-    const timer = setTimeout(() => {
-      setIsVisible(false)
-      setTimeout(onClose, 300) // Ждем окончания анимации исчезновения
-    }, 5000)
-
-    return () => clearTimeout(timer)
-  }, [onClose])
+/** Область всплывающих сообщений. Монтируется один раз в Layout. */
+export function Toaster() {
+  const items = useToasts()
 
   return (
     <div
-      className={clsx(
-        'fixed top-20 right-6 max-w-sm bg-white border border-line rounded-card shadow-xl p-4 flex gap-3 z-50 transition-all duration-300',
-        isVisible ? 'translate-y-0 opacity-100' : '-translate-y-4 opacity-0'
-      )}
+      aria-live="polite"
+      className="fixed inset-x-0 z-[60] px-4 flex flex-col items-center gap-2 pointer-events-none bottom-[calc(4.75rem+env(safe-area-inset-bottom))] md:bottom-6"
     >
-      <div className="w-10 h-10 bg-[#e8eeff] text-navy rounded-full flex items-center justify-center shrink-0">
-        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-        </svg>
-      </div>
-      <div>
-        <h4 className="font-bold text-navy-deep text-sm mb-1">Е-Паслуга</h4>
-        <p className="text-sm text-ink">{message}</p>
-      </div>
-      <button onClick={onClose} className="absolute top-2 right-2 text-muted hover:text-ink">
-        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
+      {items.map((item) => (
+        <ToastCard key={item.id} item={item} />
+      ))}
     </div>
   )
 }

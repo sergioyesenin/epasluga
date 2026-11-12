@@ -156,7 +156,7 @@ export function LoginPage() {
   return (
     <div className="max-w-md mx-auto py-12">
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-navy-deep mb-2">Вход в Е-Паслуга</h1>
+        <h1 className="text-3xl font-bold text-ink mb-2">Вход в Е-Паслуга</h1>
         <p className="text-muted">Выберите удобный способ входа</p>
       </div>
 

@@ -79,7 +79,7 @@ export function AppsTab() {
       ) : (
         <div className="bg-white border border-line rounded-card overflow-x-auto">
           <table className="w-full text-left text-sm responsive-table">
-            <thead className="bg-soft text-muted text-xs uppercase tracking-wider">
+            <thead className="bg-soft text-muted text-xs font-semibold">
               <tr>
                 <th className="px-4 py-3 font-semibold">Услуга</th>
                 <th className="px-4 py-3 font-semibold">Дата</th>

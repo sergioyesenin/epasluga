@@ -13,7 +13,7 @@ export function AboutPage() {
   return (
     <div className="max-w-3xl mx-auto pb-12">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-navy-deep mb-2">О портале</h1>
+        <h1 className="text-3xl font-bold text-ink mb-2">О портале</h1>
         <p className="text-lg text-ink">
           Е-Паслуга — единое место, где можно решить государственные вопросы онлайн, не выходя из дома.
         </p>
@@ -25,12 +25,12 @@ export function AboutPage() {
             <span className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-white text-navy mb-3">
               <Icon className="w-6 h-6" />
             </span>
-            <span className="text-sm font-semibold text-navy-deep">{text}</span>
+            <span className="text-sm font-semibold text-ink">{text}</span>
           </Card>
         ))}
       </div>
 
-      <h2 className="text-xl font-bold text-navy-deep mb-4">Частые вопросы</h2>
+      <h2 className="text-xl font-bold text-ink mb-4">Частые вопросы</h2>
 
       <div className="space-y-2">
         <Accordion title="Что такое Е-Паслуга?" defaultOpen>

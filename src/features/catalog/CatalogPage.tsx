@@ -24,9 +24,21 @@ export function CatalogPage() {
   const categoryId = params.get('cat') ?? ''
   const query = params.get('q') ?? ''
 
+  const isErrorQuery = (q: string) => q.trim().toLowerCase() === 'ошибка'
   const [draftQuery, setDraftQuery] = useState(query)
+  const [syncedQuery, setSyncedQuery] = useState(query)
   const [isLoading, setIsLoading] = useState(false)
-  const [hasError, setHasError] = useState(false)
+  const [hasError, setHasError] = useState(() => isErrorQuery(query))
+
+  // Запрос в адресе поменялся извне (назад/вперёд, ссылка) — подтягиваем поле ввода.
+  // Делается во время рендера, а не в эффекте: так React не рендерит дважды.
+  if (syncedQuery !== query) {
+    setSyncedQuery(query)
+    setDraftQuery(query)
+    if (isErrorQuery(query)) {
+      setHasError(true)
+    }
+  }
   const debounceRef = useRef<number | null>(null)
 
   const { favs, toggle, has } = useFavorites()
@@ -42,10 +54,6 @@ export function CatalogPage() {
     })
     setParams(next)
   }
-
-  useEffect(() => {
-    setDraftQuery(query)
-  }, [query])
 
   useEffect(() => {
     if (debounceRef.current) window.clearTimeout(debounceRef.current)
@@ -98,14 +106,10 @@ export function CatalogPage() {
     window.setTimeout(() => setIsLoading(false), 400)
   }
 
-  useEffect(() => {
-    if (query.trim().toLowerCase() === 'ошибка') setHasError(true)
-  }, [query])
-
   return (
     <div className="max-w-6xl mx-auto pb-12">
       <header className="mb-6">
-        <h1 className="text-3xl font-bold text-navy-deep mb-2">
+        <h1 className="text-3xl font-bold text-ink mb-2">
           {mode === 'situations'
             ? 'Жизненные ситуации'
             : mode === 'favs'
@@ -197,7 +201,7 @@ export function CatalogPage() {
                           <span className="shrink-0 inline-flex items-center justify-center w-12 h-12 rounded-xl bg-[#e8eeff] text-navy">
                             <SituationIcon id={sit.id} className="w-6 h-6" />
                           </span>
-                          <h3 className="text-lg font-bold text-navy group-hover:text-navy-deep transition-colors leading-tight">
+                          <h3 className="text-lg font-bold text-navy group-hover:text-ink transition-colors leading-tight">
                             {sit.title}
                           </h3>
                         </div>
