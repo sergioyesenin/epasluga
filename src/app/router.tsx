@@ -15,6 +15,7 @@ import { AboutPage } from '../features/about/AboutPage'
 import { ProfilePage } from '../features/profile/ProfilePage'
 import { NotificationsPage } from '../features/notifications/NotificationsPage'
 import { SituationPage } from '../features/situations/SituationPage'
+import { PassportPage } from '../features/passports/PassportPage'
 import { DalonLayout } from '../features/family/DalonLayout'
 import { PanelPage } from '../features/family/panel/PanelPage'
 import { RemindersPage } from '../features/family/reminders/RemindersPage'
@@ -36,6 +37,7 @@ export const router = createHashRouter([
       { index: true, element: <HomeSwitcher /> },
       { path: 'catalog', element: <CatalogPage /> },
       { path: 'situation/:id', element: <SituationPage /> },
+      { path: 'passport/:id', element: <PassportPage /> },
       {
         path: 'family',
         element: (

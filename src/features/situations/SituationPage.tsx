@@ -2,13 +2,30 @@ import { useMemo, useState } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import clsx from 'clsx'
 import { lifeSituations } from '../../data/situations'
+import { xcById } from '../../data/xcComponents'
+import { passportById } from '../../data/situationPassports'
 import { Card, Badge, Button } from '../../design-system'
 import { useSituationProgress } from '../../lib/situationProgress'
 import { useApplications } from '../../lib/applications'
 import { CheckIcon, ClockIcon } from '../../lib/situationIcons'
-import type { ApplicationStatus } from '../../types/service'
+import type { ApplicationStatus, DigitalState, Priority } from '../../types/service'
 
 const PAUSE_KEY_PREFIX = 'epasluga-situ-paused:'
+
+const DIGITAL_BADGE: Record<
+  DigitalState,
+  { label: string; variant: 'accent' | 'ecp' | 'need-id'; hint: string }
+> = {
+  green: { label: 'Онлайн', variant: 'accent', hint: 'Полный цифровой маршрут' },
+  yellow: { label: 'Частично', variant: 'ecp', hint: 'Есть онлайн-этапы, маршрут рвётся' },
+  red: { label: 'Офлайн', variant: 'need-id', hint: 'Пока без онлайн-маршрута' },
+}
+
+const PRIORITY_HINT: Record<Priority, string> = {
+  P1: 'P1 — готовые «кирпичи», высокая массовость',
+  P2: 'P2 — нужны изменения НПА или интеграции',
+  P3: 'P3 — институционально сложно (комиссии, экспертиза, суд)',
+}
 
 export function SituationPage() {
   const { id } = useParams()
@@ -58,6 +75,13 @@ export function SituationPage() {
   }
 
   const isComplete = completed.size >= situation.steps.length && situation.steps.length > 0
+  const digital = situation.digitalState ? DIGITAL_BADGE[situation.digitalState] : null
+  const xcList = (situation.xcDeps ?? [])
+    .map((xcId) => xcById[xcId])
+    .filter((x): x is NonNullable<typeof x> => Boolean(x))
+  const hasPassport = situation.registryId
+    ? Boolean(passportById(situation.registryId))
+    : false
 
   const handleSkip = (stepId: string) => {
     if (!completed.has(stepId)) toggle(stepId)
@@ -67,8 +91,6 @@ export function SituationPage() {
     if (index <= 0) return
     const prev = situation.steps[index - 1]
     if (!prev) return
-    // «Назад» снимает отметку с текущего и открывает предыдущий для переработки.
-    // Если предыдущий уже выполнен — снимаем с него, иначе просто скроллим (визуально).
     if (completed.has(prev.id)) {
       toggle(prev.id)
     }
@@ -84,7 +106,19 @@ export function SituationPage() {
           </Link>{' '}
           / <span>{situation.title}</span>
         </div>
-        <h1 className="text-3xl font-bold text-ink mb-3">{situation.title}</h1>
+        <div className="flex flex-wrap items-center gap-2 mb-3">
+          <h1 className="text-3xl font-bold text-ink">{situation.title}</h1>
+          {digital && (
+            <Badge variant={digital.variant} title={digital.hint}>
+              {digital.label}
+            </Badge>
+          )}
+          {situation.priority && (
+            <Badge variant="code" title={PRIORITY_HINT[situation.priority]}>
+              {situation.priority}
+            </Badge>
+          )}
+        </div>
         <p className="text-lg text-ink mb-4">{situation.painPoint}</p>
 
         <Card className="bg-[#f8f9ff] border-line flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -118,6 +152,27 @@ export function SituationPage() {
             </div>
           </div>
         </Card>
+
+        {(situation.gap || hasPassport) && (
+          <Card className="mt-4 bg-[#fffaf2] border-[#edd9b3]">
+            {situation.gap && (
+              <>
+                <h3 className="font-bold text-ink mb-1">Что нужно изменить (декомпозиция)</h3>
+                <p className="text-sm text-muted">{situation.gap}</p>
+              </>
+            )}
+            {hasPassport && situation.registryId && (
+              <div className={situation.gap ? 'mt-3' : ''}>
+                <Link
+                  to={`/passport/${situation.registryId}`}
+                  className="inline-flex items-center gap-1 text-sm font-semibold text-navy hover:underline"
+                >
+                  Открыть паспорт ситуации ({situation.registryId}) →
+                </Link>
+              </div>
+            )}
+          </Card>
+        )}
 
         {isPaused && (
           <div className="mt-3 bg-[#fff4e5] border border-[#edd9b3] rounded-control px-3 py-2 text-xs text-accent-warm">
@@ -277,6 +332,26 @@ export function SituationPage() {
         </div>
 
         <div className="space-y-6">
+          {xcList.length > 0 && (
+            <Card>
+              <h3 className="font-bold text-ink mb-3">Сквозные компоненты</h3>
+              <p className="text-xs text-muted mb-3">
+                «Кирпичи», от которых зависит маршрут. Без них ситуация рвётся.
+              </p>
+              <ul className="space-y-3 text-sm">
+                {xcList.map((xc) => (
+                  <li key={xc.id}>
+                    <div className="flex items-center gap-2 mb-0.5">
+                      <Badge variant="code">{xc.id}</Badge>
+                      <span className="font-semibold text-ink">{xc.title}</span>
+                    </div>
+                    <p className="text-xs text-muted">{xc.purpose}</p>
+                  </li>
+                ))}
+              </ul>
+            </Card>
+          )}
+
           <Card>
             <h3 className="font-bold text-ink mb-3">Полезно знать</h3>
             <ul className="space-y-3 text-sm text-muted">

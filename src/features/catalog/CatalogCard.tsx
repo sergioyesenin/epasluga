@@ -24,6 +24,27 @@ const AUTH_LABEL: Record<
   },
 }
 
+const DIGITAL_LABEL: Record<
+  NonNullable<Service['digitalState']>,
+  { label: string; variant: 'accent' | 'ecp' | 'need-id'; hint: string }
+> = {
+  green: {
+    label: 'Онлайн',
+    variant: 'accent',
+    hint: 'Есть полный цифровой маршрут — все этапы можно пройти онлайн.',
+  },
+  yellow: {
+    label: 'Частично',
+    variant: 'ecp',
+    hint: 'Есть онлайн-этапы, но маршрут рвётся — часть шагов пока офлайн.',
+  },
+  red: {
+    label: 'Офлайн',
+    variant: 'need-id',
+    hint: 'Услуга пока не оцифрована — потребуется личное обращение.',
+  },
+}
+
 type CatalogCardProps = {
   service: Service
   isFavorite: boolean
@@ -32,6 +53,7 @@ type CatalogCardProps = {
 
 export function CatalogCard({ service, isFavorite, onToggleFavorite }: CatalogCardProps) {
   const auth = AUTH_LABEL[service.authLevel]
+  const digital = service.digitalState ? DIGITAL_LABEL[service.digitalState] : null
 
   return (
     <Link to={`/service/${service.id}`} className="block h-full group">
@@ -51,6 +73,16 @@ export function CatalogCard({ service, isFavorite, onToggleFavorite }: CatalogCa
           <Badge variant={auth.variant} title={auth.hint}>
             {auth.label}
           </Badge>
+          {digital && (
+            <Badge variant={digital.variant} title={digital.hint}>
+              {digital.label}
+            </Badge>
+          )}
+          {service.priority && (
+            <Badge variant="code" title={`Приоритет декомпозиции: ${service.priority}`}>
+              {service.priority}
+            </Badge>
+          )}
           <Badge variant="code">{service.code}</Badge>
         </div>
 

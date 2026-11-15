@@ -1,5 +1,11 @@
 export type AuthLevel = 'none' | 'id' | 'ecp'
 
+/** Статус цифровизации из мастер-реестра: 🟢 онлайн · 🟡 частично · 🔴 офлайн */
+export type DigitalState = 'green' | 'yellow' | 'red'
+
+/** Приоритет волны декомпозиции: P1 — быстрый эффект · P2 — нужны НПА/интеграции · P3 — институционально сложно */
+export type Priority = 'P1' | 'P2' | 'P3'
+
 export interface Service {
   id: string
   code: string
@@ -17,6 +23,12 @@ export interface Service {
   orgName: string
   orgUnp: string
   steps: string[]
+  /** Текущее состояние цифровизации (из мастер-реестра) */
+  digitalState?: DigitalState
+  /** Приоритет для декомпозиции */
+  priority?: Priority
+  /** Сквозные компоненты, от которых зависит услуга */
+  xcDeps?: string[]
 }
 
 export interface Situation {
@@ -92,6 +104,55 @@ export interface LifeSituation {
   categoryIds: string[]
   steps: SituationStep[]
   faq?: { question: string; answer: string }[]
+  /** ID из мастер-реестра (LS-01, BS-07 и т.п.) */
+  registryId?: string
+  /** Состояние цифровизации */
+  digitalState?: DigitalState
+  /** Приоритет */
+  priority?: Priority
+  /** Разрыв / что декомпозировать */
+  gap?: string
+  /** Сквозные компоненты, от которых зависит ситуация */
+  xcDeps?: string[]
+}
+
+/** Сквозной компонент — «кирпич», общий для всех ситуаций */
+export interface CrossCuttingComponent {
+  /** 'XC-01' */
+  id: string
+  title: string
+  purpose: string
+  /** ID ситуаций (LS-…/BS-…), на которые влияет компонент */
+  affectedSituations: string[]
+}
+
+/** Шаблон «паспорта ситуации» для BA */
+export interface SituationPassport {
+  id: string
+  name: string
+  /** Ведомство-«хозяин» ситуации */
+  owner: string
+  trigger: string
+  /** НПА и коды процедур (верифицировать!) */
+  legalBasis: string
+  participants: string[]
+  /** Целевой маршрут: какие этапы онлайн, какие офлайн и почему */
+  targetRoute: Array<{ stage: string; online: boolean; why?: string }>
+  /** Какие атрибуты нужны, откуда берутся, кто master-источник */
+  data: Array<{ attr: string; source: string; master?: string }>
+  channels: string[]
+  /** Результат для пользователя */
+  result: string
+  metrics: {
+    onlineShare?: number
+    time?: string
+    visits?: number
+    refusals?: number
+  }
+  /** Зависимости от XC-компонентов */
+  dependencies: string[]
+  /** Правовая основа требует верификации перед спецификацией */
+  legalVerificationRequired?: boolean
 }
 
 /* --- Новые сущности для «Личного кабинета» --- */

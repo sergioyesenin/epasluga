@@ -4,11 +4,69 @@ import { useApplications } from '../../../lib/applications'
 import { useNotifications } from '../../../lib/notifications'
 import { mockDocuments } from '../../../data/mockDocuments'
 import { mockMail } from '../../../data/mockMail'
+import { xcComponents } from '../../../data/xcComponents'
+import { lifeSituations } from '../../../data/situations'
 import { formatWhen, statusClass } from '../../../lib/format'
 import { ClockIcon, FileIcon, InfoIcon } from '../../../lib/situationIcons'
 import type { CabinetTab } from '../ProfilePage'
 
 type Props = { onNavigate: (tab: CabinetTab) => void }
+
+const PRIORITY_XC = ['XC-01', 'XC-02', 'XC-06']
+
+function PriorityBlock() {
+  const items = xcComponents.filter((x) => PRIORITY_XC.includes(x.id))
+
+  return (
+    <Card className="lg:col-span-2 bg-[#f8f9ff] border-line">
+      <div className="flex flex-wrap items-baseline justify-between gap-2 mb-2">
+        <h2 className="text-lg font-bold text-ink">Что улучшим в первую очередь</h2>
+        <span className="text-xs text-muted">
+          Это разблокирует большинство услуг
+        </span>
+      </div>
+      <p className="text-sm text-muted mb-3">
+        Несколько общих «кирпичей», на которых держатся все остальные услуги.
+        Когда они готовы — новая услуга запускается быстрее и без повторного
+        сбора одних и тех же данных.
+      </p>
+      <ul className="grid sm:grid-cols-3 gap-3">
+        {items.map((xc) => {
+          const situations = xc.affectedSituations
+            .map((rid) => lifeSituations.find((s) => s.registryId === rid))
+            .filter((s): s is NonNullable<typeof s> => Boolean(s))
+          return (
+            <li
+              key={xc.id}
+              className="bg-white border border-line rounded-control p-3"
+            >
+              <div className="flex items-center gap-2 mb-1">
+                <Badge variant="code">{xc.id}</Badge>
+                <span className="font-semibold text-ink text-sm leading-tight">
+                  {xc.title}
+                </span>
+              </div>
+              <p className="text-xs text-muted mb-2">{xc.purpose}</p>
+              {situations.length > 0 && (
+                <div className="flex flex-wrap gap-1.5">
+                  {situations.slice(0, 3).map((s) => (
+                    <Link
+                      key={s.id}
+                      to={`/situation/${s.id}`}
+                      className="inline-flex items-center text-xs font-semibold text-navy hover:underline"
+                    >
+                      {s.title}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </li>
+          )
+        })}
+      </ul>
+    </Card>
+  )
+}
 
 export function OverviewTab({ onNavigate }: Props) {
   const { apps } = useApplications()
@@ -25,6 +83,8 @@ export function OverviewTab({ onNavigate }: Props) {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <PriorityBlock />
+
       {/* Активные заявления */}
       <Card className="lg:col-span-1">
         <div className="flex items-center justify-between mb-3">
@@ -114,9 +174,9 @@ export function OverviewTab({ onNavigate }: Props) {
                 </span>
                 <div className="min-w-0">
                   <div className="font-semibold text-ink truncate">{m.subject}</div>
-                    <div className="text-xs text-muted">
+                  <div className="text-xs text-muted">
                     {m.agency} · {formatWhen(m.at)}
-                    </div>
+                  </div>
                 </div>
               </li>
             ))}

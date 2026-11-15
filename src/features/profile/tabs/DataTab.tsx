@@ -1,6 +1,9 @@
 import { useState } from 'react'
-import { Card, Button, ConfirmDialog, EmptyState } from '../../../design-system'
+import { Link } from 'react-router-dom'
+import { Badge, Card, Button, ConfirmDialog, EmptyState } from '../../../design-system'
 import { DeviceSettingsCard } from '../DeviceSettingsCard'
+import { xcComponents } from '../../../data/xcComponents'
+import { lifeSituations } from '../../../data/situations'
 
 const PERSONA = {
   fullName: 'Иванов Алексей Сергеевич',
@@ -96,6 +99,53 @@ export function DataTab() {
               Заблокировать УИ
             </Button>
           </div>
+        </Card>
+
+        <Card>
+          <div className="flex flex-wrap items-baseline justify-between gap-2 mb-3 border-b border-line pb-2">
+            <h3 className="text-lg font-bold text-ink">Сквозные компоненты</h3>
+            <span className="text-xs text-muted">
+              внутренняя информация — что улучшит все услуги сразу
+            </span>
+          </div>
+          <p className="text-sm text-muted mb-4">
+            Общие «кирпичи», на которых держатся все услуги. Чем больше компонентов
+            готово, тем меньше шагов и бумаг в каждой отдельной ситуации.
+          </p>
+          <ul className="space-y-3">
+            {xcComponents.map((xc) => {
+              const situations = xc.affectedSituations
+                .map((rid) => lifeSituations.find((s) => s.registryId === rid))
+                .filter((s): s is NonNullable<typeof s> => Boolean(s))
+              return (
+                <li key={xc.id} className="border border-line rounded-control p-3">
+                  <div className="flex flex-wrap items-center gap-2 mb-1">
+                    <Badge variant="code">{xc.id}</Badge>
+                    <span className="font-semibold text-ink text-sm">{xc.title}</span>
+                    <Badge variant="default">
+                      {xc.affectedSituations.length > 0
+                        ? `${xc.affectedSituations.length} ситуаций`
+                        : 'мета-компонент'}
+                    </Badge>
+                  </div>
+                  <p className="text-xs text-muted mb-2">{xc.purpose}</p>
+                  {situations.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5">
+                      {situations.map((s) => (
+                        <Link
+                          key={s.id}
+                          to={`/situation/${s.id}`}
+                          className="inline-flex items-center text-xs font-semibold text-navy hover:underline"
+                        >
+                          {s.title}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </li>
+              )
+            })}
+          </ul>
         </Card>
       </div>
 
