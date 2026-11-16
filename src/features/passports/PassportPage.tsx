@@ -136,7 +136,7 @@ export function PassportPage() {
               <tr className="text-left text-xs uppercase tracking-wide text-muted border-b border-line">
                 <th className="py-2 pr-3 font-semibold">Атрибут</th>
                 <th className="py-2 pr-3 font-semibold">Источник</th>
-                <th className="py-2 font-semibold">Master-источник</th>
+                <th className="py-2 font-semibold">Мастер-источник</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-line">

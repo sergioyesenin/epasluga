@@ -11,7 +11,7 @@ export type CabinetTab = 'overview' | 'apps' | 'docs' | 'mail' | 'repo' | 'data'
 
 const TABS: Array<{ id: CabinetTab; label: string }> = [
   { id: 'overview', label: 'Обзор' },
-  { id: 'apps', label: 'Заявления' },
+  { id: 'apps', label: 'Мои услуги' },
   { id: 'docs', label: 'Документы' },
   { id: 'mail', label: 'Почта' },
   { id: 'repo', label: 'Репозиторий' },
@@ -59,9 +59,7 @@ export function ProfilePage() {
             onClick={() => setTab(t.id)}
             className={clsx(
               'shrink-0 px-4 py-2 min-h-11 rounded-full text-sm font-semibold transition-colors',
-              tab === t.id
-                ? 'bg-white text-navy shadow-sm'
-                : 'text-muted hover:text-navy',
+              tab === t.id ? 'bg-white text-navy shadow-sm' : 'text-muted hover:text-navy',
             )}
           >
             {t.label}

@@ -146,7 +146,7 @@ export function SituationPage() {
                 to="/profile?tab=apps"
                 className="text-xs font-semibold text-navy hover:underline whitespace-nowrap"
               >
-                Мои заявления
+                Мои услуги
               </Link>
             </div>
           </div>
@@ -364,7 +364,7 @@ export function SituationPage() {
                 to="/profile?tab=apps"
                 className="text-sm font-semibold text-navy hover:underline inline-flex items-center gap-1"
               >
-                Мои заявления по этой ситуации
+                Мои услуги по этой ситуации
               </Link>
             </div>
           </Card>

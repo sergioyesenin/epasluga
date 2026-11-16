@@ -17,12 +17,12 @@ export function SupportPage() {
           <Card>
             <h2 className="text-lg font-bold text-ink mb-2">Задать вопрос</h2>
             <p className="text-sm text-muted mb-4">
-              Работает без авторизации. Ответим на email в течение дня.
+              Работает без входа в кабинет. Ответим на электронную почту в течение дня.
             </p>
 
             {sent ? (
               <div className="bg-[#e6f6ec] text-ok p-4 rounded-control text-sm font-semibold">
-                Спасибо! Ваше обращение принято. Мы ответим на указанный email.
+                Спасибо! Обращение принято. В демо-прототипе оно никуда не отправляется.
               </div>
             ) : (
               <form
@@ -33,15 +33,26 @@ export function SupportPage() {
                 }}
               >
                 <div>
-                  <label className="block text-sm font-semibold mb-1">Ваш email</label>
-                  <Input type="email" required placeholder="example@mail.com" />
+                  <label htmlFor="support-email" className="block text-sm font-semibold mb-1">
+                    Ваша электронная почта
+                  </label>
+                  <Input
+                    id="support-email"
+                    type="email"
+                    autoComplete="email"
+                    required
+                    placeholder="example@mail.com"
+                  />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold mb-1">Опишите проблему</label>
+                  <label htmlFor="support-text" className="block text-sm font-semibold mb-1">
+                    Опишите проблему
+                  </label>
                   <textarea
+                    id="support-text"
                     required
                     className="w-full rounded-control border border-field px-3 py-2.5 text-[15px] outline-none focus:border-navy focus:ring-4 focus:ring-navy/12 min-h-25"
-                    placeholder="Например: не приходит SMS с кодом..."
+                    placeholder="Например: не приходит SMS с кодом…"
                   />
                 </div>
                 <Button type="submit" className="w-full">
@@ -61,10 +72,14 @@ export function SupportPage() {
           </Card>
 
           <Card className="bg-soft border-line">
-            <h3 className="text-sm font-semibold text-muted mb-2">Email поддержки</h3>
+            <h3 className="text-sm font-semibold text-muted mb-2">Электронная почта поддержки</h3>
             <p className="text-xl font-bold text-ink mb-1">help@epasluga.by</p>
             <p className="text-sm text-muted">Круглосуточно</p>
           </Card>
+
+          <p className="text-xs text-muted">
+            Телефон и почта условные: это учебный прототип, а не официальный сайт.
+          </p>
         </div>
       </div>
     </div>

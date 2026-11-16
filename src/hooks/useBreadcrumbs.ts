@@ -42,7 +42,7 @@ export function useBreadcrumbs(): Crumb[] {
     const tab = params.get('tab')
     crumbs.push({ label: 'Личный кабинет', href: '/profile' })
     const tabLabels: Record<string, string> = {
-      apps: 'Заявления',
+      apps: 'Мои услуги',
       docs: 'Документы',
       mail: 'Почта',
       repo: 'Репозиторий',
@@ -51,7 +51,7 @@ export function useBreadcrumbs(): Crumb[] {
     if (tab && tabLabels[tab]) crumbs.push({ label: tabLabels[tab] })
   } else if (pathname === '/apps') {
     crumbs.push({ label: 'Личный кабинет', href: '/profile' })
-    crumbs.push({ label: 'Заявления' })
+    crumbs.push({ label: 'Мои услуги' })
   } else if (pathname === '/notifications') {
     crumbs.push({ label: 'Мои уведомления' })
   } else if (pathname.startsWith('/status/')) {
