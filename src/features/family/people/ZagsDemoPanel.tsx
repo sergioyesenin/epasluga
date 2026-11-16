@@ -21,7 +21,7 @@ export function ZagsDemoPanel() {
       <div className="flex items-center gap-2 mb-1">
         <DemoBadge />
         <h2 id="zags-demo-title" className="text-lg font-bold text-ink">
-          События из реестра ЗАГС
+          Демо: события из реестра ЗАГС
         </h2>
       </div>
       <p className="text-sm text-muted mb-4">
@@ -39,7 +39,7 @@ export function ZagsDemoPanel() {
           }}
         >
           <Icon name="file" className="w-5 h-5 shrink-0" />
-          Поступила запись о расторжении брака
+          Запись о расторжении брака
         </button>
         {!demo.spouse && (
           <p className="text-xs text-muted -mt-1">Действующей записи о браке нет.</p>
@@ -73,7 +73,7 @@ export function ZagsDemoPanel() {
             }}
           >
             <Icon name="file" className="w-5 h-5 shrink-0" />
-            Поступила запись о смерти
+            Запись о смерти
           </button>
         </div>
 
@@ -86,7 +86,7 @@ export function ZagsDemoPanel() {
           }}
         >
           <Icon name="plus" className="w-5 h-5 shrink-0" />
-          {demo.born ? 'Запись о рождении уже поступила' : 'В семье родился ребёнок'}
+          {demo.born ? 'Запись о рождении уже поступила' : 'Запись о рождении ребёнка'}
         </button>
 
         <button
