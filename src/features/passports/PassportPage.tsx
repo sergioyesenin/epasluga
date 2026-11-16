@@ -4,12 +4,15 @@ import { passportById } from '../../data/situationPassports'
 import { xcById } from '../../data/xcComponents'
 import { lifeSituations } from '../../data/situations'
 
+import { useDocumentTitle } from '../../hooks/useDocumentTitle'
+
 export function PassportPage() {
   const { id } = useParams()
   const passport = id ? passportById(id) : undefined
   const situation = passport
     ? lifeSituations.find((s) => s.registryId === passport.id)
     : undefined
+  useDocumentTitle(passport ? `Паспорт ситуации: ${passport.name}` : 'Паспорт не найден')
 
   if (!passport) {
     return (

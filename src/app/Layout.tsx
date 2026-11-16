@@ -1,4 +1,5 @@
-﻿import { Outlet, ScrollRestoration, useLocation } from 'react-router-dom'
+﻿import { Suspense } from 'react'
+import { Outlet, ScrollRestoration, useLocation } from 'react-router-dom'
 import { AiAssistant } from '../features/support/AiAssistant'
 import { OfflineBanner } from '../features/pwa/OfflineBanner'
 import { Toaster } from '../design-system'
@@ -9,6 +10,9 @@ import { TopBar } from './layout/TopBar'
 import { BottomTabs } from './layout/BottomTabs'
 import { SiteFooter } from './layout/SiteFooter'
 import { guestNav, memberNav } from './layout/navItems'
+import { PageSkeleton } from './PageSkeleton'
+import { useRouteTitle } from './routeTitle'
+import { useDocumentTitle } from '../hooks/useDocumentTitle'
 
 /**
  * Каркас приложения.
@@ -20,6 +24,7 @@ export function Layout() {
   const { pathname } = useLocation()
   // В «Далони» снизу панель оплаты — кнопку помощника на телефоне прячем, чтобы не перекрывала
   const busyBottom = pathname.startsWith('/family')
+  useDocumentTitle(useRouteTitle())
 
   return (
     <div className="min-h-dvh flex bg-bg">
@@ -40,7 +45,9 @@ export function Layout() {
           className="flex-1 w-full pt-5 md:pt-8 pb-10 pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))] md:px-8"
         >
           <Breadcrumbs />
-          <Outlet />
+          <Suspense fallback={<PageSkeleton />}>
+            <Outlet />
+          </Suspense>
         </main>
         <SiteFooter />
       </div>

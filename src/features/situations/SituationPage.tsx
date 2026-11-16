@@ -10,6 +10,7 @@ import { useApplications } from '../../lib/applications'
 import { CheckIcon, ClockIcon } from '../../lib/situationIcons'
 import type { ApplicationStatus, DigitalState, Priority } from '../../types/service'
 import { readString, writeString } from '../../lib/storage'
+import { useDocumentTitle } from '../../hooks/useDocumentTitle'
 
 const PAUSE_KEY_PREFIX = 'epasluga-situ-paused:'
 
@@ -34,6 +35,7 @@ export function SituationPage() {
   const situation = lifeSituations.find((s) => s.id === id)
   const { completed, toggle, reset } = useSituationProgress(id ?? '__none__')
   const { apps } = useApplications()
+  useDocumentTitle(situation?.title ?? 'Ситуация не найдена')
 
   const [isPaused, setIsPaused] = useState<boolean>(() => {
     if (!id) return false

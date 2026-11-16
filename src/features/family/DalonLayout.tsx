@@ -1,6 +1,8 @@
+import { Suspense } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
 import clsx from 'clsx'
 import { DalonMark } from './components/DalonMark'
+import { PageSkeleton } from '../../app/PageSkeleton'
 
 const TABS = [
   { to: '/family', label: 'Панель', end: true },
@@ -48,7 +50,10 @@ export function DalonLayout() {
         </div>
       </nav>
 
-      <Outlet />
+      {/* Своя граница: при переходе между вкладками шапка «Далони» не мигает */}
+      <Suspense fallback={<PageSkeleton />}>
+        <Outlet />
+      </Suspense>
     </div>
   )
 }
