@@ -69,7 +69,7 @@ export function StatusPage() {
               {app.status === 'Черновик' && 'Заявление ещё не отправлено.'}
             </p>
             <p className="text-sm text-muted">
-              {app.comment || 'Дополнительные комментарии отсутствуют.'}
+              {app.comment || app.note || 'Дополнительные комментарии отсутствуют.'}
             </p>
           </div>
         </div>

@@ -22,6 +22,8 @@ import { RemindersPage } from '../features/family/reminders/RemindersPage'
 import { PeoplePage } from '../features/family/people/PeoplePage'
 import { HistoryPage } from '../features/family/history/HistoryPage'
 import { PayPage } from '../features/family/pay/PayPage'
+import { CareerPage } from '../features/family/career/CareerPage'
+import { TestingPage } from '../features/family/testing/TestingPage'
 
 // Компонент-переключатель для главной страницы
 function HomeSwitcher() {
@@ -50,6 +52,8 @@ export const router = createHashRouter([
           { path: 'reminders', element: <RemindersPage /> },
           { path: 'people', element: <PeoplePage /> },
           { path: 'history', element: <HistoryPage /> },
+          { path: 'career/:memberId', element: <CareerPage /> },
+          { path: 'testing/:memberId', element: <TestingPage /> },
         ],
       },
       {

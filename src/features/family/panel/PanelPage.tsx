@@ -7,6 +7,7 @@ import { isMemberVisible, personById, sumDue } from '../../../lib/dalon/selector
 import { lockReason } from '../../../lib/dalon/zags'
 import { formatDay, toneFor, toneText } from '../../../lib/dates'
 import { PlantSummary } from './plant/PlantSummary'
+import { SuggestionsPanel } from '../proactive/SuggestionsPanel'
 import { MemberGroup } from './MemberGroup'
 import { DuePanel } from './DuePanel'
 import { PayBar } from './PayBar'
@@ -74,6 +75,8 @@ export function PanelPage() {
           <NoWalletNote />
         </div>
       </div>
+
+      <SuggestionsPanel state={state} now={now} />
 
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] gap-6 items-start">
         <div className="min-w-0">

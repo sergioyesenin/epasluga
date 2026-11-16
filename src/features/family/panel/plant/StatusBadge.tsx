@@ -18,11 +18,7 @@ export function StatusBadge({ status, count, x, y }: StatusBadgeProps) {
     return (
       <g transform={`translate(${x} ${y})`}>
         <circle r={10.5} className="fill-family-wine stroke-white" strokeWidth={2} />
-        <text
-          y={4}
-          textAnchor="middle"
-          className="fill-white text-[11.5px] font-bold tabular"
-        >
+        <text y={4} textAnchor="middle" className="fill-white text-[11.5px] font-bold tabular">
           {count}
         </text>
       </g>

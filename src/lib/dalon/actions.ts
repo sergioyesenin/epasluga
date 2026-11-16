@@ -5,6 +5,7 @@ import { formatMoney } from '../money'
 import { getDalonState, updateDalon } from './store'
 import { amountDue, isDiscountActive, personById, visibleCharges } from './selectors'
 import { withLog } from './log'
+import { confirmTestingPaid } from './testing'
 
 export const METHOD_LABEL: Record<PayMethod, string> = {
   erip: 'ЕРИП',
@@ -54,6 +55,8 @@ export function payCharges(ids: string[], method: PayMethod): PaymentRecord[] {
       'you',
     ),
   }))
+
+  confirmTestingPaid(records.flatMap((r) => (r.appId ? [r.appId] : [])))
 
   addNotification(
     'legal',

@@ -55,13 +55,24 @@ export function plantItems(state: DalonState, charges: DalonCharge[], now = new 
     const status = memberStatus(state, id, charges, now)
     const sum = status === 'locked' ? 0 : sumDue(own, now)
     const count = status === 'locked' ? 0 : own.length
-    return { id, kind, name, initials, status, count, sum, text: itemText(name, status, count, sum) }
+    return {
+      id,
+      kind,
+      name,
+      initials,
+      status,
+      count,
+      sum,
+      text: itemText(name, status, count, sum),
+    }
   }
   const people = state.people
     .filter((p) => p.closedBy?.kind !== 'death')
     .map((p) => make(p.id, p.kind, p.name, p.initials))
   const assets = state.assets.map((a) => make(a.id, a.kind, a.full, ''))
-  return { mode: plantMode(people.length), people, assets }
+  // Порог считаем по действующим связям: после расторжения брака лист остаётся, но человек уже не в семье
+  const family = state.people.filter((p) => !p.closedBy).length
+  return { mode: plantMode(family), family, people, assets }
 }
 
 /* --- Геометрия рисунка (координаты 400×400, видимая часть — plantView) --- */

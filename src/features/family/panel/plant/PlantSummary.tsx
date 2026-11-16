@@ -14,13 +14,15 @@ type PlantSummaryProps = {
   onPick: (memberId: string) => void
 }
 
-function modeText(mode: 'sprout' | 'flower', people: number, assets: number): string {
-  const who = countText(people, 'человек', 'человека', 'человек')
-  const what = countText(assets, 'лист', 'листа', 'листьев')
-  if (mode === 'flower') {
-    return `Цветок: ${who} в семье — лепестки, имущество — ${what} на стебле.`
+function modeText(plant: ReturnType<typeof plantItems>): string {
+  const who = countText(plant.family, 'человек', 'человека', 'человек')
+  const what = countText(plant.assets.length, 'лист', 'листа', 'листьев')
+  const locked = plant.people.filter((p) => p.status === 'locked').map((p) => p.name)
+  const lockedText = locked.length > 0 ? ` Без доступа: ${locked.join(', ')}.` : ''
+  if (plant.mode === 'flower') {
+    return `Цветок: ${who} в семье — лепестки, имущество — ${what} на стебле.${lockedText}`
   }
-  return `Росток: ${who} в семье, имущество — ${what} на стебле. С ${FLOWER_MIN_PEOPLE} человек росток станет цветком.`
+  return `Росток: ${who} в семье, имущество — ${what} на стебле. С ${FLOWER_MIN_PEOPLE} человек росток станет цветком.${lockedText}`
 }
 
 /** Растение семьи и сумма к оплате. Нажатие на лист или лепесток ведёт к его начислениям. */
@@ -49,7 +51,7 @@ export function PlantSummary({ state, charges, total, now, onPick }: PlantSummar
         {activeItem ? activeItem.text : ''}
       </p>
       <p id="plant-mode" className="mt-1 text-center text-sm text-muted max-w-[46ch] mx-auto">
-        {modeText(plant.mode, plant.people.length, plant.assets.length)}
+        {modeText(plant)}
       </p>
       <PlantLegend />
 

@@ -23,6 +23,7 @@ export function MyServicesRow({ app, href, onPay, onDownload, help }: MyServices
       <td className="px-4 py-3 align-top">
         <div className="font-semibold text-ink">{app.title}</div>
         <div className="text-xs text-muted mt-0.5">№ {app.num}</div>
+        {app.note && <div className="text-xs text-muted mt-1.5 max-w-sm">{app.note}</div>}
         {situation && (
           <div className="text-xs mt-1.5">
             <Link
@@ -57,7 +58,15 @@ export function MyServicesRow({ app, href, onPay, onDownload, help }: MyServices
               Скачать
             </button>
           )}
-          {app.status === 'Ожидает оплаты' && (
+          {app.status === 'Ожидает оплаты' && app.payHref && (
+            <Link
+              to={app.payHref}
+              className="inline-flex items-center justify-center rounded-control px-4 min-h-11 text-sm font-semibold bg-navy text-white hover:bg-navy-deep transition-colors w-full sm:w-auto"
+            >
+              Оплатить
+            </Link>
+          )}
+          {app.status === 'Ожидает оплаты' && !app.payHref && (
             <button
               type="button"
               onClick={onPay}
