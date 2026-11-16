@@ -6,7 +6,7 @@ import { DalonSummary } from './DalonSummary'
 import { ProactiveBanner } from './ProactiveBanner'
 import { InstallBanner } from '../pwa/InstallBanner'
 import { useApplications } from '../../lib/applications'
-import { useAuth } from '../../contexts/AuthContext'
+import { useAuth } from '../../hooks/useAuth'
 import { Badge, Card } from '../../design-system'
 import { statusClass } from '../../lib/format'
 

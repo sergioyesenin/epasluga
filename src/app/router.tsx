@@ -1,7 +1,7 @@
 ﻿import { createHashRouter } from 'react-router-dom'
 import { Layout } from './Layout'
 import { RequireAuth } from './RequireAuth'
-import { useAuth } from '../contexts/AuthContext'
+import { useAuth } from '../hooks/useAuth'
 
 // Страницы
 import { HomePage } from '../features/home/HomePage'

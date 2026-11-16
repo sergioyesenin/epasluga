@@ -31,12 +31,6 @@ export interface Service {
   xcDeps?: string[]
 }
 
-export interface Situation {
-  id: string
-  title: string
-  hint: string
-}
-
 export interface Category {
   id: string
   title: string
@@ -80,12 +74,6 @@ export interface AppNotification {
   body: string
   at: string
   archived: boolean
-}
-
-export interface Agency {
-  id: string
-  name: string
-  shortName: string
 }
 
 export type SituationStep = {

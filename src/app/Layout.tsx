@@ -2,7 +2,7 @@
 import { AiAssistant } from '../features/support/AiAssistant'
 import { OfflineBanner } from '../features/pwa/OfflineBanner'
 import { Toaster } from '../design-system'
-import { useAuth } from '../contexts/AuthContext'
+import { useAuth } from '../hooks/useAuth'
 import { Breadcrumbs } from './Breadcrumbs'
 import { Sidebar } from './layout/Sidebar'
 import { TopBar } from './layout/TopBar'

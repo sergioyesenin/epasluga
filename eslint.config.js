@@ -6,7 +6,7 @@ import tseslint from 'typescript-eslint'
 import prettier from 'eslint-config-prettier'
 
 export default tseslint.config(
-  { ignores: ['dist', 'legacy', 'public/mockServiceWorker.js'] },
+  { ignores: ['dist', 'dev-dist', 'legacy'] },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended, prettier],
     files: ['**/*.{ts,tsx}'],
