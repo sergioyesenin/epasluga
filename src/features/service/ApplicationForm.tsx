@@ -11,6 +11,9 @@ import { isRecord, readJson, removeKey, writeJson } from '../../lib/storage'
 import { FieldError } from './FieldError'
 import { errorProps } from './fieldA11y'
 
+// Без JIT-компиляции схем через new Function: CSP запрещает eval ('unsafe-eval' убран)
+z.config({ jitless: true })
+
 // Схема валидации (эвристика #9 — понятные сообщения рядом с полем)
 const PHONE_RE = /^\+375\s?\(?(?:17|25|29|33|44)\)?[\s-]?\d{3}[\s-]?\d{2}[\s-]?\d{2}$/
 

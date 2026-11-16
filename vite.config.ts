@@ -2,8 +2,41 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
+import type { Plugin } from 'vite'
 
-const YEAR = 60 * 60 * 24 * 365
+/*
+ * Content-Security-Policy для сборки. Всё своё: шрифт лежит в репозитории,
+ * инлайн-скриптов нет, eval не нужен (zod работает в режиме jitless).
+ * frame-ancestors в <meta> браузеры игнорируют — на хостинге продублировать заголовком
+ * (см. README, «Готовность к продакшену»).
+ */
+const CSP = [
+  "default-src 'self'",
+  "script-src 'self'",
+  "style-src 'self'",
+  "img-src 'self' data: blob:",
+  "font-src 'self'",
+  "connect-src 'self'",
+  "manifest-src 'self'",
+  "worker-src 'self'",
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+].join('; ')
+
+function cspPlugin(): Plugin {
+  return {
+    name: 'epasluga-csp',
+    apply: 'build',
+    // Метку <!--csp--> меняем на meta сразу после charset и viewport — до любых скриптов
+    transformIndexHtml(html) {
+      return html.replace(
+        '<!--csp-->',
+        `<meta http-equiv="Content-Security-Policy" content="${CSP}" />`,
+      )
+    },
+  }
+}
 
 /*
  * base: './' + hash-роутер (createHashRouter):
@@ -16,6 +49,7 @@ export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
+    cspPlugin(),
     VitePWA({
       // Новая версия ставится только после согласия пользователя (тост «Обновить»)
       registerType: 'prompt',
@@ -89,34 +123,14 @@ export default defineConfig({
       },
       workbox: {
         // Оболочка приложения целиком: после первого визита открывается без сети
-        globPatterns: ['**/*.{js,css,html,svg,png,ico,webmanifest}'],
-        // Воркер msw нужен только для разработки — в кэш не кладём
-        globIgnores: ['**/mockServiceWorker.js'],
+        // Сюда же попадают все ленивые чанки экранов (assets/*.js) и шрифт Onest (woff2)
+        globPatterns: ['**/*.{js,css,html,svg,png,ico,webmanifest,woff2}'],
         // Офлайн-фолбэк: любой переход внутри scope отдаёт закэшированный index.html
         navigateFallback: 'index.html',
         cleanupOutdatedCaches: true,
         maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
         // Клик по уведомлению открывает нужный раздел
         importScripts: ['sw-notifications.js'],
-        runtimeCaching: [
-          {
-            urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
-            handler: 'StaleWhileRevalidate',
-            options: {
-              cacheName: 'google-fonts-css',
-              expiration: { maxEntries: 10, maxAgeSeconds: YEAR },
-            },
-          },
-          {
-            urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'google-fonts-files',
-              cacheableResponse: { statuses: [0, 200] },
-              expiration: { maxEntries: 30, maxAgeSeconds: YEAR },
-            },
-          },
-        ],
       },
     }),
   ],
