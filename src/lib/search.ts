@@ -1,11 +1,7 @@
 // src/lib/search.ts
-import { services as baseServices } from '../data/services'
-import { servicesExtra } from '../data/servicesExtra'
+import { allServices as services } from '../data/catalog'
 import { synonyms } from '../data/synonyms'
 import type { Service } from '../types/service'
-
-/** Базовый каталог (174 услуги из генератора) + услуги Волны 1 из servicesExtra. */
-export const services: Service[] = [...baseServices, ...servicesExtra]
 
 /** Нормализация: нижний регистр, ё→е, схлопывание пробелов. */
 export function normalize(s: string): string {

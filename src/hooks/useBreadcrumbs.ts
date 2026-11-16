@@ -1,12 +1,14 @@
 import { useLocation } from 'react-router-dom'
-import { services } from '../data/services'
 import { categories } from '../data/categories'
+import { useLazyService } from './useLazyService'
 
 export type Crumb = { label: string; href?: string }
 
 export function useBreadcrumbs(): Crumb[] {
   const { pathname, search } = useLocation()
   const params = new URLSearchParams(search)
+  const serviceId = pathname.startsWith('/service/') ? pathname.replace('/service/', '') : undefined
+  const svc = useLazyService(serviceId)
 
   const crumbs: Crumb[] = [{ label: 'Главная', href: '/' }]
 
@@ -26,8 +28,6 @@ export function useBreadcrumbs(): Crumb[] {
       crumbs.push({ label: 'Каталог услуг' })
     }
   } else if (pathname.startsWith('/service/')) {
-    const id = pathname.replace('/service/', '')
-    const svc = services.find((s) => s.id === id)
     crumbs.push({ label: 'Каталог услуг', href: '/catalog' })
     if (svc) {
       crumbs.push({

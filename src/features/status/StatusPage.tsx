@@ -1,6 +1,6 @@
 ﻿import { useParams, Link } from 'react-router-dom'
 import { useApplications } from '../../lib/applications'
-import { services } from '../../data/services'
+import { serviceById } from '../../data/catalog'
 import { StatusTracker, Card, Badge } from '../../design-system'
 import { formatWhen, statusClass } from '../../lib/format'
 
@@ -22,7 +22,7 @@ export function StatusPage() {
   }
 
   const app = apps.find((a) => a.id === id)
-  const service = services.find((s) => s.id === app?.serviceId)
+  const service = serviceById(app?.serviceId)
 
   if (!app) {
     return (

@@ -1,12 +1,12 @@
 import { Link } from 'react-router-dom'
 import { Card } from '../../design-system'
-import { services } from '../../data/services'
+import { serviceById } from '../../data/catalog'
 import { ClockIcon } from '../../lib/situationIcons'
 
 const QUICK_IDS = ['3-05-03', '200-12-1', '200-15-11']
 
 export function QuickActions() {
-  const quickServices = QUICK_IDS.map((id) => services.find((s) => s.id === id)).filter(
+  const quickServices = QUICK_IDS.map((id) => serviceById(id)).filter(
     (s): s is NonNullable<typeof s> => Boolean(s),
   )
 

@@ -1,6 +1,6 @@
 ﻿import { useState } from 'react'
 import { useParams, Link, useSearchParams } from 'react-router-dom'
-import { services } from '../../data/services'
+import { serviceById } from '../../data/catalog'
 import { Button, Badge, Card, Accordion, Tooltip } from '../../design-system'
 import { ClockIcon, WalletIcon, FileIcon } from '../../lib/situationIcons'
 import { ru } from '../../content/ru'
@@ -23,7 +23,7 @@ export function ServicePage() {
   const situationId = params.get('situation') ?? undefined
   const situationStepId = params.get('step') ?? undefined
 
-  const service = services.find((s) => s.id === id)
+  const service = serviceById(id)
   const [isFormOpen, setIsFormOpen] = useState(false)
 
   if (!service) {
@@ -40,6 +40,7 @@ export function ServicePage() {
   if (isFormOpen) {
     return (
       <ApplicationForm
+        key={service.id}
         service={service}
         onBack={() => setIsFormOpen(false)}
         situationId={situationId}
