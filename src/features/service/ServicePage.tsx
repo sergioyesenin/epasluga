@@ -153,9 +153,7 @@ export function ServicePage() {
             </Card>
 
             <Card>
-              <h3 className="text-sm font-bold text-muted mb-3">
-                Кто оказывает услугу
-              </h3>
+              <h3 className="text-sm font-bold text-muted mb-3">Кто оказывает услугу</h3>
               <div className="font-semibold text-ink mb-1">{service.orgName}</div>
               <div className="text-sm text-muted">УНП: {service.orgUnp}</div>
             </Card>

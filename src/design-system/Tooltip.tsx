@@ -56,13 +56,13 @@ export function Tooltip({ text, children, className }: TooltipProps) {
       >
         {children}
       </span>
-      
+
       {/* Текст всегда в DOM — его зачитывает экранный диктор через aria-describedby */}
       <div
         id={tooltipId}
         role="tooltip"
         hidden={!isVisible}
-          className="fixed z-50 bg-[#1c1c28] text-white text-xs px-3 py-2 rounded-lg pointer-events-none max-w-xs shadow-lg -translate-x-1/2 -translate-y-full"
+        className="fixed z-50 bg-[#1c1c28] text-white text-xs px-3 py-2 rounded-lg pointer-events-none max-w-xs shadow-lg -translate-x-1/2 -translate-y-full"
         style={{ top: coords.top, left: coords.left }}
       >
         {text}

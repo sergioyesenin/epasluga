@@ -30,11 +30,7 @@ export function RepoTab() {
       const next: RepositoryFile = {
         id: `f-${Date.now()}`,
         name: file.name,
-        format: file.name.endsWith('.pdf')
-          ? 'pdf'
-          : file.name.endsWith('.zip')
-            ? 'zip'
-            : 'xml',
+        format: file.name.endsWith('.pdf') ? 'pdf' : file.name.endsWith('.zip') ? 'zip' : 'xml',
         sizeKb: Math.round(file.size / 1024),
         uploadedAt: new Date().toISOString(),
       }
@@ -123,8 +119,8 @@ export function RepoTab() {
       <div className="mt-6 flex items-start gap-2 text-xs text-muted">
         <InfoIcon className="w-4 h-4 shrink-0 mt-0.5" />
         <span>
-          Файлы хранятся в вашем кабинете и доступны при оформлении заявлений. В демо
-          загрузка симулируется.
+          Файлы хранятся в вашем кабинете и доступны при оформлении заявлений. В демо загрузка
+          симулируется.
         </span>
       </div>
     </div>

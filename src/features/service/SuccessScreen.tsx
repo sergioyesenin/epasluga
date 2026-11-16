@@ -16,7 +16,13 @@ export function SuccessScreen({ service, applicationNum, situationId }: SuccessS
   return (
     <div className="max-w-xl mx-auto py-12 text-center">
       <div className="w-20 h-20 bg-[#e6f6ec] text-ok rounded-full flex items-center justify-center mx-auto mb-6">
-        <svg aria-hidden="true" className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg
+          aria-hidden="true"
+          className="w-10 h-10"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
         </svg>
       </div>
@@ -24,7 +30,9 @@ export function SuccessScreen({ service, applicationNum, situationId }: SuccessS
       <h1 className="text-3xl font-bold text-ink mb-4">Заявление принято!</h1>
       <p className="text-lg text-ink mb-2">Услуга: {service.shortTitle}</p>
       {applicationNum && (
-        <p className="text-sm text-muted mb-2">Номер заявления: <span className="font-mono">{applicationNum}</span></p>
+        <p className="text-sm text-muted mb-2">
+          Номер заявления: <span className="font-mono">{applicationNum}</span>
+        </p>
       )}
 
       <p className="text-muted mb-8">
@@ -49,17 +57,26 @@ export function SuccessScreen({ service, applicationNum, situationId }: SuccessS
       </div>
 
       <Card className="bg-soft border-line text-left">
-        <h3 className="font-bold text-ink mb-2 text-center">Насколько легко было получить услугу?</h3>
+        <h3 className="font-bold text-ink mb-2 text-center">
+          Насколько легко было получить услугу?
+        </h3>
         {isRated ? (
-          <p className="text-center text-ok font-semibold">Спасибо за ваш отзыв! Это помогает нам становиться лучше.</p>
+          <p className="text-center text-ok font-semibold">
+            Спасибо за ваш отзыв! Это помогает нам становиться лучше.
+          </p>
         ) : (
           <div className="flex justify-center gap-2 mt-4">
-            {[1, 2, 3, 4, 5].map(star => (
+            {[1, 2, 3, 4, 5].map((star) => (
               <button
                 key={star}
-                onClick={() => { setRating(star); setIsRated(true) }}
+                onClick={() => {
+                  setRating(star)
+                  setIsRated(true)
+                }}
                 className={`w-10 h-10 rounded-full font-bold transition-colors ${
-                  rating && rating >= star ? 'bg-navy text-white' : 'bg-white text-navy border border-navy hover:bg-soft'
+                  rating && rating >= star
+                    ? 'bg-navy text-white'
+                    : 'bg-white text-navy border border-navy hover:bg-soft'
                 }`}
               >
                 {star}

@@ -42,20 +42,22 @@ function FakeQr({ payload, size = 120 }: { payload: string; size?: number }) {
         const col = idx % cells
         // Уголки-маркеры
         const inCorner =
-          (row < 7 && col < 7) ||
-          (row < 7 && col >= cells - 7) ||
-          (row >= cells - 7 && col < 7)
+          (row < 7 && col < 7) || (row < 7 && col >= cells - 7) || (row >= cells - 7 && col < 7)
         const markerBorder =
           inCorner &&
-          (row === 0 || row === 6 || col === 0 || col === 6 ||
-            row === cells - 1 || row === cells - 7 ||
-            col === cells - 1 || col === cells - 7)
+          (row === 0 ||
+            row === 6 ||
+            col === 0 ||
+            col === 6 ||
+            row === cells - 1 ||
+            row === cells - 7 ||
+            col === cells - 1 ||
+            col === cells - 7)
         const markerCenter =
           inCorner &&
           row >= 2 &&
           row <= 4 &&
-          ((col >= 2 && col <= 4) ||
-            (col >= cells - 5 && col <= cells - 3))
+          ((col >= 2 && col <= 4) || (col >= cells - 5 && col <= cells - 3))
         const filled = inCorner ? markerBorder || markerCenter : hash(idx)
         if (!filled) return null
         return (
@@ -93,18 +95,12 @@ function DocumentCard({ doc }: { doc: Document }) {
       <div className="flex flex-wrap gap-1.5 mb-3">
         <Badge variant="code">{doc.format.toUpperCase()}</Badge>
         <Badge variant="default">{doc.sizeKb} КБ</Badge>
-        {validity && (
-          <Badge variant={isExpired ? 'need-id' : 'accent'}>{validity}</Badge>
-        )}
+        {validity && <Badge variant={isExpired ? 'need-id' : 'accent'}>{validity}</Badge>}
       </div>
 
       <div className="text-xs text-muted mb-4 flex-1">
         Выдан {formatWhen(doc.issuedAt)}
-        {doc.applicationNum && (
-          <>
-            {' '}· по заявлению № {doc.applicationNum}
-          </>
-        )}
+        {doc.applicationNum && <> · по заявлению № {doc.applicationNum}</>}
       </div>
 
       {showQr ? (
@@ -183,9 +179,7 @@ export function DocsTab() {
 
       <div className="mt-6 flex items-start gap-2 text-xs text-muted">
         <InfoIcon className="w-4 h-4 shrink-0 mt-0.5" />
-        <span>
-          QR-код ведёт на страницу проверки документа. В демо-режиме он декоративный.
-        </span>
+        <span>QR-код ведёт на страницу проверки документа. В демо-режиме он декоративный.</span>
       </div>
     </div>
   )

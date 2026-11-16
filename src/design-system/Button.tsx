@@ -6,7 +6,13 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   size?: 'md' | 'sm'
 }
 
-export function Button({ variant = 'primary', size = 'md', className, children, ...props }: ButtonProps) {
+export function Button({
+  variant = 'primary',
+  size = 'md',
+  className,
+  children,
+  ...props
+}: ButtonProps) {
   return (
     <button
       className={clsx(

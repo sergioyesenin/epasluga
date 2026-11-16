@@ -22,7 +22,8 @@ export function Accordion({ title, children, defaultOpen = false }: AccordionPro
         className="w-full flex items-center justify-between p-4 bg-transparent hover:bg-soft/50 transition-colors text-left font-semibold text-ink focus-visible:outline-3 focus-visible:-outline-offset-3 focus-visible:outline-navy"
       >
         <span>{title}</span>
-        <svg aria-hidden="true"
+        <svg
+          aria-hidden="true"
           className={clsx('w-5 h-5 transition-transform duration-200', isOpen && 'rotate-180')}
           fill="none"
           viewBox="0 0 24 24"

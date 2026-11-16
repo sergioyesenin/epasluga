@@ -39,12 +39,7 @@ export interface Category {
 }
 
 export type ApplicationStatus =
-  | 'Черновик'
-  | 'На проверке'
-  | 'Ожидает оплаты'
-  | 'Выполнено'
-  | 'Отозвано'
-  | 'Отказано'
+  'Черновик' | 'На проверке' | 'Ожидает оплаты' | 'Выполнено' | 'Отозвано' | 'Отказано'
 
 export interface Application {
   id: string

@@ -10,7 +10,14 @@ export function ErrorState({
   return (
     <div className="flex flex-col items-center justify-center text-center py-14 px-6 bg-white border border-dashed border-line rounded-card">
       <div className="w-12 h-12 rounded-full bg-[#fdecea] text-danger flex items-center justify-center mb-4">
-        <svg aria-hidden="true" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <svg
+          aria-hidden="true"
+          className="w-6 h-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2}
+        >
           <path
             strokeLinecap="round"
             strokeLinejoin="round"

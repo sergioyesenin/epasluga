@@ -23,7 +23,8 @@ export function StarButton({ active, onClick, label }: StarButtonProps) {
         active ? 'text-navy bg-soft' : 'text-muted hover:text-navy hover:bg-soft',
       )}
     >
-      <svg aria-hidden="true"
+      <svg
+        aria-hidden="true"
         viewBox="0 0 24 24"
         className="w-5 h-5 transition-transform duration-150"
         fill={active ? 'currentColor' : 'none'}

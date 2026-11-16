@@ -86,7 +86,13 @@ export function AiAssistant({ hideFabOnMobile = false }: AiAssistantProps) {
         )}
         aria-label="Открыть ИИ-помощника"
       >
-        <svg aria-hidden="true" className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg
+          aria-hidden="true"
+          className="w-7 h-7"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -118,7 +124,13 @@ export function AiAssistant({ hideFabOnMobile = false }: AiAssistantProps) {
               className="w-11 h-11 inline-flex items-center justify-center rounded-xl text-muted hover:text-ink hover:bg-soft"
               aria-label="Закрыть чат"
             >
-              <svg aria-hidden="true" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg
+                aria-hidden="true"
+                className="w-5 h-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -201,7 +213,13 @@ export function AiAssistant({ hideFabOnMobile = false }: AiAssistantProps) {
               className="text-navy p-2 hover:bg-soft rounded-full disabled:opacity-50"
               aria-label="Отправить"
             >
-              <svg aria-hidden="true" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg
+                aria-hidden="true"
+                className="w-5 h-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"

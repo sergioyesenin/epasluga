@@ -57,9 +57,7 @@ export function SituationPage() {
     return apps.find(
       (a) =>
         a.serviceId === stepServiceId &&
-        (['На проверке', 'Ожидает оплаты', 'Черновик'] as ApplicationStatus[]).includes(
-          a.status,
-        ),
+        (['На проверке', 'Ожидает оплаты', 'Черновик'] as ApplicationStatus[]).includes(a.status),
     )
   }
 
@@ -84,9 +82,7 @@ export function SituationPage() {
   const xcList = (situation.xcDeps ?? [])
     .map((xcId) => xcById[xcId])
     .filter((x): x is NonNullable<typeof x> => Boolean(x))
-  const hasPassport = situation.registryId
-    ? Boolean(passportById(situation.registryId))
-    : false
+  const hasPassport = situation.registryId ? Boolean(passportById(situation.registryId)) : false
 
   const handleSkip = (stepId: string) => {
     if (!completed.has(stepId)) toggle(stepId)
@@ -140,9 +136,7 @@ export function SituationPage() {
                   style={{ width: `${progress}%` }}
                 />
               </div>
-              <span className="text-sm font-bold text-navy whitespace-nowrap">
-                {progress}%
-              </span>
+              <span className="text-sm font-bold text-navy whitespace-nowrap">{progress}%</span>
             </div>
             <div className="flex items-center gap-2 justify-end">
               <Button variant="ghost" size="sm" onClick={togglePause}>
@@ -237,7 +231,9 @@ export function SituationPage() {
                     type="button"
                     onClick={() => toggle(step.id)}
                     aria-pressed={isDone}
-                    aria-label={isDone ? 'Отметить шаг как невыполненный' : 'Отметить шаг как выполненный'}
+                    aria-label={
+                      isDone ? 'Отметить шаг как невыполненный' : 'Отметить шаг как выполненный'
+                    }
                     className={clsx(
                       'shrink-0 w-11 h-11 rounded-full border-2 flex items-center justify-center transition-colors',
                       isDone
@@ -253,10 +249,7 @@ export function SituationPage() {
                   <div className="flex-1">
                     <div className="flex justify-between items-start mb-1 gap-2 flex-wrap">
                       <h3
-                        className={clsx(
-                          'font-semibold text-ink text-lg',
-                          isDone && 'line-through',
-                        )}
+                        className={clsx('font-semibold text-ink text-lg', isDone && 'line-through')}
                       >
                         {step.title}
                       </h3>

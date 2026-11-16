@@ -34,7 +34,9 @@ type FormData = z.infer<typeof schema>
 const DRAFT_PREFIX = 'epasluga-draft:'
 
 function isDraft(value: unknown): value is Partial<FormData> {
-  return isRecord(value) && Object.values(value).every((v) => v === undefined || typeof v === 'string')
+  return (
+    isRecord(value) && Object.values(value).every((v) => v === undefined || typeof v === 'string')
+  )
 }
 
 function readDraft(id: string): Partial<FormData> | null {
@@ -143,11 +145,7 @@ export function ApplicationForm({
 
   if (isSubmitted) {
     return (
-      <SuccessScreen
-        service={service}
-        applicationNum={generatedNum}
-        situationId={situationId}
-      />
+      <SuccessScreen service={service} applicationNum={generatedNum} situationId={situationId} />
     )
   }
 
