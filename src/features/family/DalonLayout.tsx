@@ -1,6 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom'
 import clsx from 'clsx'
-import { useDalon } from '../../hooks/useDalon'
 import { DalonMark } from './components/DalonMark'
 
 const TABS = [
@@ -12,8 +11,6 @@ const TABS = [
 
 /** Шапка «Далони» и вкладки раздела. */
 export function DalonLayout() {
-  const { pending } = useDalon()
-
   return (
     <div className="max-w-6xl mx-auto pb-6">
       <header className="flex items-center gap-3 mb-5">
@@ -46,14 +43,6 @@ export function DalonLayout() {
               }
             >
               {t.label}
-              {t.to === '/family/people' && pending > 0 && (
-                <span
-                  className="min-w-5 h-5 px-1.5 rounded-full bg-family-wine-tint text-family-wine-ink text-xs font-semibold inline-flex items-center justify-center"
-                  aria-label={`ждут согласия: ${pending}`}
-                >
-                  {pending}
-                </span>
-              )}
             </NavLink>
           ))}
         </div>

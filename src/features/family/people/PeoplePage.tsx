@@ -1,71 +1,80 @@
-import { useState } from 'react'
-import { ConfirmDialog, Icon } from '../../../design-system'
-import type { DalonPerson } from '../../../types/dalon'
+import { Icon } from '../../../design-system'
 import { useDalon } from '../../../hooks/useDalon'
-import { DALON_MEMBERS, memberById } from '../../../data/dalon'
-import { setConsent } from '../../../lib/dalon/actions'
-import { showToast } from '../../../lib/toast'
-import { formatDay } from '../../../lib/dates'
+import { representatives } from '../../../lib/dalon/selectors'
 import { MemberAvatar } from '../components/MemberAvatar'
-import { TypeLabel } from '../components/TypeLabel'
-import { actionButton } from '../components/styles'
-import { AddPersonDialog } from './AddPersonDialog'
+import { ActionLog } from './ActionLog'
+import { AssetCard } from './AssetCard'
+import { ChildCard } from './ChildCard'
 import { PersonCard } from './PersonCard'
+import { ZagsDemoPanel } from './ZagsDemoPanel'
+
+/** Главное правило раздела — дословно, как его видит пользователь. */
+export const ZAGS_RULE =
+  'Изменить состав семьи можно только по решению ЗАГС: при регистрации расторжения брака или смерти.'
 
 const RULES = [
   {
-    title: 'Взрослый — только с согласия.',
-    text: 'Запрос уходит в его кабинет. Пока он не согласится, вы ничего о нём не видите.',
+    title: 'Состав семьи — по записям ЗАГС.',
+    text: 'Супруг появляется сам после регистрации брака, ребёнок — после регистрации рождения. Добавить или убрать человека вручную нельзя.',
   },
   {
-    title: 'Роли можно сочетать.',
-    text: '«Видит» — начисления и сроки семьи. «Платит» — может оплатить за любого члена семьи.',
+    title: '«Видит» даёт сама связь.',
+    text: 'Пока действует запись о браке, супруги видят начисления и сроки всей семьи.',
   },
   {
-    title: 'Согласие отзывается в один клик.',
-    text: 'Начисления человека сразу исчезают из «Далони», история платежей остаётся.',
+    title: '«Платит» включают сами взрослые.',
+    text: 'Каждый супруг решает за себя, может ли он оплачивать начисления семьи.',
   },
   {
-    title: 'Дети — через законного представителя.',
-    text: 'Согласие детей не нужно: садик, школу и кружки видят родители по данным регистра населения.',
+    title: 'Связь закрывает только ЗАГС.',
+    text: 'Запись о расторжении брака закрывает связь с супругом, запись о смерти — с любым членом семьи. Начисления человека исчезают, история платежей остаётся.',
+  },
+  {
+    title: 'Дети — до 18 лет.',
+    text: 'Родители — законные представители: видят садик, школу и кружки. В 18 лет представительство прекращается само.',
   },
 ]
 
-/** «Семья и права»: кто видит, кто платит, согласия, дети и имущество. */
+/** «Семья и права»: состав семьи по записям ЗАГС, права взрослых, дети и имущество. */
 export function PeoplePage() {
-  const { state } = useDalon()
-  const [adding, setAdding] = useState(false)
-  const [revoking, setRevoking] = useState<DalonPerson | null>(null)
-  const me = memberById('me')
-  const kids = DALON_MEMBERS.filter((m) => m.kind === 'child')
-  const car = memberById('car')
+  const { state, now } = useDalon()
+  const me = state.people.find((p) => p.id === 'me')
+  const adults = state.people.filter((p) => p.kind === 'adult' && p.id !== 'me')
+  const kids = state.people.filter((p) => p.kind === 'child')
+  const parents = representatives(state)
+    .map((p) => (p.id === 'me' ? 'вы' : p.name))
+    .join(' и ')
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_340px] gap-6 items-start">
       <div className="space-y-8 min-w-0">
-        <section aria-labelledby="adults-title" className="space-y-3">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <h2 id="adults-title" className="text-lg font-bold text-ink">
-              Взрослые
+        <section
+          aria-labelledby="zags-rule"
+          className="flex gap-3 rounded-card border border-family-wine/20 bg-family-wine-tint p-4 md:p-5"
+        >
+          <Icon name="shield" className="w-6 h-6 shrink-0 text-family-wine" />
+          <div>
+            <h2 id="zags-rule" className="font-semibold text-family-wine-ink leading-snug">
+              {ZAGS_RULE}
             </h2>
-            <button
-              type="button"
-              className={actionButton}
-              onClick={() => {
-                setAdding(true)
-              }}
-            >
-              <Icon name="plus" className="w-5 h-5" />
-              Добавить взрослого
-            </button>
+            <p className="mt-1 text-sm text-family-wine-ink/85">
+              Новые члены семьи появляются сами: супруг — после регистрации брака, ребёнок — после
+              регистрации рождения. Так никто не получит доступ к данным семьи без записи ЗАГС.
+            </p>
           </div>
+        </section>
+
+        <section aria-labelledby="adults-title" className="space-y-3">
+          <h2 id="adults-title" className="text-lg font-bold text-ink">
+            Взрослые
+          </h2>
 
           {me && (
             <article className="bg-card border border-line rounded-card p-4 md:p-5 flex items-start gap-3">
               <MemberAvatar kind="adult" initials={me.initials} size="md" />
               <div className="flex-1 min-w-0">
                 <h3 className="font-semibold text-ink leading-snug">{me.full}</h3>
-                <p className="text-sm text-muted mb-2">Вы — владелец семейного пространства</p>
+                <p className="text-sm text-muted mb-2">Вы — владелец кабинета</p>
                 <span className="inline-flex rounded-full bg-family-wine-tint text-family-wine-ink px-2.5 py-1 text-xs font-semibold">
                   Видит и платит
                 </span>
@@ -73,9 +82,15 @@ export function PeoplePage() {
             </article>
           )}
 
-          {state.people.map((p) => (
-            <PersonCard key={p.id} person={p} onRevoke={setRevoking} />
+          {adults.map((p) => (
+            <PersonCard key={p.id} person={p} />
           ))}
+
+          <p className="flex gap-3 rounded-xl border border-dashed border-line-2 px-4 py-3 text-sm text-muted">
+            <Icon name="info" className="w-5 h-5 shrink-0" />
+            Связь со взрослым появится автоматически после регистрации брака в ЗАГС. Добавлять
+            вручную и ждать согласия не нужно.
+          </p>
         </section>
 
         <section aria-labelledby="kids-title" className="space-y-3">
@@ -84,46 +99,24 @@ export function PeoplePage() {
           </h2>
           <div className="grid sm:grid-cols-2 gap-3">
             {kids.map((k) => (
-              <article
-                key={k.id}
-                className="bg-card border border-line rounded-card p-4 flex gap-3"
-              >
-                <MemberAvatar kind="child" initials={k.initials} size="md" />
-                <div className="min-w-0">
-                  <h3 className="font-semibold text-ink leading-snug">{k.full}</h3>
-                  <p className="text-sm text-muted">{k.role}</p>
-                  <p className="mt-2 flex gap-2 text-xs text-muted">
-                    <Icon name="shield" className="w-4 h-4 shrink-0" />
-                    Законные представители: вы и Анна
-                  </p>
-                </div>
-              </article>
+              <ChildCard key={k.id} child={k} parents={parents} now={now} />
             ))}
           </div>
         </section>
 
-        {car && (
-          <section aria-labelledby="car-title" className="space-y-3">
-            <h2 id="car-title" className="text-lg font-bold text-ink">
-              Имущество
-            </h2>
-            <article className="bg-card border border-line rounded-card p-4 flex gap-3">
-              <MemberAvatar kind="car" initials="" size="md" />
-              <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-ink leading-snug">{car.full}</h3>
-                <p className="text-sm text-muted">{car.role}</p>
-                <p className="mt-2 flex gap-2 text-xs text-muted">
-                  <Icon name="info" className="w-4 h-4 shrink-0" />
-                  Штрафы с камер и госпошлина за техосмотр приходят по номеру автомобиля сами.
-                </p>
-              </div>
-              <TypeLabel type="car" className="self-start" />
-            </article>
-          </section>
-        )}
+        <section aria-labelledby="assets-title" className="space-y-3">
+          <h2 id="assets-title" className="text-lg font-bold text-ink">
+            Имущество
+          </h2>
+          <div className="grid sm:grid-cols-2 gap-3">
+            {state.assets.map((a) => (
+              <AssetCard key={a.id} asset={a} />
+            ))}
+          </div>
+        </section>
       </div>
 
-      <aside className="space-y-4 lg:sticky lg:top-24">
+      <aside className="space-y-4">
         <section
           aria-labelledby="rules-title"
           className="bg-card border border-line rounded-card p-5"
@@ -139,54 +132,9 @@ export function PeoplePage() {
             ))}
           </ul>
         </section>
-        <section
-          aria-labelledby="log-title"
-          className="bg-card border border-line rounded-card p-5"
-        >
-          <h2 id="log-title" className="text-lg font-bold text-ink mb-3">
-            Журнал действий
-          </h2>
-          <ol className="space-y-2.5 text-sm">
-            {state.log.slice(0, 6).map((l) => (
-              <li key={l.id} className="flex gap-3">
-                <span className="text-muted tabular whitespace-nowrap w-20 shrink-0">
-                  {formatDay(l.at)}
-                </span>
-                <span className="text-ink">{l.text}</span>
-              </li>
-            ))}
-          </ol>
-        </section>
+        <ZagsDemoPanel />
+        <ActionLog entries={state.log} />
       </aside>
-
-      <AddPersonDialog
-        open={adding}
-        onClose={() => {
-          setAdding(false)
-        }}
-      />
-      <ConfirmDialog
-        open={revoking !== null}
-        title="Отозвать доступ?"
-        description={
-          revoking
-            ? `${revoking.full} перестанет видеть начисления семьи и оплачивать их. Его или её начисления исчезнут из вашей «Далони», история платежей сохранится.`
-            : ''
-        }
-        confirmLabel="Отозвать доступ"
-        cancelLabel="Оставить как есть"
-        isDanger
-        onCancel={() => {
-          setRevoking(null)
-        }}
-        onConfirm={() => {
-          if (revoking) {
-            setConsent(revoking.id, 'revoked')
-            showToast({ message: `Доступ отозван: ${revoking.name}` })
-          }
-          setRevoking(null)
-        }}
-      />
     </div>
   )
 }

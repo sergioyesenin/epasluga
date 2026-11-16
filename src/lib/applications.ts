@@ -2,6 +2,8 @@ import { useCallback, useEffect, useState } from 'react'
 import type { Application } from '../types/service'
 
 const APPS_KEY = 'epasluga-apps'
+/** Событие для обновления в этой же вкладке, когда заявление меняют вне хука. */
+const CHANGE_EVENT = 'epasluga-apps-change'
 
 const daysAgo = (n: number) => new Date(Date.now() - n * 86400000).toISOString()
 
@@ -87,17 +89,44 @@ function write(rows: Application[]) {
   localStorage.setItem(APPS_KEY, JSON.stringify(rows))
 }
 
+/** Запись вне хука (из «Далони»): все экземпляры useApplications перечитают данные. */
+function writeAndNotify(rows: Application[]) {
+  write(rows)
+  window.dispatchEvent(new Event(CHANGE_EVENT))
+}
+
+/** Добавить заявление из любого места — например, регистрацию на РТ из «Далони». */
+export function addApplication(app: Application) {
+  writeAndNotify([app, ...read()])
+}
+
+export function patchApplication(id: string, patch: Partial<Application>) {
+  writeAndNotify(read().map((a) => (a.id === id ? { ...a, ...patch } : a)))
+}
+
+/** Убрать заявления, созданные демо «Далони», — при сбросе демо. */
+export function removeApplications(match: (app: Application) => boolean) {
+  writeAndNotify(read().filter((a) => !match(a)))
+}
+
 export function useApplications() {
   const [apps, setApps] = useState<Application[]>(() => read())
 
   useEffect(() => {
+    const reload = () => {
+      setApps(read())
+    }
     const onStorage = (e: StorageEvent) => {
       if (e.key === APPS_KEY) {
-        setApps(read())
+        reload()
       }
     }
     window.addEventListener('storage', onStorage)
-    return () => window.removeEventListener('storage', onStorage)
+    window.addEventListener(CHANGE_EVENT, reload)
+    return () => {
+      window.removeEventListener('storage', onStorage)
+      window.removeEventListener(CHANGE_EVENT, reload)
+    }
   }, [])
 
   const update = useCallback((id: string, patch: Partial<Application>) => {

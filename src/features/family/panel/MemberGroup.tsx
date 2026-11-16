@@ -9,17 +9,18 @@ import { ChargeRow } from './ChargeRow'
 type MemberGroupProps = {
   member: DalonMember
   charges: DalonCharge[]
-  hidden: boolean
+  /** Почему начисления скрыты (связь закрыта ЗАГС, совершеннолетие) — или null. */
+  lockReason: string | null
   selected: string[]
   now: Date
   onToggle: (id: string) => void
 }
 
-/** Начисления одного члена семьи. id нужен, чтобы палец ладони прокручивал сюда. */
+/** Начисления одного члена семьи или имущества. id нужен, чтобы лист растения прокручивал сюда. */
 export function MemberGroup({
   member,
   charges,
-  hidden,
+  lockReason,
   selected,
   now,
   onToggle,
@@ -39,18 +40,18 @@ export function MemberGroup({
           </h3>
           <p className="text-sm text-muted">{member.role}</p>
         </div>
-        {charges.length > 0 && !hidden && (
+        {charges.length > 0 && !lockReason && (
           <span className="tabular font-semibold text-family-wine whitespace-nowrap">
             {formatBYN(sumDue(charges, now))}
           </span>
         )}
       </header>
 
-      {hidden ? (
+      {lockReason ? (
         <p className="flex gap-3 px-4 py-4 text-sm text-muted">
           <Icon name="lock" className="w-5 h-5 shrink-0" />
           <span>
-            Начисления скрыты: согласия на доступ нет или оно отозвано.{' '}
+            <span className="font-semibold text-ink">Нет доступа.</span> {lockReason}{' '}
             <Link
               to="/family/people"
               className="font-semibold text-family-wine underline underline-offset-2"

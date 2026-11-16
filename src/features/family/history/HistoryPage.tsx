@@ -4,10 +4,9 @@ import clsx from 'clsx'
 import { ConfirmDialog, EmptyState, Icon } from '../../../design-system'
 import type { PaymentRecord } from '../../../types/dalon'
 import { useDalon } from '../../../hooks/useDalon'
-import { DALON_MEMBERS, memberById } from '../../../data/dalon'
 import { METHOD_LABEL } from '../../../lib/dalon/actions'
 import { downloadReceipts } from '../../../lib/dalon/receipt'
-import { resetDalon } from '../../../lib/dalon/store'
+import { resetDalonDemo } from '../../../lib/dalon/demo'
 import { countText, formatDay, formatMonth } from '../../../lib/dates'
 import { formatBYN, formatMoney } from '../../../lib/money'
 import { showToast } from '../../../lib/toast'
@@ -25,7 +24,7 @@ function groupByMonth(list: PaymentRecord[]) {
   return [...groups.values()]
 }
 
-function HistoryRow({ h }: { h: PaymentRecord }) {
+function HistoryRow({ h, who }: { h: PaymentRecord; who: string }) {
   return (
     <li className="flex flex-col sm:flex-row sm:items-center gap-x-4 gap-y-1 px-4 py-3">
       <span className="sm:w-24 shrink-0 text-xs sm:text-sm text-muted tabular">
@@ -34,7 +33,7 @@ function HistoryRow({ h }: { h: PaymentRecord }) {
       <span className="flex-1 min-w-0">
         <span className="block font-semibold text-ink leading-snug">{h.title}</span>
         <span className="block text-xs text-muted">
-          {memberById(h.memberId)?.name}, {METHOD_LABEL[h.method]}, квитанция {h.receipt}
+          {who}, {METHOD_LABEL[h.method]}, квитанция {h.receipt}
         </span>
       </span>
       <span className="flex items-center justify-between gap-4">
@@ -60,7 +59,7 @@ function HistoryRow({ h }: { h: PaymentRecord }) {
 
 /** «История»: оплаченное за год, фильтр по члену семьи, квитанции. */
 export function HistoryPage() {
-  const { state } = useDalon()
+  const { state, members, memberById } = useDalon()
   const [params, setParams] = useSearchParams()
   const [resetOpen, setResetOpen] = useState(false)
   const who = params.get('who') ?? ''
@@ -106,7 +105,7 @@ export function HistoryPage() {
         </p>
         <div role="group" aria-label="Чьи платежи" className="flex flex-wrap gap-2">
           {chip('', 'Вся семья')}
-          {DALON_MEMBERS.map((m) => chip(m.id, m.name))}
+          {members.map((m) => chip(m.id, m.name))}
         </div>
       </div>
 
@@ -131,7 +130,7 @@ export function HistoryPage() {
             <h2 className="text-lg font-bold text-ink mb-2">{g.title}</h2>
             <ul className="bg-card border border-line rounded-card divide-y divide-line">
               {g.items.map((h) => (
-                <HistoryRow key={h.id} h={h} />
+                <HistoryRow key={h.id} h={h} who={memberById(h.memberId)?.name ?? ''} />
               ))}
             </ul>
           </section>
@@ -154,18 +153,13 @@ export function HistoryPage() {
       <ConfirmDialog
         open={resetOpen}
         title="Начать демо заново?"
-        description="Начисления, история, согласия и настройки напоминаний вернутся к исходным. Это только учебные данные на этом устройстве."
+        description="Состав семьи, начисления, история, предложения и настройки напоминаний вернутся к исходным. Это только учебные данные на этом устройстве."
         confirmLabel="Начать заново"
         onCancel={() => {
           setResetOpen(false)
         }}
         onConfirm={() => {
-          resetDalon()
-          try {
-            sessionStorage.removeItem('epasluga-dalon-selection')
-          } catch {
-            // без sessionStorage выбор и так не сохраняется
-          }
+          resetDalonDemo()
           setResetOpen(false)
           showToast({ tone: 'ok', message: 'Демо-данные «Далони» восстановлены' })
         }}

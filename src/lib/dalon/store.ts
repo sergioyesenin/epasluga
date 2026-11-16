@@ -8,7 +8,8 @@ import { createSeedState } from '../../data/dalon'
  */
 
 const KEY = 'epasluga-dalon'
-const VERSION = 1
+// 2 — состав семьи по записям ЗАГС, имущество, профориентация и тестирование
+const VERSION = 2
 
 type Listener = () => void
 
@@ -78,7 +79,7 @@ export function updateDalon(fn: (prev: DalonState) => DalonState) {
   emit()
 }
 
-/** Вернуть демо-данные к началу (кнопка в «Истории»). */
+/** Вернуть демо-данные к началу (кнопки в «Истории» и в демо-блоке ЗАГС). */
 export function resetDalon() {
   state = createSeedState(VERSION)
   write(state)

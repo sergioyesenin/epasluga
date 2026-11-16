@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import clsx from 'clsx'
 import { Icon } from '../../../design-system'
 import type { TimelineItem } from '../../../lib/dalon/selectors'
-import { memberById } from '../../../data/dalon'
+import type { DalonMember } from '../../../types/dalon'
 import { formatDay, toneFor } from '../../../lib/dates'
 import { formatMoney } from '../../../lib/money'
 import { DueCalendar } from './DueCalendar'
@@ -16,7 +16,13 @@ const DOT: Record<ReturnType<typeof toneFor>, string> = {
 }
 
 /** Колонка «Сроки»: календарь и ближайшие даты по порядку. */
-export function DuePanel({ items, now }: { items: TimelineItem[]; now: Date }) {
+type DuePanelProps = {
+  items: TimelineItem[]
+  now: Date
+  memberById: (id: string) => DalonMember | undefined
+}
+
+export function DuePanel({ items, now, memberById }: DuePanelProps) {
   return (
     <aside
       aria-labelledby="dates-title"

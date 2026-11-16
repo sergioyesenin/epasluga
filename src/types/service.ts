@@ -65,6 +65,10 @@ export interface Application {
   situationId?: string
   /** id шага в этой ситуации. */
   situationStepId?: string
+  /** Пояснение к статусу (не ошибка): пропуск, дата, пункт — для регистрации на РТ. */
+  note?: string
+  /** Куда ведёт «Оплатить», если оплата идёт через «Далонь». */
+  payHref?: string
 }
 
 export type NotificationKind = 'legal' | 'info'

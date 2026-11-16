@@ -76,6 +76,24 @@
   --color-family-hand: #ebe6df;
   --color-family-hand-hover: #e2dcd3;
 
+  /* --- Растение «Далони» ---
+     Люди — листья ростка (до 4 человек) или лепестки цветка (5 и больше),
+     имущество — листья на стебле. Зелёные приглушены, чтобы не спорить с бордо. */
+  --color-plant-stem: #5e7a49;
+  --color-plant-vein: #4b663a;
+  --color-plant-leaf: #b9cf9c;
+  --color-plant-leaf-hover: #a9c389;
+  --color-plant-sprout: #d9e8c3;
+  --color-plant-sprout-hover: #cbdfae;
+  --color-plant-tint: #e8f0dc;
+  --color-plant-ink: #34482a;
+  --color-plant-petal-adult: #efd5bc;
+  --color-plant-petal-adult-hover: #e8c7a7;
+  --color-plant-petal-child: #f4c9b8;
+  --color-plant-petal-child-hover: #efb8a3;
+  --color-plant-locked: #e9e6e1;
+  --color-plant-soil: #ebe6df;
+
   --animate-rise: rise 220ms ease-out both;
   --animate-fade: fade 180ms ease-out both;
 

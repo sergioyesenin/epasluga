@@ -1,30 +1,23 @@
 import clsx from 'clsx'
-import type { DalonCharge, DalonMember, Finger } from '../../../types/dalon'
-import { DALON_MEMBERS } from '../../../data/dalon'
+import type { DalonCharge, DalonMember } from '../../../types/dalon'
 import { formatBYN, formatMoney } from '../../../lib/money'
 import { countText } from '../../../lib/dates'
 import { sumDue } from '../../../lib/dalon/selectors'
 import { MemberAvatar } from '../components/MemberAvatar'
 
 /** Высота пальца — как у настоящей ладони: средний длиннее всех, мизинец короче. */
-const FINGER_CLASS: Record<Finger, string> = {
-  // На телефоне без наклона: повёрнутый палец уезжал за край экрана и под ладонь
-  thumb: 'h-[74%] sm:h-[78%] sm:-rotate-[12deg] origin-bottom-right sm:mr-3',
-  index: 'h-[88%]',
-  middle: 'h-full',
-  ring: 'h-[92%]',
-  pinky: 'h-[72%]',
-}
+const FINGER_CLASS = ['h-[74%] sm:h-[78%]', 'h-[88%]', 'h-full', 'h-[92%]', 'h-[72%]']
 
 type FingerProps = {
   member: DalonMember
+  index: number
   charges: DalonCharge[]
   hidden: boolean
   now: Date
   onPick: (memberId: string) => void
 }
 
-function FingerButton({ member, charges, hidden, now, onPick }: FingerProps) {
+function FingerButton({ member, index, charges, hidden, now, onPick }: FingerProps) {
   const sum = sumDue(charges, now)
   let sumText = 'оплачено'
   let aria = `${member.name}: всё оплачено`
@@ -46,13 +39,13 @@ function FingerButton({ member, charges, hidden, now, onPick }: FingerProps) {
       className={clsx(
         'relative flex-1 min-w-0 rounded-t-full bg-family-hand hover:bg-family-hand-hover transition-colors',
         'focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-family-wine',
-        FINGER_CLASS[member.finger],
+        FINGER_CLASS[index % FINGER_CLASS.length],
       )}
     >
       <span
         className={clsx(
           'flex flex-col items-center gap-1 pt-2.5 px-0.5',
-          member.finger === 'thumb' ? 'sm:rotate-[12deg]' : 'sm:pt-4',
+          index === 0 ? '' : 'sm:pt-4',
         )}
       >
         <MemberAvatar
@@ -78,6 +71,7 @@ function FingerButton({ member, charges, hidden, now, onPick }: FingerProps) {
 }
 
 type HandSummaryProps = {
+  members: DalonMember[]
   charges: DalonCharge[]
   total: number
   now: Date
@@ -89,17 +83,18 @@ type HandSummaryProps = {
  * Ладонь: пять пальцев — пять членов семьи (вместе с автомобилем),
  * на ладони — сколько всего к оплате. Нажатие на палец ведёт к его начислениям.
  */
-export function HandSummary({ charges, total, now, isHidden, onPick }: HandSummaryProps) {
+export function HandSummary({ members, charges, total, now, isHidden, onPick }: HandSummaryProps) {
   return (
     <section aria-labelledby="hand-title" className="w-full max-w-[560px]">
       <h2 id="hand-title" className="sr-only">
         Семья и сумма к оплате
       </h2>
       <div className="flex items-end gap-1.5 sm:gap-2.5 h-52 sm:h-60 pl-1 pr-4 sm:pr-6">
-        {DALON_MEMBERS.map((m) => (
+        {members.slice(0, 5).map((m, i) => (
           <FingerButton
             key={m.id}
             member={m}
+            index={i}
             charges={charges.filter((c) => c.memberId === m.id)}
             hidden={isHidden(m.id)}
             now={now}

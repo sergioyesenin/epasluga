@@ -4,7 +4,6 @@ import { EmptyState, Icon } from '../../../design-system'
 import { useDalon } from '../../../hooks/useDalon'
 import { useOnlineStatus } from '../../../hooks/useOnlineStatus'
 import { usePayment } from '../../../hooks/usePayment'
-import { memberById } from '../../../data/dalon'
 import { amountDue, isDiscountActive, sumDue } from '../../../lib/dalon/selectors'
 import { formatMoney } from '../../../lib/money'
 import { MemberAvatar } from '../components/MemberAvatar'
@@ -25,7 +24,7 @@ function BackLink() {
 export function PayPage() {
   const [params] = useSearchParams()
   const ids = useMemo(() => (params.get('ids') ?? '').split(',').filter(Boolean), [params])
-  const { charges, now } = useDalon()
+  const { charges, now, memberById } = useDalon()
   const online = useOnlineStatus()
   const payment = usePayment(ids)
 

@@ -1,79 +1,143 @@
 import type {
   ChargeType,
+  DalonAsset,
   DalonCharge,
   DalonDeadline,
-  DalonMember,
   DalonPerson,
   DalonState,
   PaymentRecord,
   RemindSettings,
+  ZagsRecord,
 } from '../types/dalon'
 import { isoInDays } from '../lib/dates'
 
 /*
- * Демо-семья Ивановых. Суммы, сроки и имена условные.
- * Polo — автомобиль (не питомец): на него приходят госпошлина
- * за техосмотр и штрафы с камер.
+ * Демо-семья Ивановых. Суммы, сроки, имена и номера записей ЗАГС условные.
+ * Состав семьи — по записям ЗАГС: брак Алексея и Анны, рождение Маши и Миши.
+ * Polo, квартира и дача — имущество: у каждого свои начисления.
  */
 
-export const DALON_MEMBERS: DalonMember[] = [
+export const ZAGS_DISTRICT = 'Отдел ЗАГС администрации Московского района г. Минска'
+
+/** Адрес семьи из профиля — от него подбираются учреждения и пункты рядом. */
+export const FAMILY_HOME = {
+  city: 'minsk',
+  text: 'г. Минск, ул. Карла Маркса, 14',
+}
+
+const MARRIAGE: ZagsRecord = {
+  kind: 'marriage',
+  number: '1287',
+  date: '2010-08-21T12:00:00.000Z',
+  office: 'Минский городской Дворец бракосочетания',
+}
+
+export const PEOPLE_SEED: DalonPerson[] = [
   {
     id: 'me',
     name: 'Алексей',
     full: 'Иванов Алексей Сергеевич',
-    role: 'Вы',
+    relation: 'Вы',
     kind: 'adult',
     initials: 'АС',
-    finger: 'thumb',
+    birth: '1990-03-14T12:00:00.000Z',
+    pays: true,
   },
   {
     id: 'anna',
     name: 'Анна',
     full: 'Иванова Анна Викторовна',
-    role: 'Супруга',
+    relation: 'Супруга',
     kind: 'adult',
     initials: 'АВ',
-    finger: 'index',
+    birth: '1991-07-08T12:00:00.000Z',
+    basis: MARRIAGE,
+    pays: true,
   },
   {
     id: 'masha',
     name: 'Маша',
     full: 'Иванова Мария Алексеевна',
-    role: 'Дочь, 9 лет',
+    relation: 'Дочь',
     kind: 'child',
     initials: 'МА',
-    finger: 'middle',
+    birth: '2012-04-03T12:00:00.000Z',
+    basis: {
+      kind: 'birth',
+      number: '902',
+      date: '2012-04-12T12:00:00.000Z',
+      office: ZAGS_DISTRICT,
+    },
+    pays: false,
+    school: { name: 'Средняя школа № 151 г. Минска', grade: 9 },
   },
   {
     id: 'misha',
     name: 'Миша',
     full: 'Иванов Михаил Алексеевич',
-    role: 'Сын, 4 года',
+    relation: 'Сын',
     kind: 'child',
     initials: 'МИ',
-    finger: 'ring',
-  },
-  {
-    id: 'car',
-    name: 'Polo',
-    full: 'Volkswagen Polo',
-    role: '7714 AB-7, владелец — вы',
-    kind: 'car',
-    initials: '',
-    finger: 'pinky',
+    birth: '2022-08-20T12:00:00.000Z',
+    basis: {
+      kind: 'birth',
+      number: '1514',
+      date: '2022-08-29T12:00:00.000Z',
+      office: ZAGS_DISTRICT,
+    },
+    pays: false,
+    kindergarten: 'Ясли-сад № 512 г. Минска',
   },
 ]
 
-export function memberById(id: string): DalonMember | undefined {
-  return DALON_MEMBERS.find((m) => m.id === id)
+/** Демо-ребёнок для записи о рождении: с ним в семье 5 человек — растение становится цветком. */
+export const NEWBORN_SEED: Omit<DalonPerson, 'birth' | 'basis'> = {
+  id: 'alena',
+  name: 'Алёна',
+  full: 'Иванова Алёна Алексеевна',
+  relation: 'Дочь',
+  kind: 'child',
+  initials: 'АА',
+  pays: false,
 }
 
-/** Метка типа начисления: дети — персиковая, авто и штрафы — розоватая, остальное — песочная. */
+export const ASSETS: DalonAsset[] = [
+  {
+    id: 'flat',
+    kind: 'flat',
+    name: 'Квартира',
+    full: 'Квартира на ул. Карла Маркса, 14–27',
+    detail: 'г. Минск, 64,2 м²',
+    owners: 'собственники — вы и Анна',
+    source: 'Налог и ЖКХ приходят по адресу квартиры сами.',
+  },
+  {
+    id: 'car',
+    kind: 'car',
+    name: 'Polo',
+    full: 'Volkswagen Polo',
+    detail: '7714 AB-7',
+    owners: 'владелец — вы',
+    source: 'Штрафы с камер и госпошлина за техосмотр приходят по номеру автомобиля сами.',
+  },
+  {
+    id: 'dacha',
+    kind: 'dacha',
+    name: 'Дача',
+    full: 'Дача в СТ «Рассвет»',
+    detail: 'Минский р-н, участок 0,08 га',
+    owners: 'владелец — вы',
+    source: 'Земельный налог приходит по кадастровому номеру участка сам.',
+  },
+]
+
+/** Метка типа начисления: дети и учёба — персиковая, авто и штрафы — розоватая, остальное — песочная. */
 export type LabelType = ChargeType | 'doc'
 
 export const CHARGE_LABELS: Record<LabelType, { text: string; tone: 'peach' | 'rose' | 'sand' }> = {
   doc: { text: 'Документ', tone: 'sand' },
   kids: { text: 'Дети', tone: 'peach' },
+  edu: { text: 'Учёба', tone: 'peach' },
   fine: { text: 'Штраф ГАИ', tone: 'rose' },
   car: { text: 'Авто', tone: 'rose' },
   tax: { text: 'Налог', tone: 'sand' },
@@ -89,12 +153,22 @@ type ChargeSeed = Omit<DalonCharge, 'dueAt' | 'discount'> & {
 const CHARGE_SEEDS: ChargeSeed[] = [
   {
     id: 'c-tax',
-    memberId: 'me',
+    memberId: 'flat',
     type: 'tax',
     title: 'Налог на недвижимость за 2026 год',
     detail: 'Квартира: г. Минск, ул. Карла Маркса, 14–27',
     payee: 'Инспекция МНС по Московскому району г. Минска',
     amount: 18640,
+    dueIn: 2,
+  },
+  {
+    id: 'c-land',
+    memberId: 'dacha',
+    type: 'tax',
+    title: 'Земельный налог за 2026 год',
+    detail: 'Участок в СТ «Рассвет», Минский район',
+    payee: 'Инспекция МНС по Минскому району',
+    amount: 2350,
     dueIn: 2,
   },
   {
@@ -119,11 +193,21 @@ const CHARGE_SEEDS: ChargeSeed[] = [
     dueIn: 7,
   },
   {
-    id: 'c-home',
+    id: 'c-net',
     memberId: 'anna',
+    type: 'telecom',
+    title: 'Домашний интернет и ТВ: ноябрь',
+    detail: 'Договор на Анну № 1700-48213, тариф «Семейный»',
+    payee: 'РУП «Белтелеком»',
+    amount: 3290,
+    dueIn: 9,
+  },
+  {
+    id: 'c-home',
+    memberId: 'flat',
     type: 'home',
     title: 'ЖКХ за октябрь',
-    detail: 'Лицевой счёт на Анну: ул. Карла Маркса, 14–27',
+    detail: 'Лицевой счёт: ул. Карла Маркса, 14–27',
     payee: 'КУП «ЖРЭО Московского района г. Минска»',
     amount: 11864,
     dueIn: 12,
@@ -137,16 +221,6 @@ const CHARGE_SEEDS: ChargeSeed[] = [
     payee: 'Дворец детского творчества Московского района',
     amount: 3800,
     dueIn: 13,
-  },
-  {
-    id: 'c-net',
-    memberId: 'me',
-    type: 'telecom',
-    title: 'Домашний интернет и ТВ: ноябрь',
-    detail: 'Договор № 1700-48213, тариф «Семейный»',
-    payee: 'РУП «Белтелеком»',
-    amount: 3290,
-    dueIn: 17,
   },
   {
     id: 'c-to',
@@ -213,7 +287,7 @@ const HISTORY_SEEDS: HistorySeed[] = [
   {
     id: 'h3',
     title: 'ЖКХ за сентябрь',
-    memberId: 'anna',
+    memberId: 'flat',
     type: 'home',
     payee: 'КУП «ЖРЭО Московского района г. Минска»',
     amount: 9712,
@@ -245,30 +319,6 @@ const HISTORY_SEEDS: HistorySeed[] = [
   },
 ]
 
-const PEOPLE_SEEDS: Array<Omit<DalonPerson, 'consentAt'> & { ago: number }> = [
-  {
-    id: 'p-anna',
-    name: 'Анна',
-    full: 'Иванова Анна Викторовна',
-    relation: 'Супруга',
-    consent: 'given',
-    ago: 58,
-    sees: true,
-    pays: true,
-    memberId: 'anna',
-  },
-  {
-    id: 'p-dad',
-    name: 'Сергей Петрович',
-    full: 'Иванов Сергей Петрович',
-    relation: 'Отец',
-    consent: 'pending',
-    ago: 1,
-    sees: true,
-    pays: false,
-  },
-]
-
 export const REMIND_DEFAULTS: RemindSettings = {
   d7: true,
   d1: true,
@@ -287,6 +337,8 @@ export const REMIND_DEFAULTS: RemindSettings = {
 export function createSeedState(version: number, now = new Date()): DalonState {
   return {
     v: version,
+    people: PEOPLE_SEED.map((p) => ({ ...p })),
+    assets: ASSETS.map((a) => ({ ...a })),
     charges: CHARGE_SEEDS.map(({ dueIn, discount, ...c }) => ({
       ...c,
       dueAt: isoInDays(dueIn, now),
@@ -296,24 +348,29 @@ export function createSeedState(version: number, now = new Date()): DalonState {
     })),
     deadlines: DEADLINE_SEEDS.map(({ dueIn, ...d }) => ({ ...d, dueAt: isoInDays(dueIn, now) })),
     history: HISTORY_SEEDS.map(({ ago, ...h }) => ({ ...h, paidAt: isoInDays(-ago, now) })),
-    people: PEOPLE_SEEDS.map(({ ago, ...p }) => ({ ...p, consentAt: isoInDays(-ago, now) })),
     remind: { ...REMIND_DEFAULTS },
     log: [
       {
         id: 'l-1',
         at: isoInDays(-1, now),
-        text: 'Вы отправили запрос на доступ: Сергей Петрович (отец)',
+        text: 'Состав семьи сверен с реестром ЗАГС: изменений нет',
+        source: 'zags',
       },
       {
         id: 'l-2',
         at: isoInDays(-22, now),
         text: 'Вы оплатили: детский сад, питание за октябрь',
+        source: 'you',
       },
       {
         id: 'l-3',
         at: isoInDays(-58, now),
-        text: 'Анна дала согласие: видит и платит',
+        text: 'Анна включила себе «платит»: может оплачивать за семью',
+        source: 'family',
       },
     ],
+    career: [],
+    testing: [],
+    dismissed: [],
   }
 }
