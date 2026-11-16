@@ -9,6 +9,7 @@ import { useSituationProgress } from '../../lib/situationProgress'
 import { useApplications } from '../../lib/applications'
 import { CheckIcon, ClockIcon } from '../../lib/situationIcons'
 import type { ApplicationStatus, DigitalState, Priority } from '../../types/service'
+import { readString, writeString } from '../../lib/storage'
 
 const PAUSE_KEY_PREFIX = 'epasluga-situ-paused:'
 
@@ -36,14 +37,14 @@ export function SituationPage() {
 
   const [isPaused, setIsPaused] = useState<boolean>(() => {
     if (!id) return false
-    return localStorage.getItem(PAUSE_KEY_PREFIX + id) === '1'
+    return readString(PAUSE_KEY_PREFIX + id) === '1'
   })
 
   const togglePause = () => {
     if (!id) return
     const next = !isPaused
     setIsPaused(next)
-    localStorage.setItem(PAUSE_KEY_PREFIX + id, next ? '1' : '0')
+    writeString(PAUSE_KEY_PREFIX + id, next ? '1' : '0')
   }
 
   /** Найти активное заявление по услуге шага. */
@@ -187,7 +188,9 @@ export function SituationPage() {
               onClick={() => {
                 reset()
                 setIsPaused(false)
-                if (id) localStorage.setItem(PAUSE_KEY_PREFIX + id, '0')
+                if (id) {
+                  writeString(PAUSE_KEY_PREFIX + id, '0')
+                }
               }}
               className="text-xs text-muted hover:text-danger transition-colors underline"
             >

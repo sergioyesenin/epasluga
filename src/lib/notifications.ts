@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import type { AppNotification, NotificationKind } from '../types/service'
+import { isRecord, readJson, writeJson } from './storage'
 
 const NOTIF_KEY = 'epasluga-notifs'
 /** Событие для обновления в этой же вкладке (storage приходит только из других). */
@@ -58,21 +59,33 @@ const SEED: AppNotification[] = [
   },
 ]
 
+function isNotificationList(value: unknown): value is AppNotification[] {
+  return (
+    Array.isArray(value) &&
+    value.every(
+      (n) =>
+        isRecord(n) &&
+        typeof n.id === 'string' &&
+        typeof n.title === 'string' &&
+        typeof n.body === 'string' &&
+        typeof n.at === 'string' &&
+        (n.kind === 'legal' || n.kind === 'info'),
+    )
+  )
+}
+
 function read(): AppNotification[] {
-  try {
-    const raw = JSON.parse(localStorage.getItem(NOTIF_KEY) || 'null')
-    if (Array.isArray(raw)) {
-      return raw
-    }
-  } catch {
-    // повреждённые данные — засеваем заново
+  const rows = readJson<AppNotification[] | null>(NOTIF_KEY, null, isNotificationList)
+  if (rows) {
+    return rows
   }
-  localStorage.setItem(NOTIF_KEY, JSON.stringify(SEED))
+  // Первый запуск или повреждённые данные — засеваем заново
+  writeJson(NOTIF_KEY, SEED)
   return SEED
 }
 
 function write(rows: AppNotification[]) {
-  localStorage.setItem(NOTIF_KEY, JSON.stringify(rows))
+  writeJson(NOTIF_KEY, rows)
   window.dispatchEvent(new Event(CHANGE_EVENT))
 }
 

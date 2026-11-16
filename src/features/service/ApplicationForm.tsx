@@ -5,8 +5,11 @@ import { z } from 'zod'
 import { Button, Card, Input } from '../../design-system'
 import type { Service } from '../../types/service'
 import { SuccessScreen } from './SuccessScreen'
-import { useApplications } from '../../lib/applications'
+import { newApplicationIds, useApplications } from '../../lib/applications'
 import { CheckIcon } from '../../lib/situationIcons'
+import { isRecord, readJson, removeKey, writeJson } from '../../lib/storage'
+import { FieldError } from './FieldError'
+import { errorProps } from './fieldA11y'
 
 // Схема валидации (эвристика #9 — понятные сообщения рядом с полем)
 const PHONE_RE = /^\+375\s?\(?(?:17|25|29|33|44)\)?[\s-]?\d{3}[\s-]?\d{2}[\s-]?\d{2}$/
@@ -27,13 +30,22 @@ type FormData = z.infer<typeof schema>
 
 const DRAFT_PREFIX = 'epasluga-draft:'
 
-function readDraft(id: string): Partial<FormData> | null {
-  try {
-    return JSON.parse(localStorage.getItem(DRAFT_PREFIX + id) || 'null')
-  } catch {
-    return null
-  }
+function isDraft(value: unknown): value is Partial<FormData> {
+  return isRecord(value) && Object.values(value).every((v) => v === undefined || typeof v === 'string')
 }
+
+function readDraft(id: string): Partial<FormData> | null {
+  return readJson<Partial<FormData> | null>(DRAFT_PREFIX + id, null, isDraft)
+}
+
+/** Черновик без галочки согласия: согласие даётся заново при каждой отправке. */
+function saveDraft(id: string, values: Partial<FormData>) {
+  const draft = { ...values }
+  delete draft.consent
+  writeJson(DRAFT_PREFIX + id, draft)
+}
+
+const timeNow = () => new Date().toLocaleTimeString('ru-BY', { hour: '2-digit', minute: '2-digit' })
 
 type ApplicationFormProps = {
   service: Service
@@ -49,7 +61,11 @@ export function ApplicationForm({
   situationStepId,
 }: ApplicationFormProps) {
   const [isSubmitted, setIsSubmitted] = useState(false)
-  const [draftSavedAt, setDraftSavedAt] = useState<string | null>(null)
+  // Черновик читаем один раз при открытии формы — он же становится значениями по умолчанию
+  const [savedDraft] = useState(() => readDraft(service.id))
+  const [draftStatus, setDraftStatus] = useState<string | null>(
+    savedDraft ? 'Черновик восстановлен' : null,
+  )
   const [generatedNum, setGeneratedNum] = useState<string>('')
   const saveTimer = useRef<number | null>(null)
   const { add } = useApplications()
@@ -57,50 +73,51 @@ export function ApplicationForm({
   const {
     register,
     handleSubmit,
-    watch,
-    reset,
+    subscribe,
+    getValues,
     formState: { errors, isSubmitting },
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     mode: 'onBlur',
     defaultValues: {
-      lastName: '', firstName: '', middleName: '',
-      phone: '', email: '', comment: '',
+      lastName: '',
+      firstName: '',
+      middleName: '',
+      phone: '',
+      email: '',
+      comment: '',
+      ...savedDraft,
     },
   })
 
+  // Автосохранение черновика: подписка без перерисовки формы на каждый символ
   useEffect(() => {
-    const saved = readDraft(service.id)
-    if (saved) {
-      reset(saved as FormData)
-      setDraftSavedAt('черновик восстановлен')
-    }
-  }, [service.id, reset])
-
-  useEffect(() => {
-    const sub = watch((values) => {
-      if (saveTimer.current) window.clearTimeout(saveTimer.current)
-      saveTimer.current = window.setTimeout(() => {
-        const draft = { ...values }
-        delete draft.consent
-        localStorage.setItem(DRAFT_PREFIX + service.id, JSON.stringify(draft))
-        setDraftSavedAt(
-          new Date().toLocaleTimeString('ru-BY', { hour: '2-digit', minute: '2-digit' }),
-        )
-      }, 400)
+    const unsubscribe = subscribe({
+      formState: { values: true },
+      callback: ({ values }) => {
+        if (saveTimer.current) {
+          window.clearTimeout(saveTimer.current)
+        }
+        saveTimer.current = window.setTimeout(() => {
+          saveDraft(service.id, values)
+          setDraftStatus(`Черновик сохранён ${timeNow()}`)
+        }, 400)
+      },
     })
     return () => {
-      sub.unsubscribe()
-      if (saveTimer.current) window.clearTimeout(saveTimer.current)
+      unsubscribe()
+      if (saveTimer.current) {
+        window.clearTimeout(saveTimer.current)
+      }
     }
-  }, [watch, service.id])
+  }, [subscribe, service.id])
 
   const onSubmit = async (data: FormData) => {
-    const num = String(Date.now()).slice(-12)
+    const { id, num } = newApplicationIds()
     setGeneratedNum(num)
 
     add({
-      id: 'a' + Date.now(),
+      id,
       num,
       title: service.shortTitle,
       serviceId: service.id,
@@ -112,13 +129,12 @@ export function ApplicationForm({
       situationStepId,
     })
 
-    localStorage.removeItem(DRAFT_PREFIX + service.id)
+    removeKey(DRAFT_PREFIX + service.id)
     setIsSubmitted(true)
   }
 
   const onSaveAndExit = () => {
-    const values = watch()
-    localStorage.setItem(DRAFT_PREFIX + service.id, JSON.stringify(values))
+    saveDraft(service.id, getValues())
     onBack()
   }
 
@@ -155,15 +171,11 @@ export function ApplicationForm({
               id="lastName"
               {...register('lastName')}
               placeholder="Иванов"
+              autoComplete="family-name"
               isError={!!errors.lastName}
-              aria-invalid={!!errors.lastName}
-              aria-describedby={errors.lastName ? 'lastName-error' : undefined}
+              {...errorProps('lastName', errors.lastName)}
             />
-            {errors.lastName && (
-              <p id="lastName-error" className="text-danger text-xs mt-1">
-                {errors.lastName.message}
-              </p>
-            )}
+            <FieldError name="lastName" error={errors.lastName} />
           </div>
 
           <div>
@@ -174,19 +186,23 @@ export function ApplicationForm({
               id="firstName"
               {...register('firstName')}
               placeholder="Алексей"
+              autoComplete="given-name"
               isError={!!errors.firstName}
-              aria-invalid={!!errors.firstName}
+              {...errorProps('firstName', errors.firstName)}
             />
-            {errors.firstName && (
-              <p className="text-danger text-xs mt-1">{errors.firstName.message}</p>
-            )}
+            <FieldError name="firstName" error={errors.firstName} />
           </div>
 
           <div>
             <label htmlFor="middleName" className="block text-sm font-semibold mb-1">
               Отчество
             </label>
-            <Input id="middleName" {...register('middleName')} placeholder="Сергеевич" />
+            <Input
+              id="middleName"
+              {...register('middleName')}
+              placeholder="Сергеевич"
+              autoComplete="additional-name"
+            />
           </div>
 
           <div>
@@ -197,24 +213,29 @@ export function ApplicationForm({
               id="phone"
               {...register('phone')}
               placeholder="+375 29 123-45-67"
+              type="tel"
+              inputMode="tel"
+              autoComplete="tel"
               isError={!!errors.phone}
-              aria-invalid={!!errors.phone}
+              {...errorProps('phone', errors.phone)}
             />
-            {errors.phone && <p className="text-danger text-xs mt-1">{errors.phone.message}</p>}
+            <FieldError name="phone" error={errors.phone} />
           </div>
 
           <div>
             <label htmlFor="email" className="block text-sm font-semibold mb-1">
-              Email
+              Электронная почта
             </label>
             <Input
               id="email"
               type="email"
               {...register('email')}
               placeholder="example@mail.com"
+              autoComplete="email"
               isError={!!errors.email}
+              {...errorProps('email', errors.email)}
             />
-            {errors.email && <p className="text-danger text-xs mt-1">{errors.email.message}</p>}
+            <FieldError name="email" error={errors.email} />
           </div>
 
           <div>
@@ -224,31 +245,35 @@ export function ApplicationForm({
             <textarea
               id="comment"
               {...register('comment')}
+              {...errorProps('comment', errors.comment)}
               placeholder="Дополнительная информация (необязательно)"
               className="w-full rounded-control border border-line px-3 py-2.5 text-[15px] outline-none focus:border-navy focus:ring-4 focus:ring-navy/12 min-h-24"
             />
-            {errors.comment && <p className="text-danger text-xs mt-1">{errors.comment.message}</p>}
+            <FieldError name="comment" error={errors.comment} />
           </div>
 
           <div>
             <label className="flex gap-2 items-start text-sm">
-              <input type="checkbox" {...register('consent')} className="mt-0.5" />
+              <input
+                type="checkbox"
+                {...register('consent')}
+                {...errorProps('consent', errors.consent)}
+                className="mt-0.5"
+              />
               <span>
                 Согласен на обработку персональных данных для оказания услуги.{' '}
                 <span className="text-danger">*</span>
               </span>
             </label>
-            {errors.consent && (
-              <p className="text-danger text-xs mt-1">{errors.consent.message}</p>
-            )}
+            <FieldError name="consent" error={errors.consent} />
           </div>
 
           <div className="pt-4 border-t border-line flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div className="text-sm text-ok font-semibold min-h-5">
-              {draftSavedAt && (
-                <span className="flex items-center gap-1.5">
-                  <CheckIcon className="w-4 h-4" />
-                  Черновик сохранён {draftSavedAt}
+              {draftStatus && (
+                <span className="flex items-center gap-1.5" role="status">
+                  <CheckIcon className="w-4 h-4" aria-hidden="true" />
+                  {draftStatus}
                 </span>
               )}
             </div>

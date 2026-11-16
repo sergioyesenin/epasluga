@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import type { Application } from '../types/service'
+import { isRecord, readJson, writeJson } from './storage'
 
 const APPS_KEY = 'epasluga-apps'
 /** Событие для обновления в этой же вкладке, когда заявление меняют вне хука. */
@@ -71,28 +72,47 @@ const SEED: Application[] = [
   },
 ]
 
+/** Минимальная проверка формы: без этих полей экраны «Моих услуг» упадут. */
+function isApplicationList(value: unknown): value is Application[] {
+  return (
+    Array.isArray(value) &&
+    value.every(
+      (a) =>
+        isRecord(a) &&
+        typeof a.id === 'string' &&
+        typeof a.title === 'string' &&
+        typeof a.serviceId === 'string' &&
+        typeof a.status === 'string' &&
+        typeof a.at === 'string',
+    )
+  )
+}
+
 function read(): Application[] {
-  try {
-    const raw = JSON.parse(localStorage.getItem(APPS_KEY) || 'null')
-    // Пустой массив мог остаться от версии без демо-данных — засеваем заново
-    if (Array.isArray(raw) && raw.length > 0) {
-      return raw
-    }
-  } catch {
-    // повреждённые данные — засеваем заново
+  const rows = readJson<Application[] | null>(APPS_KEY, null, isApplicationList)
+  // Пустой массив мог остаться от версии без демо-данных — засеваем заново.
+  // Повреждённые данные или чужой формат — тоже
+  if (rows && rows.length > 0) {
+    return rows
   }
-  localStorage.setItem(APPS_KEY, JSON.stringify(SEED))
+  writeJson(APPS_KEY, SEED)
   return SEED
 }
 
 function write(rows: Application[]) {
-  localStorage.setItem(APPS_KEY, JSON.stringify(rows))
+  writeJson(APPS_KEY, rows)
 }
 
 /** Запись вне хука (из «Далони»): все экземпляры useApplications перечитают данные. */
 function writeAndNotify(rows: Application[]) {
   write(rows)
   window.dispatchEvent(new Event(CHANGE_EVENT))
+}
+
+/** Номер и id нового заявления. В продукте номер присваивает сервер при регистрации. */
+export function newApplicationIds(): { id: string; num: string } {
+  const stamp = Date.now()
+  return { id: `a${stamp}`, num: String(stamp).slice(-12) }
 }
 
 /** Добавить заявление из любого места — например, регистрацию на РТ из «Далони». */
