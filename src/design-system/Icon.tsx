@@ -174,12 +174,28 @@ type IconProps = {
   className?: string
   strokeWidth?: number
   title?: string
+  /** Положение и размер, когда иконка вложена в другой SVG (лист растения «Далони»). */
+  x?: number
+  y?: number
+  size?: number
 }
 
-export function Icon({ name, className = 'w-5 h-5', strokeWidth = 1.8, title }: IconProps) {
+export function Icon({
+  name,
+  className = 'w-5 h-5',
+  strokeWidth = 1.8,
+  title,
+  x,
+  y,
+  size,
+}: IconProps) {
   return (
     <svg
       className={className}
+      x={x}
+      y={y}
+      width={size}
+      height={size}
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"

@@ -6,7 +6,7 @@ import { useChargeSelection } from '../../../hooks/useChargeSelection'
 import { isMemberVisible, personById, sumDue } from '../../../lib/dalon/selectors'
 import { lockReason } from '../../../lib/dalon/zags'
 import { formatDay, toneFor, toneText } from '../../../lib/dates'
-import { HandSummary } from './HandSummary'
+import { PlantSummary } from './plant/PlantSummary'
 import { MemberGroup } from './MemberGroup'
 import { DuePanel } from './DuePanel'
 import { PayBar } from './PayBar'
@@ -23,7 +23,7 @@ function scrollToMember(id: string) {
   el.focus({ preventScroll: true })
 }
 
-/** Панель «Далони»: ладонь, начисления по членам семьи, сроки и оплата. */
+/** Панель «Далони»: растение семьи, начисления по членам семьи, сроки и оплата. */
 export function PanelPage() {
   const { state, charges, members, memberById, total, timeline, now } = useDalon()
   const { selected, toggle, toggleAll, allSelected } = useChargeSelection(charges, now)
@@ -43,13 +43,12 @@ export function PanelPage() {
 
   return (
     <div>
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,560px)_minmax(0,1fr)] gap-6 lg:gap-12 items-end mb-10">
-        <HandSummary
-          members={members}
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,560px)_minmax(0,1fr)] gap-6 lg:gap-12 items-center mb-10">
+        <PlantSummary
+          state={state}
           charges={charges}
           total={total}
           now={now}
-          isHidden={isHidden}
           onPick={scrollToMember}
         />
         <div className="lg:pb-4 space-y-4">

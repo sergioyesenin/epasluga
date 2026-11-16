@@ -1,6 +1,7 @@
 import clsx from 'clsx'
-import { Icon, type IconName } from '../../../design-system'
-import type { AssetKind, MemberKind } from '../../../types/dalon'
+import { Icon } from '../../../design-system'
+import type { MemberKind } from '../../../types/dalon'
+import { ASSET_ICON } from './assetIcon'
 
 /** Люди — тёплые тона, имущество — зелёные, как листья на стебле. */
 const KIND_CLASS: Record<MemberKind, string> = {
@@ -9,12 +10,6 @@ const KIND_CLASS: Record<MemberKind, string> = {
   car: 'bg-plant-tint text-plant-ink',
   flat: 'bg-plant-tint text-plant-ink',
   dacha: 'bg-plant-tint text-plant-ink',
-}
-
-export const ASSET_ICON: Record<AssetKind, IconName> = {
-  car: 'car',
-  flat: 'home',
-  dacha: 'dacha',
 }
 
 const SIZE_CLASS = {
