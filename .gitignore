@@ -25,3 +25,12 @@ dist-ssr
 venv/
 ingest.py
 digest.txt
+# Выгрузки кода для LLM (repomix и т. п.) — не часть проекта
+repomix-output.*
+**/repomix-output.*
+
+# Случайные пустые файлы от опечаток в командах (`npm > npm`)
+/npm
+
+# Сборка PWA в режиме разработки (vite-plugin-pwa devOptions)
+dev-dist
