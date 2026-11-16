@@ -32,7 +32,7 @@ export function SupportPage() {
                   <label className="block text-sm font-semibold mb-1">Опишите проблему</label>
                   <textarea 
                     required
-                    className="w-full rounded-control border border-line px-3 py-2.5 text-[15px] outline-none focus:border-navy focus:ring-4 focus:ring-navy/12 min-h-25"
+                    className="w-full rounded-control border border-field px-3 py-2.5 text-[15px] outline-none focus:border-navy focus:ring-4 focus:ring-navy/12 min-h-25"
                     placeholder="Например: не приходит SMS с кодом..."
                   />
                 </div>

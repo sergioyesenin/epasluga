@@ -4,7 +4,7 @@ import { DemoBadge } from '../components/DemoBadge'
 import { quietButton, textButton } from '../components/styles'
 
 const selectClass =
-  'w-full min-h-11 rounded-control border border-line bg-white px-3 text-[15px] focus:border-family-wine focus:outline-none focus:ring-4 focus:ring-family-wine/15'
+  'w-full min-h-11 rounded-control border border-field bg-white px-3 text-[15px] focus:border-family-wine focus:outline-none focus:ring-4 focus:ring-family-wine/15'
 
 /**
  * Демо-блок: события, которые в жизни приходят из реестра ЗАГС сами.

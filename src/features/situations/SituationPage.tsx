@@ -4,7 +4,7 @@ import clsx from 'clsx'
 import { lifeSituations } from '../../data/situations'
 import { xcById } from '../../data/xcComponents'
 import { passportById } from '../../data/situationPassports'
-import { Card, Badge, Button } from '../../design-system'
+import { Card, Badge, Button, Modal } from '../../design-system'
 import { useSituationProgress } from '../../lib/situationProgress'
 import { useApplications } from '../../lib/applications'
 import { CheckIcon, ClockIcon } from '../../lib/situationIcons'
@@ -37,6 +37,8 @@ export function SituationPage() {
   const { apps } = useApplications()
   useDocumentTitle(situation?.title ?? 'Ситуация не найдена')
 
+  // Подсказка «как сделать офлайн» — в модальном окне вместо блокирующего alert()
+  const [offlineHint, setOfflineHint] = useState<string | null>(null)
   const [isPaused, setIsPaused] = useState<boolean>(() => {
     if (!id) return false
     return readString(PAUSE_KEY_PREFIX + id) === '1'
@@ -296,7 +298,7 @@ export function SituationPage() {
                       ) : step.externalAction ? (
                         <Button
                           variant="ghost"
-                          onClick={() => alert(step.externalAction)}
+                          onClick={() => setOfflineHint(step.externalAction ?? null)}
                         >
                           Как сделать офлайн
                         </Button>
@@ -387,6 +389,25 @@ export function SituationPage() {
           )}
         </div>
       </div>
+
+      <Modal
+        open={offlineHint !== null}
+        title="Как сделать офлайн"
+        onClose={() => {
+          setOfflineHint(null)
+        }}
+      >
+        <p className="text-[15px] text-ink mb-6">{offlineHint}</p>
+        <Button
+          type="button"
+          className="w-full sm:w-auto"
+          onClick={() => {
+            setOfflineHint(null)
+          }}
+        >
+          Понятно
+        </Button>
+      </Modal>
     </div>
   )
 }

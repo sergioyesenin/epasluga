@@ -22,7 +22,11 @@ const CSP = [
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",
-].join('; ')
+]
+  .map((d) => `${d};`)
+  // Точка с запятой и после последней директивы: антивирусы (Kaspersky) дописывают в meta
+  // свои директивы без разделителя и ломают последнюю
+  .join(' ')
 
 function cspPlugin(): Plugin {
   return {

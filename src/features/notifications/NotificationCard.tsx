@@ -14,7 +14,7 @@ export function NotificationCard({ n, box, onArchive, onUnarchive, onDelete }: N
   return (
     <article className="flex gap-3 p-4">
       <div className={`shrink-0 w-10 h-10 rounded-xl flex items-center justify-center ${n.kind === 'legal' ? 'bg-[#fff4e5] text-accent-warm' : 'bg-[#e8eeff] text-navy'}`}>
-        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+        <svg aria-hidden="true" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
           {n.kind === 'legal' ? (
             <path strokeLinecap="round" strokeLinejoin="round" d="M7 4h7l5 5v11H7V4ZM14 4v5h5" />
           ) : (

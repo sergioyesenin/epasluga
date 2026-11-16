@@ -16,7 +16,7 @@ export function SuccessScreen({ service, applicationNum, situationId }: SuccessS
   return (
     <div className="max-w-xl mx-auto py-12 text-center">
       <div className="w-20 h-20 bg-[#e6f6ec] text-ok rounded-full flex items-center justify-center mx-auto mb-6">
-        <svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg aria-hidden="true" className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
         </svg>
       </div>

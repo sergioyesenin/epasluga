@@ -3,6 +3,7 @@ import { Badge, Card, EmptyState } from '../../../design-system'
 import { mockRepository } from '../../../data/mockRepository'
 import { formatWhen } from '../../../lib/format'
 import { FileIcon, InfoIcon } from '../../../lib/situationIcons'
+import { demoUnavailable } from '../../../lib/demo'
 import type { RepositoryFile } from '../../../types/service'
 
 function formatSize(kb: number): string {
@@ -54,7 +55,7 @@ export function RepoTab() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Поиск по имени файла"
-          className="flex-1 h-11 rounded-control border border-line px-3 text-[15px] outline-none focus:border-navy focus:ring-4 focus:ring-navy/12"
+          className="flex-1 h-11 rounded-control border border-field px-3 text-[15px] outline-none focus:border-navy focus:ring-4 focus:ring-navy/12"
         />
         <button
           type="button"
@@ -101,7 +102,7 @@ export function RepoTab() {
               <div className="mt-auto border-t border-line pt-3 flex gap-2">
                 <button
                   type="button"
-                  onClick={() => alert('В демо скачивание недоступно')}
+                  onClick={() => demoUnavailable('В демо скачивание недоступно')}
                   className="flex-1 inline-flex items-center justify-center rounded-control min-h-11 text-sm font-semibold border border-navy text-navy hover:bg-soft"
                 >
                   Скачать

@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { clsx } from 'clsx'
+import { useDialogFocus } from '../../hooks/useDialogFocus'
 
 type Message = { role: 'user' | 'ai'; text: string }
 
@@ -17,7 +18,12 @@ export function AiAssistant({ hideFabOnMobile = false }: AiAssistantProps) {
   const [input, setInput] = useState('')
   const [isTyping, setIsTyping] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
+  const panelRef = useRef<HTMLDivElement>(null)
   const navigate = useNavigate()
+  // Фокус в поле вопроса, Esc закрывает, после закрытия фокус — снова на круглой кнопке
+  useDialogFocus(panelRef, isOpen, () => {
+    setIsOpen(false)
+  })
 
   // Быстрые действия: навигация и демо-вопросы
   const quickQuestions = [
@@ -61,7 +67,7 @@ export function AiAssistant({ hideFabOnMobile = false }: AiAssistantProps) {
         ...prev,
         {
           role: 'ai',
-          text: 'Я нашел информацию по вашему вопросу. Вы можете оформить эту услугу в разделе «Каталог услуг». Если нужна помощь с ID-картой, перейдите по ссылке в разделе «О портале».',
+          text: 'Я нашёл информацию по вашему вопросу. Вы можете оформить эту услугу в разделе «Каталог услуг». Если нужна помощь с ID-картой, перейдите по ссылке в разделе «О портале».',
         },
       ])
     }, 1000)
@@ -71,6 +77,7 @@ export function AiAssistant({ hideFabOnMobile = false }: AiAssistantProps) {
     <>
       {/* Кнопка вызова чата */}
       <button
+        type="button"
         onClick={() => setIsOpen(true)}
         className={clsx(
           'fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] md:bottom-6 right-[max(1rem,env(safe-area-inset-right))] md:right-6 w-14 h-14 bg-card text-navy border border-line rounded-full shadow-lift flex items-center justify-center hover:border-navy transition-colors z-40',
@@ -79,7 +86,7 @@ export function AiAssistant({ hideFabOnMobile = false }: AiAssistantProps) {
         )}
         aria-label="Открыть ИИ-помощника"
       >
-        <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg aria-hidden="true" className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -92,8 +99,10 @@ export function AiAssistant({ hideFabOnMobile = false }: AiAssistantProps) {
       {/* Окно чата */}
       {isOpen && (
         <div
+          ref={panelRef}
           role="dialog"
-          aria-label="ИИ-Помощник"
+          aria-modal="true"
+          aria-label="ИИ-помощник"
           className="fixed z-50 flex flex-col overflow-hidden bg-white border-line inset-0 pt-safe pb-safe md:inset-auto md:pt-0 md:pb-0 md:bottom-6 md:right-6 md:w-96 md:h-[550px] md:max-h-[calc(100dvh-6rem)] md:rounded-card md:border md:shadow-2xl"
         >
           {/* Шапка */}
@@ -101,13 +110,15 @@ export function AiAssistant({ hideFabOnMobile = false }: AiAssistantProps) {
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-ok rounded-full" />
               <span className="font-semibold text-sm text-ink">ИИ-помощник</span>
+              <span className="text-xs text-muted">демо, ответы шаблонные</span>
             </div>
             <button
+              type="button"
               onClick={() => setIsOpen(false)}
               className="w-11 h-11 inline-flex items-center justify-center rounded-xl text-muted hover:text-ink hover:bg-soft"
               aria-label="Закрыть чат"
             >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg aria-hidden="true" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -119,7 +130,11 @@ export function AiAssistant({ hideFabOnMobile = false }: AiAssistantProps) {
           </div>
 
           {/* История сообщений */}
-          <div ref={scrollRef} className="flex-1 p-4 overflow-y-auto space-y-4 bg-bg/50">
+          <div
+            ref={scrollRef}
+            className="flex-1 p-4 overflow-y-auto space-y-4 bg-bg/50"
+            aria-live="polite"
+          >
             {messages.map((msg, i) => (
               <div
                 key={i}
@@ -154,6 +169,7 @@ export function AiAssistant({ hideFabOnMobile = false }: AiAssistantProps) {
               {quickQuestions.map((q) => (
                 <button
                   key={q}
+                  type="button"
                   onClick={() => handleSend(q)}
                   className="text-sm bg-card text-navy px-3 min-h-11 rounded-full hover:border-navy transition-colors border border-line text-left"
                 >
@@ -169,17 +185,23 @@ export function AiAssistant({ hideFabOnMobile = false }: AiAssistantProps) {
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleSend(input)}
-              placeholder="Напишите вопрос..."
-              className="flex-1 bg-bg rounded-full px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-navy/20"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleSend(input)
+                }
+              }}
+              aria-label="Ваш вопрос"
+              placeholder="Напишите вопрос…"
+              className="flex-1 bg-bg rounded-full px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-navy"
             />
             <button
+              type="button"
               onClick={() => handleSend(input)}
               disabled={!input.trim()}
               className="text-navy p-2 hover:bg-soft rounded-full disabled:opacity-50"
               aria-label="Отправить"
             >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg aria-hidden="true" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"

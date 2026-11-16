@@ -16,7 +16,7 @@ const optionClass = (on: boolean) =>
   )
 
 const selectClass =
-  'w-full min-h-11 rounded-control border border-line bg-white px-3 text-[15px] focus:border-family-wine focus:outline-none focus:ring-4 focus:ring-family-wine/15'
+  'w-full min-h-11 rounded-control border border-field bg-white px-3 text-[15px] focus:border-family-wine focus:outline-none focus:ring-4 focus:ring-family-wine/15'
 
 const legendClass = 'text-lg font-bold text-ink mb-3'
 

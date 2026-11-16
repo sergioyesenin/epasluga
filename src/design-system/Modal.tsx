@@ -1,5 +1,6 @@
-import { useEffect, useRef, type ReactNode } from 'react'
+import { useEffect, useId, useRef, type ReactNode } from 'react'
 import { Icon } from './Icon'
+import { useDialogFocus } from '../hooks/useDialogFocus'
 
 type ModalProps = {
   open: boolean
@@ -11,35 +12,21 @@ type ModalProps = {
 /**
  * Диалог поверх страницы. На телефоне — лист снизу с учётом safe-area,
  * на компьютере — окно по центру. Закрывается Esc и кликом по фону.
+ * Фокус заперт внутри окна и после закрытия возвращается на кнопку, которая его открыла.
  */
 export function Modal({ open, title, onClose, children }: ModalProps) {
   const boxRef = useRef<HTMLDivElement>(null)
-  // Последний onClose без перезапуска эффекта: иначе фокус прыгал бы при каждом рендере
-  const closeRef = useRef(onClose)
-
-  useEffect(() => {
-    closeRef.current = onClose
-  }, [onClose])
+  // Уникальный id заголовка: на странице может быть несколько модалок
+  const titleId = useId()
+  useDialogFocus(boxRef, open, onClose)
 
   useEffect(() => {
     if (!open) {
       return
     }
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        closeRef.current()
-      }
-    }
-    window.addEventListener('keydown', onKey)
-    const box = boxRef.current
-    const first =
-      box?.querySelector<HTMLElement>('input, select, textarea') ??
-      box?.querySelector<HTMLElement>('button')
-    first?.focus()
     const prevOverflow = document.body.style.overflow
     document.body.style.overflow = 'hidden'
     return () => {
-      window.removeEventListener('keydown', onKey)
       document.body.style.overflow = prevOverflow
     }
   }, [open])
@@ -58,14 +45,14 @@ export function Modal({ open, title, onClose, children }: ModalProps) {
         ref={boxRef}
         role="dialog"
         aria-modal="true"
-        aria-labelledby="modal-title"
+        aria-labelledby={titleId}
         className="bg-card w-full sm:max-w-lg rounded-t-3xl sm:rounded-card shadow-2xl max-h-[92dvh] overflow-y-auto pb-[max(1.5rem,env(safe-area-inset-bottom))] animate-rise"
         onClick={(e) => {
           e.stopPropagation()
         }}
       >
         <div className="flex items-start justify-between gap-3 pl-6 pr-2 pt-2">
-          <h2 id="modal-title" className="text-xl font-bold text-ink pt-4">
+          <h2 id={titleId} className="text-xl font-bold text-ink pt-4">
             {title}
           </h2>
           <button

@@ -19,11 +19,11 @@ export function StarButton({ active, onClick, label }: StarButtonProps) {
       aria-label={label ?? (active ? 'Убрать из избранного' : 'Добавить в избранное')}
       className={clsx(
         'shrink-0 w-11 h-11 flex items-center justify-center rounded-full transition-all',
-        'focus:outline-none focus:ring-2 focus:ring-navy/40',
+        'focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-navy',
         active ? 'text-navy bg-soft' : 'text-muted hover:text-navy hover:bg-soft',
       )}
     >
-      <svg
+      <svg aria-hidden="true"
         viewBox="0 0 24 24"
         className="w-5 h-5 transition-transform duration-150"
         fill={active ? 'currentColor' : 'none'}

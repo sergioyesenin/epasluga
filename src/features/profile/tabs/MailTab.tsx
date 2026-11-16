@@ -8,6 +8,7 @@ import {
   ShieldCheckIcon,
   CheckIcon,
 } from '../../../lib/situationIcons'
+import { demoUnavailable } from '../../../lib/demo'
 import type { MailMessage } from '../../../types/service'
 import clsx from 'clsx'
 
@@ -140,7 +141,7 @@ export function MailTab() {
                     </div>
                     <button
                       type="button"
-                      onClick={() => alert('В демо скачивание недоступно')}
+                      onClick={() => demoUnavailable('В демо скачивание недоступно')}
                       className="shrink-0 inline-flex items-center justify-center rounded-control min-h-11 px-3 text-sm font-semibold bg-navy text-white hover:bg-navy-deep"
                     >
                       Скачать
@@ -168,7 +169,7 @@ export function MailTab() {
             {selected.actionRequired === 'sign' && (
               <button
                 type="button"
-                onClick={() => alert('В демо подпись недоступна')}
+                onClick={() => demoUnavailable('В демо подпись недоступна')}
                 className="inline-flex items-center justify-center rounded-control px-4 min-h-11 text-sm font-semibold bg-navy text-white hover:bg-navy-deep"
               >
                 Подписать и отправить
@@ -177,7 +178,7 @@ export function MailTab() {
             {selected.actionRequired === 'pay' && (
               <button
                 type="button"
-                onClick={() => alert('В демо оплата недоступна')}
+                onClick={() => demoUnavailable('В демо оплата недоступна')}
                 className="inline-flex items-center justify-center rounded-control px-4 min-h-11 text-sm font-semibold bg-navy text-white hover:bg-navy-deep"
               >
                 Перейти к оплате
@@ -186,7 +187,7 @@ export function MailTab() {
             {selected.actionRequired === 'provide' && (
               <button
                 type="button"
-                onClick={() => alert('В демо загрузка документов недоступна')}
+                onClick={() => demoUnavailable('В демо загрузка документов недоступна')}
                 className="inline-flex items-center justify-center rounded-control px-4 min-h-11 text-sm font-semibold bg-navy text-white hover:bg-navy-deep"
               >
                 Загрузить документы
@@ -194,7 +195,7 @@ export function MailTab() {
             )}
             <button
               type="button"
-              onClick={() => alert('В демо архив недоступен')}
+              onClick={() => demoUnavailable('В демо архив недоступен')}
               className="inline-flex items-center justify-center rounded-control px-4 min-h-11 text-sm font-semibold border border-navy text-navy hover:bg-soft"
             >
               В архив

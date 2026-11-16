@@ -250,7 +250,7 @@ export function ApplicationForm({
               {...register('comment')}
               {...errorProps('comment', errors.comment)}
               placeholder="Дополнительная информация (необязательно)"
-              className="w-full rounded-control border border-line px-3 py-2.5 text-[15px] outline-none focus:border-navy focus:ring-4 focus:ring-navy/12 min-h-24"
+              className="w-full rounded-control border border-field px-3 py-2.5 text-[15px] outline-none focus:border-navy focus:ring-4 focus:ring-navy/12 min-h-24"
             />
             <FieldError name="comment" error={errors.comment} />
           </div>

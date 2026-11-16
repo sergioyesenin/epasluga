@@ -42,7 +42,7 @@ function ToastCard({ item }: { item: ToastItem }) {
         className="shrink-0 w-11 h-11 inline-flex items-center justify-center rounded-xl text-white/70 hover:text-white hover:bg-white/10"
         aria-label="Закрыть сообщение"
       >
-        <svg
+        <svg aria-hidden="true"
           className="w-4 h-4"
           fill="none"
           viewBox="0 0 24 24"

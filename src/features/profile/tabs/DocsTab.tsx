@@ -3,6 +3,7 @@ import { Badge, Card, EmptyState, SkeletonList } from '../../../design-system'
 import { mockDocuments } from '../../../data/mockDocuments'
 import { formatWhen } from '../../../lib/format'
 import { FileIcon, InfoIcon } from '../../../lib/situationIcons'
+import { demoUnavailable } from '../../../lib/demo'
 import type { Document } from '../../../types/service'
 
 function formatValidUntil(iso?: string): string | null {
@@ -117,7 +118,7 @@ function DocumentCard({ doc }: { doc: Document }) {
         <div className="border-t border-line pt-3 flex gap-2">
           <button
             type="button"
-            onClick={() => alert('В демо скачивание недоступно')}
+            onClick={() => demoUnavailable('В демо скачивание недоступно')}
             className="flex-1 inline-flex items-center justify-center rounded-control min-h-11 text-sm font-semibold bg-navy text-white hover:bg-navy-deep"
           >
             Скачать
@@ -162,7 +163,7 @@ export function DocsTab() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Поиск по названию, ведомству или номеру заявления"
-          className="w-full h-11 rounded-control border border-line px-3 text-[15px] outline-none focus:border-navy focus:ring-4 focus:ring-navy/12"
+          className="w-full h-11 rounded-control border border-field px-3 text-[15px] outline-none focus:border-navy focus:ring-4 focus:ring-navy/12"
         />
       </div>
 
