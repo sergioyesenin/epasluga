@@ -3,9 +3,10 @@ import { QuickSearch } from './QuickSearch'
 import { QuickActions } from './QuickActions'
 import { LifeSituations } from './LifeSituations'
 import { DalonSummary } from './DalonSummary'
+import { ProactiveBanner } from './ProactiveBanner'
 import { InstallBanner } from '../pwa/InstallBanner'
 import { useApplications } from '../../lib/applications'
-import { useAuth } from '../../contexts/AuthContext'
+import { useAuth } from '../../hooks/useAuth'
 import { Badge, Card } from '../../design-system'
 import { statusClass } from '../../lib/format'
 
@@ -40,7 +41,10 @@ export function HomePage() {
         <QuickSearch />
       </section>
 
-      <DalonSummary />
+      <div className="space-y-3">
+        <DalonSummary />
+        <ProactiveBanner />
+      </div>
 
       <InstallBanner />
 

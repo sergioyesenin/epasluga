@@ -13,6 +13,8 @@
  * Биометрия не покидает телефон ни в демо, ни в жизни — сервер видит только подпись.
  */
 
+import { isRecord, readJson, removeKey, writeJson } from './storage'
+
 const KEY = 'epasluga-biometric'
 
 export type BiometricEnrollment = {
@@ -35,21 +37,20 @@ export async function isBiometricAvailable(): Promise<boolean> {
   }
 }
 
+function isEnrollment(value: unknown): value is BiometricEnrollment {
+  return isRecord(value) && typeof value.enabledAt === 'string'
+}
+
 export function getEnrollment(): BiometricEnrollment | null {
-  try {
-    const raw = JSON.parse(localStorage.getItem(KEY) || 'null') as BiometricEnrollment | null
-    return raw && typeof raw.enabledAt === 'string' ? raw : null
-  } catch {
-    return null
-  }
+  return readJson<BiometricEnrollment | null>(KEY, null, isEnrollment)
 }
 
 export function enrollBiometric(): BiometricEnrollment {
   const enrollment = { enabledAt: new Date().toISOString() }
-  localStorage.setItem(KEY, JSON.stringify(enrollment))
+  writeJson(KEY, enrollment)
   return enrollment
 }
 
 export function removeBiometric() {
-  localStorage.removeItem(KEY)
+  removeKey(KEY)
 }

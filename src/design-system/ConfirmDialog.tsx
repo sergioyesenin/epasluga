@@ -1,5 +1,6 @@
-import { useEffect } from 'react'
+import { useId, useRef } from 'react'
 import { Button } from './Button'
+import { useDialogFocus } from '../hooks/useDialogFocus'
 
 type ConfirmDialogProps = {
   open: boolean
@@ -22,17 +23,15 @@ export function ConfirmDialog({
   onCancel,
   isDanger = false,
 }: ConfirmDialogProps) {
-  // Закрытие по Escape
-  useEffect(() => {
-    if (!open) return
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onCancel()
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [open, onCancel])
+  const boxRef = useRef<HTMLDivElement>(null)
+  const titleId = useId()
+  const descId = useId()
+  // Esc, ловушка фокуса и возврат фокуса после закрытия
+  useDialogFocus(boxRef, open, onCancel)
 
-  if (!open) return null
+  if (!open) {
+    return null
+  }
 
   return (
     <div
@@ -41,16 +40,22 @@ export function ConfirmDialog({
       role="presentation"
     >
       <div
-        role="dialog"
+        ref={boxRef}
+        role="alertdialog"
         aria-modal="true"
-        aria-labelledby="confirm-title"
+        aria-labelledby={titleId}
+        aria-describedby={descId}
         className="bg-white rounded-card p-6 max-w-md w-full shadow-2xl"
-        onClick={(e) => e.stopPropagation()}
+        onClick={(e) => {
+          e.stopPropagation()
+        }}
       >
-        <h3 id="confirm-title" className="text-lg font-bold text-ink mb-2">
+        <h2 id={titleId} className="text-lg font-bold text-ink mb-2">
           {title}
-        </h3>
-        <p className="text-sm text-muted mb-6">{description}</p>
+        </h2>
+        <p id={descId} className="text-sm text-muted mb-6">
+          {description}
+        </p>
         <div className="flex gap-2 justify-end">
           <Button variant="ghost" onClick={onCancel}>
             {cancelLabel}
@@ -58,7 +63,7 @@ export function ConfirmDialog({
           <button
             type="button"
             onClick={onConfirm}
-            className={`inline-flex items-center justify-center rounded-control px-4 py-2.5 text-[15px] font-semibold text-white ${
+            className={`inline-flex items-center justify-center rounded-control px-4 py-2.5 text-[15px] font-semibold text-white focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-navy ${
               isDanger ? 'bg-danger hover:bg-[#8e1c13]' : 'bg-navy hover:bg-navy-deep'
             }`}
           >

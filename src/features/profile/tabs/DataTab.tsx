@@ -55,16 +55,14 @@ export function DataTab() {
         </Card>
 
         <Card>
-          <h3 className="text-lg font-bold text-ink mb-6 border-b border-line pb-2">
-            Контакты
-          </h3>
+          <h3 className="text-lg font-bold text-ink mb-6 border-b border-line pb-2">Контакты</h3>
           <dl className="space-y-4 text-[15px]">
             <div className="grid grid-cols-3 gap-4">
               <dt className="text-muted">Телефон</dt>
               <dd className="col-span-2 font-semibold text-ink">{PERSONA.phone}</dd>
             </div>
             <div className="grid grid-cols-3 gap-4">
-              <dt className="text-muted">Email</dt>
+              <dt className="text-muted">Электронная почта</dt>
               <dd className="col-span-2 font-semibold text-ink">{PERSONA.email}</dd>
             </div>
           </dl>
@@ -87,15 +85,11 @@ export function DataTab() {
                 Блокировка уникального идентификатора (УИ)
               </h3>
               <p className="text-sm text-muted">
-                Временно заблокирует вход и оказание услуг. Разблокировка — только в службе
-                «Одно окно».
+                Временно заблокирует вход и оказание услуг. Разблокировка — только в службе «Одно
+                окно».
               </p>
             </div>
-            <Button
-              variant="danger"
-              className="shrink-0"
-              onClick={() => setConfirmBlock(true)}
-            >
+            <Button variant="danger" className="shrink-0" onClick={() => setConfirmBlock(true)}>
               Заблокировать УИ
             </Button>
           </div>
@@ -109,8 +103,8 @@ export function DataTab() {
             </span>
           </div>
           <p className="text-sm text-muted mb-4">
-            Общие «кирпичи», на которых держатся все услуги. Чем больше компонентов
-            готово, тем меньше шагов и бумаг в каждой отдельной ситуации.
+            Общие «кирпичи», на которых держатся все услуги. Чем больше компонентов готово, тем
+            меньше шагов и бумаг в каждой отдельной ситуации.
           </p>
           <ul className="space-y-3">
             {xcComponents.map((xc) => {

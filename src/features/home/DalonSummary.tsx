@@ -2,14 +2,13 @@ import { Link } from 'react-router-dom'
 import clsx from 'clsx'
 import { Icon } from '../../design-system'
 import { useDalon } from '../../hooks/useDalon'
-import { memberById } from '../../data/dalon'
 import { countText, formatDay, toneFor, toneText, untilText } from '../../lib/dates'
 import { formatMoney } from '../../lib/money'
 import { DalonMark } from '../family/components/DalonMark'
 
 /** Плашка «Далони» на главной: сколько к оплате и ближайший срок. */
 export function DalonSummary() {
-  const { charges, total, timeline, now } = useDalon()
+  const { charges, total, timeline, now, memberById } = useDalon()
   const next = timeline[0]
 
   return (

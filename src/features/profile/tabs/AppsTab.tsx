@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useApplications } from '../../../lib/applications'
-import { services } from '../../../data/services'
+import { serviceById } from '../../../data/catalog'
 import { statusHelp } from '../../../lib/format'
 import { downloadDemoPdf } from '../../../lib/download'
 import { MyServicesRow } from '../../my-services/MyServicesRow'
@@ -89,7 +89,7 @@ export function AppsTab() {
             </thead>
             <tbody className="divide-y divide-line">
               {filtered.map((app) => {
-                const svc = services.find((s) => s.id === app.serviceId)
+                const svc = serviceById(app.serviceId)
                 return (
                   <MyServicesRow
                     key={app.id}

@@ -2,17 +2,14 @@ import { useCallback, useState, useSyncExternalStore } from 'react'
 import { isIos } from '../lib/pwa/environment'
 import { getInstallSnapshot, promptInstall, subscribeInstall } from '../lib/pwa/installPrompt'
 import { useStandalone } from './useStandalone'
+import { readString, writeString } from '../lib/storage'
 
 const DISMISS_KEY = 'epasluga-install-dismissed'
 const DISMISS_DAYS = 14
 
 function readDismissed(): boolean {
-  try {
-    const at = Number(localStorage.getItem(DISMISS_KEY) || 0)
-    return Date.now() - at < DISMISS_DAYS * 86400000
-  } catch {
-    return false
-  }
+  const at = Number(readString(DISMISS_KEY) || 0)
+  return Date.now() - at < DISMISS_DAYS * 86400000
 }
 
 export type InstallMode =
@@ -43,11 +40,8 @@ export function useInstallPrompt() {
   }
 
   const dismiss = useCallback(() => {
-    try {
-      localStorage.setItem(DISMISS_KEY, String(Date.now()))
-    } catch {
-      // приватный режим — просто скрываем до перезагрузки
-    }
+    // приватный режим — запись не удастся, баннер просто скроется до перезагрузки
+    writeString(DISMISS_KEY, String(Date.now()))
     setDismissed(true)
   }, [])
 

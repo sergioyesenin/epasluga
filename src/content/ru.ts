@@ -1,6 +1,6 @@
 export const ru = {
   common: {
-    searchPlaceholder: 'Введите запрос: "справка о доходах", "регистрация авто"...',
+    searchPlaceholder: 'Введите запрос: «справка о доходах», «регистрация авто»…',
     needHelp: 'Нужна помощь?',
     saveAndExit: 'Сохранить и выйти',
     next: 'Далее',
@@ -15,5 +15,5 @@ export const ru = {
     withoutId: 'Доступно без ID-карты',
     needId: 'Требуется ID-карта',
     needEcp: 'Требуется ЭЦП',
-  }
+  },
 }

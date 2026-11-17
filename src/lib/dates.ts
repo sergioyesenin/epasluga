@@ -45,6 +45,24 @@ export function formatDay(iso: string): string {
   return new Date(iso).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' })
 }
 
+/** «21 августа 2010 г.» — для записей ЗАГС и документов. */
+export function formatDate(iso: string): string {
+  return new Date(iso).toLocaleDateString('ru-RU', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  })
+}
+
+/** «сб, 12 декабря» — для дат тестирования. */
+export function formatWeekday(iso: string): string {
+  return new Date(iso).toLocaleDateString('ru-RU', {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'long',
+  })
+}
+
 /** «15» и «нояб.» — для плашки с датой. */
 export function formatDayParts(iso: string): { day: string; month: string } {
   const d = new Date(iso)

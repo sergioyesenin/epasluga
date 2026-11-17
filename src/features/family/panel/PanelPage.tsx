@@ -3,11 +3,11 @@ import clsx from 'clsx'
 import { EmptyState, Icon } from '../../../design-system'
 import { useDalon } from '../../../hooks/useDalon'
 import { useChargeSelection } from '../../../hooks/useChargeSelection'
-import { DALON_MEMBERS } from '../../../data/dalon'
-import { isMemberVisible, sumDue } from '../../../lib/dalon/selectors'
+import { isMemberVisible, personById, sumDue } from '../../../lib/dalon/selectors'
+import { lockReason } from '../../../lib/dalon/zags'
 import { formatDay, toneFor, toneText } from '../../../lib/dates'
-import type { DalonMemberId } from '../../../types/dalon'
-import { HandSummary } from './HandSummary'
+import { PlantSummary } from './plant/PlantSummary'
+import { SuggestionsPanel } from '../proactive/SuggestionsPanel'
 import { MemberGroup } from './MemberGroup'
 import { DuePanel } from './DuePanel'
 import { PayBar } from './PayBar'
@@ -24,13 +24,17 @@ function scrollToMember(id: string) {
   el.focus({ preventScroll: true })
 }
 
-/** Панель «Далони»: ладонь, начисления по членам семьи, сроки и оплата. */
+/** Панель «Далони»: растение семьи, начисления по членам семьи, сроки и оплата. */
 export function PanelPage() {
-  const { state, charges, total, timeline, now } = useDalon()
+  const { state, charges, members, memberById, total, timeline, now } = useDalon()
   const { selected, toggle, toggleAll, allSelected } = useChargeSelection(charges, now)
   const navigate = useNavigate()
 
-  const isHidden = (id: DalonMemberId) => !isMemberVisible(state, id)
+  const isHidden = (id: string) => !isMemberVisible(state, id, now)
+  const reasonFor = (id: string) => {
+    const p = personById(state, id)
+    return p ? lockReason(p, now) : null
+  }
   const chosen = charges.filter((c) => selected.includes(c.id))
   const next = timeline[0]
 
@@ -40,12 +44,12 @@ export function PanelPage() {
 
   return (
     <div>
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,560px)_minmax(0,1fr)] gap-6 lg:gap-12 items-end mb-10">
-        <HandSummary
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,560px)_minmax(0,1fr)] gap-6 lg:gap-12 items-center mb-10">
+        <PlantSummary
+          state={state}
           charges={charges}
           total={total}
           now={now}
-          isHidden={isHidden}
           onPick={scrollToMember}
         />
         <div className="lg:pb-4 space-y-4">
@@ -72,6 +76,8 @@ export function PanelPage() {
         </div>
       </div>
 
+      <SuggestionsPanel state={state} now={now} />
+
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] gap-6 items-start">
         <div className="min-w-0">
           <div className="flex items-center justify-between gap-3 mb-3">
@@ -83,7 +89,7 @@ export function PanelPage() {
             )}
           </div>
 
-          {charges.length === 0 && !DALON_MEMBERS.some((m) => isHidden(m.id)) ? (
+          {charges.length === 0 && !members.some((m) => isHidden(m.id)) ? (
             <EmptyState
               icon={<Icon name="check" />}
               title="Семья ничего не должна"
@@ -96,12 +102,12 @@ export function PanelPage() {
             />
           ) : (
             <div className="space-y-4">
-              {DALON_MEMBERS.map((m) => (
+              {members.map((m) => (
                 <MemberGroup
                   key={m.id}
                   member={m}
                   charges={charges.filter((c) => c.memberId === m.id)}
-                  hidden={isHidden(m.id)}
+                  lockReason={reasonFor(m.id)}
                   selected={selected}
                   now={now}
                   onToggle={toggle}
@@ -115,7 +121,7 @@ export function PanelPage() {
           )}
         </div>
 
-        <DuePanel items={timeline} now={now} />
+        <DuePanel items={timeline} now={now} memberById={memberById} />
       </div>
     </div>
   )

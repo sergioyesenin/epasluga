@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import clsx from 'clsx'
 import type { DalonCharge } from '../../../types/dalon'
-import { memberById } from '../../../data/dalon'
+import { useDalon } from '../../../hooks/useDalon'
 import { formatDay, toneFor, toneText, untilText } from '../../../lib/dates'
 import { formatMoney } from '../../../lib/money'
 import { amountDue, keyDate } from '../../../lib/dalon/selectors'
@@ -11,6 +11,7 @@ import { actionButton } from '../components/styles'
 /** Главное напоминание: скидка 50 % на штраф скоро закончится. */
 export function FineFeature({ fine, now }: { fine: DalonCharge; now: Date }) {
   const until = keyDate(fine, now)
+  const { memberById } = useDalon()
   const who = memberById(fine.memberId)
 
   return (
@@ -20,7 +21,7 @@ export function FineFeature({ fine, now }: { fine: DalonCharge; now: Date }) {
     >
       <p className="flex flex-wrap items-center gap-2 text-sm text-family-wine-ink">
         <TypeLabel type="fine" />
-        {who?.full}, {who?.role.split(',')[0]}
+        {who?.full}, {who?.role}
       </p>
       <h2 id="fine-title" className="mt-3 text-xl md:text-2xl font-bold text-ink tracking-tight">
         Скидка {fine.discount?.percent} % на штраф — до {formatDay(until)}

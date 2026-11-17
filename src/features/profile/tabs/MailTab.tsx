@@ -2,12 +2,8 @@ import { useMemo, useState } from 'react'
 import { Badge, EmptyState } from '../../../design-system'
 import { mockMail } from '../../../data/mockMail'
 import { formatWhen } from '../../../lib/format'
-import {
-  FileIcon,
-  InfoIcon,
-  ShieldCheckIcon,
-  CheckIcon,
-} from '../../../lib/situationIcons'
+import { FileIcon, InfoIcon, ShieldCheckIcon, CheckIcon } from '../../../lib/situationIcons'
+import { demoUnavailable } from '../../../lib/demo'
 import type { MailMessage } from '../../../types/service'
 import clsx from 'clsx'
 
@@ -88,16 +84,8 @@ export function MailTab() {
             <div className="text-sm text-muted">
               {selected.direction === 'in' ? 'От: ' : 'Кому: '}
               <b className="text-ink">{selected.agency}</b>
-              {selected.agencyUnp && (
-                <>
-                  {' '}· УНП {selected.agencyUnp}
-                </>
-              )}
-              {selected.applicationNum && (
-                <>
-                  {' '}· Заявление № {selected.applicationNum}
-                </>
-              )}
+              {selected.agencyUnp && <> · УНП {selected.agencyUnp}</>}
+              {selected.applicationNum && <> · Заявление № {selected.applicationNum}</>}
             </div>
           </div>
 
@@ -109,9 +97,7 @@ export function MailTab() {
           {/* Вложения */}
           {selected.attachments.length > 0 && (
             <div className="p-5 border-b border-line">
-              <h3 className="text-sm font-bold text-ink mb-3">
-                Документы в сообщении
-              </h3>
+              <h3 className="text-sm font-bold text-ink mb-3">Документы в сообщении</h3>
               <ul className="space-y-2">
                 {selected.attachments.map((att) => (
                   <li
@@ -122,9 +108,7 @@ export function MailTab() {
                       <FileIcon className="w-5 h-5" />
                     </span>
                     <div className="min-w-0 flex-1">
-                      <div className="font-semibold text-ink truncate">
-                        {att.name}
-                      </div>
+                      <div className="font-semibold text-ink truncate">{att.name}</div>
                       <div className="text-xs text-muted flex items-center gap-2 flex-wrap">
                         <span>{att.format.toUpperCase()}</span>
                         <span>· {att.sizeKb} КБ</span>
@@ -140,7 +124,7 @@ export function MailTab() {
                     </div>
                     <button
                       type="button"
-                      onClick={() => alert('В демо скачивание недоступно')}
+                      onClick={() => demoUnavailable('В демо скачивание недоступно')}
                       className="shrink-0 inline-flex items-center justify-center rounded-control min-h-11 px-3 text-sm font-semibold bg-navy text-white hover:bg-navy-deep"
                     >
                       Скачать
@@ -157,8 +141,8 @@ export function MailTab() {
               <ShieldCheckIcon className="w-4 h-4 text-ok shrink-0 mt-0.5" />
               <span>
                 Подлинность подтверждена электронной цифровой подписью
-                {selected.signedAt ? `, ${formatWhen(selected.signedAt)}` : ''}. Документ
-                имеет юридическую силу без бумажной копии.
+                {selected.signedAt ? `, ${formatWhen(selected.signedAt)}` : ''}. Документ имеет
+                юридическую силу без бумажной копии.
               </span>
             </div>
           )}
@@ -168,7 +152,7 @@ export function MailTab() {
             {selected.actionRequired === 'sign' && (
               <button
                 type="button"
-                onClick={() => alert('В демо подпись недоступна')}
+                onClick={() => demoUnavailable('В демо подпись недоступна')}
                 className="inline-flex items-center justify-center rounded-control px-4 min-h-11 text-sm font-semibold bg-navy text-white hover:bg-navy-deep"
               >
                 Подписать и отправить
@@ -177,7 +161,7 @@ export function MailTab() {
             {selected.actionRequired === 'pay' && (
               <button
                 type="button"
-                onClick={() => alert('В демо оплата недоступна')}
+                onClick={() => demoUnavailable('В демо оплата недоступна')}
                 className="inline-flex items-center justify-center rounded-control px-4 min-h-11 text-sm font-semibold bg-navy text-white hover:bg-navy-deep"
               >
                 Перейти к оплате
@@ -186,7 +170,7 @@ export function MailTab() {
             {selected.actionRequired === 'provide' && (
               <button
                 type="button"
-                onClick={() => alert('В демо загрузка документов недоступна')}
+                onClick={() => demoUnavailable('В демо загрузка документов недоступна')}
                 className="inline-flex items-center justify-center rounded-control px-4 min-h-11 text-sm font-semibold bg-navy text-white hover:bg-navy-deep"
               >
                 Загрузить документы
@@ -194,7 +178,7 @@ export function MailTab() {
             )}
             <button
               type="button"
-              onClick={() => alert('В демо архив недоступен')}
+              onClick={() => demoUnavailable('В демо архив недоступен')}
               className="inline-flex items-center justify-center rounded-control px-4 min-h-11 text-sm font-semibold border border-navy text-navy hover:bg-soft"
             >
               В архив
@@ -211,8 +195,8 @@ export function MailTab() {
       <div className="mb-4 flex items-start gap-2 text-xs text-muted bg-soft/70 border border-line rounded-control p-3">
         <ShieldCheckIcon className="w-4 h-4 shrink-0 mt-0.5 text-navy" />
         <span>
-          «Почта гражданина» — защищённый канал обмена юридически значимыми документами
-          с госорганами. Все сообщения подписаны ЭЦП и имеют юридическую силу.
+          «Почта гражданина» — защищённый канал обмена юридически значимыми документами с
+          госорганами. Все сообщения подписаны ЭЦП и имеют юридическую силу.
         </span>
       </div>
 
@@ -234,9 +218,7 @@ export function MailTab() {
               }}
               className={clsx(
                 'px-4 py-2 min-h-11 rounded-full text-sm font-semibold transition-colors',
-                box === value
-                  ? 'bg-white text-navy shadow-sm'
-                  : 'text-muted hover:text-navy',
+                box === value ? 'bg-white text-navy shadow-sm' : 'text-muted hover:text-navy',
               )}
             >
               {label}
@@ -307,9 +289,7 @@ export function MailTab() {
                 <span
                   className={clsx(
                     'shrink-0 w-10 h-10 rounded-xl flex items-center justify-center',
-                    m.actionRequired
-                      ? 'bg-[#fff4e5] text-accent-warm'
-                      : 'bg-[#e8eeff] text-navy',
+                    m.actionRequired ? 'bg-[#fff4e5] text-accent-warm' : 'bg-[#e8eeff] text-navy',
                   )}
                 >
                   {m.actionRequired ? (
@@ -344,7 +324,8 @@ export function MailTab() {
                     {m.agency} · {formatWhen(m.at)}
                     {m.attachments.length > 0 && (
                       <>
-                        {' '}· {m.attachments.length}{' '}
+                        {' '}
+                        · {m.attachments.length}{' '}
                         {m.attachments.length === 1 ? 'документ' : 'документов'}
                       </>
                     )}

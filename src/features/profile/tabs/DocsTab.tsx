@@ -3,6 +3,7 @@ import { Badge, Card, EmptyState, SkeletonList } from '../../../design-system'
 import { mockDocuments } from '../../../data/mockDocuments'
 import { formatWhen } from '../../../lib/format'
 import { FileIcon, InfoIcon } from '../../../lib/situationIcons'
+import { demoUnavailable } from '../../../lib/demo'
 import type { Document } from '../../../types/service'
 
 function formatValidUntil(iso?: string): string | null {
@@ -41,20 +42,22 @@ function FakeQr({ payload, size = 120 }: { payload: string; size?: number }) {
         const col = idx % cells
         // Уголки-маркеры
         const inCorner =
-          (row < 7 && col < 7) ||
-          (row < 7 && col >= cells - 7) ||
-          (row >= cells - 7 && col < 7)
+          (row < 7 && col < 7) || (row < 7 && col >= cells - 7) || (row >= cells - 7 && col < 7)
         const markerBorder =
           inCorner &&
-          (row === 0 || row === 6 || col === 0 || col === 6 ||
-            row === cells - 1 || row === cells - 7 ||
-            col === cells - 1 || col === cells - 7)
+          (row === 0 ||
+            row === 6 ||
+            col === 0 ||
+            col === 6 ||
+            row === cells - 1 ||
+            row === cells - 7 ||
+            col === cells - 1 ||
+            col === cells - 7)
         const markerCenter =
           inCorner &&
           row >= 2 &&
           row <= 4 &&
-          ((col >= 2 && col <= 4) ||
-            (col >= cells - 5 && col <= cells - 3))
+          ((col >= 2 && col <= 4) || (col >= cells - 5 && col <= cells - 3))
         const filled = inCorner ? markerBorder || markerCenter : hash(idx)
         if (!filled) return null
         return (
@@ -92,18 +95,12 @@ function DocumentCard({ doc }: { doc: Document }) {
       <div className="flex flex-wrap gap-1.5 mb-3">
         <Badge variant="code">{doc.format.toUpperCase()}</Badge>
         <Badge variant="default">{doc.sizeKb} КБ</Badge>
-        {validity && (
-          <Badge variant={isExpired ? 'need-id' : 'accent'}>{validity}</Badge>
-        )}
+        {validity && <Badge variant={isExpired ? 'need-id' : 'accent'}>{validity}</Badge>}
       </div>
 
       <div className="text-xs text-muted mb-4 flex-1">
         Выдан {formatWhen(doc.issuedAt)}
-        {doc.applicationNum && (
-          <>
-            {' '}· по заявлению № {doc.applicationNum}
-          </>
-        )}
+        {doc.applicationNum && <> · по заявлению № {doc.applicationNum}</>}
       </div>
 
       {showQr ? (
@@ -117,7 +114,7 @@ function DocumentCard({ doc }: { doc: Document }) {
         <div className="border-t border-line pt-3 flex gap-2">
           <button
             type="button"
-            onClick={() => alert('В демо скачивание недоступно')}
+            onClick={() => demoUnavailable('В демо скачивание недоступно')}
             className="flex-1 inline-flex items-center justify-center rounded-control min-h-11 text-sm font-semibold bg-navy text-white hover:bg-navy-deep"
           >
             Скачать
@@ -162,7 +159,7 @@ export function DocsTab() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Поиск по названию, ведомству или номеру заявления"
-          className="w-full h-11 rounded-control border border-line px-3 text-[15px] outline-none focus:border-navy focus:ring-4 focus:ring-navy/12"
+          className="w-full h-11 rounded-control border border-field px-3 text-[15px] outline-none focus:border-navy focus:ring-4 focus:ring-navy/12"
         />
       </div>
 
@@ -182,9 +179,7 @@ export function DocsTab() {
 
       <div className="mt-6 flex items-start gap-2 text-xs text-muted">
         <InfoIcon className="w-4 h-4 shrink-0 mt-0.5" />
-        <span>
-          QR-код ведёт на страницу проверки документа. В демо-режиме он декоративный.
-        </span>
+        <span>QR-код ведёт на страницу проверки документа. В демо-режиме он декоративный.</span>
       </div>
     </div>
   )

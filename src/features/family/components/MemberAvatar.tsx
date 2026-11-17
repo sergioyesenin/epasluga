@@ -1,11 +1,15 @@
 import clsx from 'clsx'
 import { Icon } from '../../../design-system'
 import type { MemberKind } from '../../../types/dalon'
+import { ASSET_ICON } from './assetIcon'
 
+/** Люди — тёплые тона, имущество — зелёные, как листья на стебле. */
 const KIND_CLASS: Record<MemberKind, string> = {
   adult: 'bg-family-sand text-family-sand-ink',
   child: 'bg-family-peach text-family-peach-ink',
-  car: 'bg-family-rose text-family-rose-ink',
+  car: 'bg-plant-tint text-plant-ink',
+  flat: 'bg-plant-tint text-plant-ink',
+  dacha: 'bg-plant-tint text-plant-ink',
 }
 
 const SIZE_CLASS = {
@@ -21,7 +25,7 @@ type MemberAvatarProps = {
   className?: string
 }
 
-/** Кружок с инициалами; у автомобиля — значок машины. */
+/** Кружок с инициалами; у имущества — значок машины, дома или дачи. */
 export function MemberAvatar({ kind, initials, size = 'md', className }: MemberAvatarProps) {
   return (
     <span
@@ -33,7 +37,11 @@ export function MemberAvatar({ kind, initials, size = 'md', className }: MemberA
         className,
       )}
     >
-      {kind === 'car' ? <Icon name="car" className="w-[55%] h-[55%]" /> : initials}
+      {kind === 'adult' || kind === 'child' ? (
+        initials
+      ) : (
+        <Icon name={ASSET_ICON[kind]} className="w-[55%] h-[55%]" />
+      )}
     </span>
   )
 }

@@ -1,7 +1,7 @@
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import clsx from 'clsx'
 import { AppMark, Icon } from '../../design-system'
-import { useAuth } from '../../contexts/AuthContext'
+import { useAuth } from '../../hooks/useAuth'
 import { useNotifications } from '../../lib/notifications'
 
 function initials(fullName: string): string {

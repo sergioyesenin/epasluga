@@ -1,5 +1,6 @@
 import type { PaymentRecord } from '../../types/dalon'
-import { memberById } from '../../data/dalon'
+import { getDalonState } from './store'
+import { memberView } from './selectors'
 import { downloadBlob } from '../download'
 import { formatMoney } from '../money'
 import { METHOD_LABEL } from './actions'
@@ -18,7 +19,7 @@ function receiptHtml(items: PaymentRecord[]): string {
   const title = items.length > 1 ? 'Квитанции об оплате (демо)' : 'Квитанция об оплате (демо)'
   const rows = items
     .map((h) => {
-      const who = memberById(h.memberId)?.full ?? ''
+      const who = memberView(getDalonState(), h.memberId)?.full ?? ''
       return `<tr><td>${esc(h.title)}<br><small>${esc(h.payee)}${who ? ` · за: ${esc(who)}` : ''}</small></td><td>${esc(h.receipt)}</td><td class="r">${formatMoney(h.amount)}&nbsp;BYN</td></tr>`
     })
     .join('')

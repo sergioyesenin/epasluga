@@ -1,27 +1,17 @@
 // src/lib/search.ts
-import { services as baseServices } from '../data/services'
-import { servicesExtra } from '../data/servicesExtra'
+import { allServices as services } from '../data/catalog'
 import { synonyms } from '../data/synonyms'
 import type { Service } from '../types/service'
 
-/** Базовый каталог (174 услуги из генератора) + услуги Волны 1 из servicesExtra. */
-export const services: Service[] = [...baseServices, ...servicesExtra]
-
 /** Нормализация: нижний регистр, ё→е, схлопывание пробелов. */
 export function normalize(s: string): string {
-  return (s || '')
-    .toLowerCase()
-    .replace(/ё/g, 'е')
-    .replace(/\s+/g, ' ')
-    .trim()
+  return (s || '').toLowerCase().replace(/ё/g, 'е').replace(/\s+/g, ' ').trim()
 }
 
 /** Собираем поисковый «блоб» для каждой услуги один раз. */
 const index: Array<{ service: Service; blob: string; shortBlob: string }> = services.map((s) => ({
   service: s,
-  blob: normalize(
-    [s.shortTitle, s.officialTitle, s.code, s.orgName, s.categoryTitle].join(' '),
-  ),
+  blob: normalize([s.shortTitle, s.officialTitle, s.code, s.orgName, s.categoryTitle].join(' ')),
   shortBlob: normalize(s.shortTitle),
 }))
 
@@ -72,5 +62,7 @@ export function searchServices(query: string): SearchHit[] {
 
 /** Топ-N подсказок для выпадающего списка. */
 export function suggestServices(query: string, limit = 6): Service[] {
-  return searchServices(query).slice(0, limit).map((h) => h.service)
+  return searchServices(query)
+    .slice(0, limit)
+    .map((h) => h.service)
 }

@@ -57,6 +57,11 @@ export function PaySuccess({ items }: { items: PaymentRecord[] }) {
           {items.length > 1 ? 'Скачать квитанции' : 'Скачать квитанцию'}
         </button>
       </div>
+      {items.some((h) => h.appId) && (
+        <Link to="/profile?tab=apps" className={`${textButton} mt-4 mr-4`}>
+          Заявка и пропуск — в «Моих услугах»
+        </Link>
+      )}
       <Link to="/family/history" className={`${textButton} mt-4`}>
         Вся история платежей
       </Link>

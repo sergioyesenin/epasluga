@@ -1,12 +1,14 @@
 import { useLocation } from 'react-router-dom'
-import { services } from '../data/services'
 import { categories } from '../data/categories'
+import { useLazyService } from './useLazyService'
 
 export type Crumb = { label: string; href?: string }
 
 export function useBreadcrumbs(): Crumb[] {
   const { pathname, search } = useLocation()
   const params = new URLSearchParams(search)
+  const serviceId = pathname.startsWith('/service/') ? pathname.replace('/service/', '') : undefined
+  const svc = useLazyService(serviceId)
 
   const crumbs: Crumb[] = [{ label: 'Главная', href: '/' }]
 
@@ -26,8 +28,6 @@ export function useBreadcrumbs(): Crumb[] {
       crumbs.push({ label: 'Каталог услуг' })
     }
   } else if (pathname.startsWith('/service/')) {
-    const id = pathname.replace('/service/', '')
-    const svc = services.find((s) => s.id === id)
     crumbs.push({ label: 'Каталог услуг', href: '/catalog' })
     if (svc) {
       crumbs.push({
@@ -42,7 +42,7 @@ export function useBreadcrumbs(): Crumb[] {
     const tab = params.get('tab')
     crumbs.push({ label: 'Личный кабинет', href: '/profile' })
     const tabLabels: Record<string, string> = {
-      apps: 'Заявления',
+      apps: 'Мои услуги',
       docs: 'Документы',
       mail: 'Почта',
       repo: 'Репозиторий',
@@ -51,7 +51,7 @@ export function useBreadcrumbs(): Crumb[] {
     if (tab && tabLabels[tab]) crumbs.push({ label: tabLabels[tab] })
   } else if (pathname === '/apps') {
     crumbs.push({ label: 'Личный кабинет', href: '/profile' })
-    crumbs.push({ label: 'Заявления' })
+    crumbs.push({ label: 'Мои услуги' })
   } else if (pathname === '/notifications') {
     crumbs.push({ label: 'Мои уведомления' })
   } else if (pathname.startsWith('/status/')) {

@@ -4,11 +4,13 @@ import clsx from 'clsx'
 import { lifeSituations } from '../../data/situations'
 import { xcById } from '../../data/xcComponents'
 import { passportById } from '../../data/situationPassports'
-import { Card, Badge, Button } from '../../design-system'
+import { Card, Badge, Button, Modal } from '../../design-system'
 import { useSituationProgress } from '../../lib/situationProgress'
 import { useApplications } from '../../lib/applications'
 import { CheckIcon, ClockIcon } from '../../lib/situationIcons'
 import type { ApplicationStatus, DigitalState, Priority } from '../../types/service'
+import { readString, writeString } from '../../lib/storage'
+import { useDocumentTitle } from '../../hooks/useDocumentTitle'
 
 const PAUSE_KEY_PREFIX = 'epasluga-situ-paused:'
 
@@ -33,17 +35,20 @@ export function SituationPage() {
   const situation = lifeSituations.find((s) => s.id === id)
   const { completed, toggle, reset } = useSituationProgress(id ?? '__none__')
   const { apps } = useApplications()
+  useDocumentTitle(situation?.title ?? 'Ситуация не найдена')
 
+  // Подсказка «как сделать офлайн» — в модальном окне вместо блокирующего alert()
+  const [offlineHint, setOfflineHint] = useState<string | null>(null)
   const [isPaused, setIsPaused] = useState<boolean>(() => {
     if (!id) return false
-    return localStorage.getItem(PAUSE_KEY_PREFIX + id) === '1'
+    return readString(PAUSE_KEY_PREFIX + id) === '1'
   })
 
   const togglePause = () => {
     if (!id) return
     const next = !isPaused
     setIsPaused(next)
-    localStorage.setItem(PAUSE_KEY_PREFIX + id, next ? '1' : '0')
+    writeString(PAUSE_KEY_PREFIX + id, next ? '1' : '0')
   }
 
   /** Найти активное заявление по услуге шага. */
@@ -52,9 +57,7 @@ export function SituationPage() {
     return apps.find(
       (a) =>
         a.serviceId === stepServiceId &&
-        (['На проверке', 'Ожидает оплаты', 'Черновик'] as ApplicationStatus[]).includes(
-          a.status,
-        ),
+        (['На проверке', 'Ожидает оплаты', 'Черновик'] as ApplicationStatus[]).includes(a.status),
     )
   }
 
@@ -79,9 +82,7 @@ export function SituationPage() {
   const xcList = (situation.xcDeps ?? [])
     .map((xcId) => xcById[xcId])
     .filter((x): x is NonNullable<typeof x> => Boolean(x))
-  const hasPassport = situation.registryId
-    ? Boolean(passportById(situation.registryId))
-    : false
+  const hasPassport = situation.registryId ? Boolean(passportById(situation.registryId)) : false
 
   const handleSkip = (stepId: string) => {
     if (!completed.has(stepId)) toggle(stepId)
@@ -135,9 +136,7 @@ export function SituationPage() {
                   style={{ width: `${progress}%` }}
                 />
               </div>
-              <span className="text-sm font-bold text-navy whitespace-nowrap">
-                {progress}%
-              </span>
+              <span className="text-sm font-bold text-navy whitespace-nowrap">{progress}%</span>
             </div>
             <div className="flex items-center gap-2 justify-end">
               <Button variant="ghost" size="sm" onClick={togglePause}>
@@ -147,7 +146,7 @@ export function SituationPage() {
                 to="/profile?tab=apps"
                 className="text-xs font-semibold text-navy hover:underline whitespace-nowrap"
               >
-                Мои заявления
+                Мои услуги
               </Link>
             </div>
           </div>
@@ -187,7 +186,9 @@ export function SituationPage() {
               onClick={() => {
                 reset()
                 setIsPaused(false)
-                if (id) localStorage.setItem(PAUSE_KEY_PREFIX + id, '0')
+                if (id) {
+                  writeString(PAUSE_KEY_PREFIX + id, '0')
+                }
               }}
               className="text-xs text-muted hover:text-danger transition-colors underline"
             >
@@ -230,7 +231,9 @@ export function SituationPage() {
                     type="button"
                     onClick={() => toggle(step.id)}
                     aria-pressed={isDone}
-                    aria-label={isDone ? 'Отметить шаг как невыполненный' : 'Отметить шаг как выполненный'}
+                    aria-label={
+                      isDone ? 'Отметить шаг как невыполненный' : 'Отметить шаг как выполненный'
+                    }
                     className={clsx(
                       'shrink-0 w-11 h-11 rounded-full border-2 flex items-center justify-center transition-colors',
                       isDone
@@ -246,10 +249,7 @@ export function SituationPage() {
                   <div className="flex-1">
                     <div className="flex justify-between items-start mb-1 gap-2 flex-wrap">
                       <h3
-                        className={clsx(
-                          'font-semibold text-ink text-lg',
-                          isDone && 'line-through',
-                        )}
+                        className={clsx('font-semibold text-ink text-lg', isDone && 'line-through')}
                       >
                         {step.title}
                       </h3>
@@ -291,7 +291,7 @@ export function SituationPage() {
                       ) : step.externalAction ? (
                         <Button
                           variant="ghost"
-                          onClick={() => alert(step.externalAction)}
+                          onClick={() => setOfflineHint(step.externalAction ?? null)}
                         >
                           Как сделать офлайн
                         </Button>
@@ -364,7 +364,7 @@ export function SituationPage() {
                 to="/profile?tab=apps"
                 className="text-sm font-semibold text-navy hover:underline inline-flex items-center gap-1"
               >
-                Мои заявления по этой ситуации
+                Мои услуги по этой ситуации
               </Link>
             </div>
           </Card>
@@ -382,6 +382,25 @@ export function SituationPage() {
           )}
         </div>
       </div>
+
+      <Modal
+        open={offlineHint !== null}
+        title="Как сделать офлайн"
+        onClose={() => {
+          setOfflineHint(null)
+        }}
+      >
+        <p className="text-[15px] text-ink mb-6">{offlineHint}</p>
+        <Button
+          type="button"
+          className="w-full sm:w-auto"
+          onClick={() => {
+            setOfflineHint(null)
+          }}
+        >
+          Понятно
+        </Button>
+      </Modal>
     </div>
   )
 }

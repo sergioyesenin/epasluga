@@ -1,7 +1,7 @@
 ﻿import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Button, Card, Icon } from '../../design-system'
-import { useAuth } from '../../contexts/AuthContext'
+import { useAuth } from '../../hooks/useAuth'
 import { useBiometric } from '../../hooks/useBiometric'
 import { useSmsLogin } from '../../hooks/useSmsLogin'
 import { PhoneForm } from './PhoneForm'

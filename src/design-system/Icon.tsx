@@ -128,6 +128,35 @@ const PATHS = {
       <path d="M9 14v-3a3 3 0 1 1 6 0v4M12 11v6.5M9 17.5V20M15 17.5V20M5 16.5V18M19 16.5V18" />
     </>
   ),
+  sprout: (
+    <>
+      <path d="M12 21v-9" />
+      <path d="M12 12c0-3.6 2.6-6 6.5-6 0 3.7-2.6 6-6.5 6Z" />
+      <path d="M12 14.5c0-3-2.2-5-5.5-5 0 3.1 2.2 5 5.5 5Z" />
+    </>
+  ),
+  dacha: (
+    <>
+      <path d="M3 20h18" />
+      <path d="M5 20v-7.5L10 8.5l5 4V20" />
+      <path d="M8.5 20v-4h3v4" />
+      <path d="M18 20v-5" />
+      <path d="M18 15c-1.7 0-2.8-1.1-2.8-2.8 1.7 0 2.8 1.1 2.8 2.8Zm0 0c1.7 0 2.8-1.1 2.8-2.8-1.7 0-2.8 1.1-2.8 2.8Z" />
+    </>
+  ),
+  school: (
+    <>
+      <path d="M2.5 9.5 12 5l9.5 4.5L12 14 2.5 9.5Z" />
+      <path d="M6.5 11.5v4.2c1.4 1.4 3.3 2.1 5.5 2.1s4.1-.7 5.5-2.1v-4.2" />
+      <path d="M21.5 9.5V15" />
+    </>
+  ),
+  sparkle: (
+    <>
+      <path d="M11 3.5 12.9 9l5.6 2-5.6 2-1.9 5.5L9.1 13 3.5 11l5.6-2L11 3.5Z" />
+      <path d="M18.5 3v3M17 4.5h3" />
+    </>
+  ),
   people: (
     <>
       <circle cx="9" cy="8.5" r="3" />
@@ -145,12 +174,28 @@ type IconProps = {
   className?: string
   strokeWidth?: number
   title?: string
+  /** Положение и размер, когда иконка вложена в другой SVG (лист растения «Далони»). */
+  x?: number
+  y?: number
+  size?: number
 }
 
-export function Icon({ name, className = 'w-5 h-5', strokeWidth = 1.8, title }: IconProps) {
+export function Icon({
+  name,
+  className = 'w-5 h-5',
+  strokeWidth = 1.8,
+  title,
+  x,
+  y,
+  size,
+}: IconProps) {
   return (
     <svg
       className={className}
+      x={x}
+      y={y}
+      width={size}
+      height={size}
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"

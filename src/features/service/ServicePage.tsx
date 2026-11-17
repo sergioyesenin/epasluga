@@ -1,10 +1,15 @@
-﻿import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import { useParams, Link, useSearchParams } from 'react-router-dom'
-import { services } from '../../data/services'
+import { serviceById } from '../../data/catalog'
 import { Button, Badge, Card, Accordion, Tooltip } from '../../design-system'
 import { ClockIcon, WalletIcon, FileIcon } from '../../lib/situationIcons'
 import { ru } from '../../content/ru'
-import { ApplicationForm } from './ApplicationForm'
+import { lazyNamed } from '../../lib/lazyNamed'
+import { PageSkeleton } from '../../app/PageSkeleton'
+import { useDocumentTitle } from '../../hooks/useDocumentTitle'
+
+// Форма с zod и react-hook-form — отдельный чанк: описание услуги открывается без них
+const ApplicationForm = lazyNamed(() => import('./ApplicationForm'), 'ApplicationForm')
 
 const AUTH_HINT: Record<string, React.ReactNode> = {
   none: 'Понадобится только ваше имя.',
@@ -23,8 +28,9 @@ export function ServicePage() {
   const situationId = params.get('situation') ?? undefined
   const situationStepId = params.get('step') ?? undefined
 
-  const service = services.find((s) => s.id === id)
+  const service = serviceById(id)
   const [isFormOpen, setIsFormOpen] = useState(false)
+  useDocumentTitle(service?.shortTitle ?? 'Услуга не найдена')
 
   if (!service) {
     return (
@@ -39,12 +45,15 @@ export function ServicePage() {
 
   if (isFormOpen) {
     return (
-      <ApplicationForm
-        service={service}
-        onBack={() => setIsFormOpen(false)}
-        situationId={situationId}
-        situationStepId={situationStepId}
-      />
+      <Suspense fallback={<PageSkeleton />}>
+        <ApplicationForm
+          key={service.id}
+          service={service}
+          onBack={() => setIsFormOpen(false)}
+          situationId={situationId}
+          situationStepId={situationStepId}
+        />
+      </Suspense>
     )
   }
 
@@ -144,9 +153,7 @@ export function ServicePage() {
             </Card>
 
             <Card>
-              <h3 className="text-sm font-bold text-muted mb-3">
-                Кто оказывает услугу
-              </h3>
+              <h3 className="text-sm font-bold text-muted mb-3">Кто оказывает услугу</h3>
               <div className="font-semibold text-ink mb-1">{service.orgName}</div>
               <div className="text-sm text-muted">УНП: {service.orgUnp}</div>
             </Card>

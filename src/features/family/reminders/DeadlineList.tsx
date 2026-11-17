@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom'
 import clsx from 'clsx'
 import { EmptyState, Icon } from '../../../design-system'
-import { memberById, type LabelType } from '../../../data/dalon'
+import type { LabelType } from '../../../data/dalon'
+import { useDalon } from '../../../hooks/useDalon'
 import { formatDayParts, toneFor, toneText, untilText } from '../../../lib/dates'
 import { TypeLabel } from '../components/TypeLabel'
 import { quietButton } from '../components/styles'
@@ -19,6 +20,8 @@ export type DeadlineItem = {
 
 /** Список ближайших сроков с датой-плашкой слева. */
 export function DeadlineList({ items, now }: { items: DeadlineItem[]; now: Date }) {
+  const { memberById } = useDalon()
+
   if (items.length === 0) {
     return (
       <EmptyState

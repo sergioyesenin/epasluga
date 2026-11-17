@@ -10,15 +10,34 @@ type NotificationCardProps = {
   onDelete: () => void
 }
 
-export function NotificationCard({ n, box, onArchive, onUnarchive, onDelete }: NotificationCardProps) {
+export function NotificationCard({
+  n,
+  box,
+  onArchive,
+  onUnarchive,
+  onDelete,
+}: NotificationCardProps) {
   return (
     <article className="flex gap-3 p-4">
-      <div className={`shrink-0 w-10 h-10 rounded-xl flex items-center justify-center ${n.kind === 'legal' ? 'bg-[#fff4e5] text-accent-warm' : 'bg-[#e8eeff] text-navy'}`}>
-        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+      <div
+        className={`shrink-0 w-10 h-10 rounded-xl flex items-center justify-center ${n.kind === 'legal' ? 'bg-[#fff4e5] text-accent-warm' : 'bg-[#e8eeff] text-navy'}`}
+      >
+        <svg
+          aria-hidden="true"
+          className="w-5 h-5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={1.8}
+        >
           {n.kind === 'legal' ? (
             <path strokeLinecap="round" strokeLinejoin="round" d="M7 4h7l5 5v11H7V4ZM14 4v5h5" />
           ) : (
-            <path strokeLinecap="round" strokeLinejoin="round" d="M6 16h12l-1.2-2.2V10a4.8 4.8 0 1 0-9.6 0v3.8L6 16ZM10 16a2 2 0 0 0 4 0" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M6 16h12l-1.2-2.2V10a4.8 4.8 0 1 0-9.6 0v3.8L6 16ZM10 16a2 2 0 0 0 4 0"
+            />
           )}
         </svg>
       </div>
@@ -35,16 +54,28 @@ export function NotificationCard({ n, box, onArchive, onUnarchive, onDelete }: N
 
         <div className="flex gap-2 flex-wrap">
           {box === 'in' ? (
-            <button type="button" onClick={onArchive} className="text-xs font-semibold px-3 min-h-11 rounded-lg border border-line text-navy hover:bg-soft">
+            <button
+              type="button"
+              onClick={onArchive}
+              className="text-xs font-semibold px-3 min-h-11 rounded-lg border border-line text-navy hover:bg-soft"
+            >
               В архив
             </button>
           ) : (
-            <button type="button" onClick={onUnarchive} className="text-xs font-semibold px-3 min-h-11 rounded-lg border border-line text-navy hover:bg-soft">
+            <button
+              type="button"
+              onClick={onUnarchive}
+              className="text-xs font-semibold px-3 min-h-11 rounded-lg border border-line text-navy hover:bg-soft"
+            >
               Вернуть во входящие
             </button>
           )}
           {n.kind === 'info' && box === 'in' && (
-            <button type="button" onClick={onDelete} className="text-xs font-semibold px-3 min-h-11 rounded-lg border border-line text-danger hover:bg-[#fff6f6]">
+            <button
+              type="button"
+              onClick={onDelete}
+              className="text-xs font-semibold px-3 min-h-11 rounded-lg border border-line text-danger hover:bg-[#fff6f6]"
+            >
               Удалить
             </button>
           )}

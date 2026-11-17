@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+import { isRecord, isStringArray, readJson, writeJson } from './storage'
 
 const STORAGE_KEY = 'epasluga-situation-progress'
 
@@ -6,20 +7,16 @@ const STORAGE_KEY = 'epasluga-situation-progress'
  * поэтому храним как { [situationId]: string[] } и оборачиваем в Set в памяти. */
 type StoredProgress = Record<string, string[]>
 
+function isProgress(value: unknown): value is StoredProgress {
+  return isRecord(value) && Object.values(value).every(isStringArray)
+}
+
 function read(): StoredProgress {
-  try {
-    const raw = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}')
-    if (raw && typeof raw === 'object' && !Array.isArray(raw)) {
-      return raw as StoredProgress
-    }
-  } catch {
-    // ignore corrupt storage
-  }
-  return {}
+  return readJson<StoredProgress>(STORAGE_KEY, {}, isProgress)
 }
 
 function write(data: StoredProgress) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
+  writeJson(STORAGE_KEY, data)
 }
 
 /**
